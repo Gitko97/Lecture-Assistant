@@ -21,3 +21,26 @@
 
 	ex)  1)   https://m.blog.naver.com/PostView.nhn?blogId=ndb796&logNo=221047683553&proxyReferer=https:%2F%2Fwww.google.com%2F
 	     2)  OpenCV 에 대해서도 알아보기
+
+
+					<5월 9일 회의 결과>
+	1. 음성 STT 부분
+
+		- 자바 Capturing Audio (https://docs.oracle.com/javase/tutorial/sound/capturing.html) 를 이용한 컴퓨터 사운드를 byte단위로 변환 후 실시간으로 카카오톡 API 이용, 
+			다시 우리가 만든 프로그램에 text를 전달
+	
+	2. 강의 화면 캡처
+
+		- 자바 Robot 클래스를 이용한 0.5초,1초 등 주기적인 Screen Capture를 통해 강의 화면 분석 (현재는 캡처 이미지를 픽셀로 변경하여 분석할 예정)
+
+		- 혹은 OpenCV를 이용한 동영상 그 자체의 분석
+
+	3. 필기의 분석
+		
+		- 스크린샷의 비교로 필기들을 추출 할 수 있지만 언제부터 언제까지가 하나의 필기로써 음성 Text 에 맵핑 되어야하는지 해결 방안이 필요함
+
+	<3번 예시 해결방안 2가지>
+
+		1. pdf 화면을 N등분 하여 각 구역의 필기가 진행 되었을때 그것을 하나의 필기로 인식하고 다른 구역으로 넘어가게되면 또 다른 필기
+			
+		2. 새로운 필기가 즉, 교수님의 입력이 일정시간 없었다면 그 전까지의 필기를 하나의 필기로 인식 및 text와 맵핑 
