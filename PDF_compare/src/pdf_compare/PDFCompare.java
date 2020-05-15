@@ -31,6 +31,7 @@ public class PDFCompare {
 	{
 		return dif;
 	}
+	
 	public int get_img(BufferedImage a, BufferedImage b)
 	{
 		if(a==null||b==null)
@@ -45,8 +46,8 @@ public class PDFCompare {
 		return 0;
 	}
 	
-	//convert RGB to dif level
-	public int getRGBdif(int rgb)
+	//convert RGB value to sum
+	public int getRGBsum(int rgb)
 	{
 		int result;
 		int red, grean, blue;
@@ -67,6 +68,7 @@ public class PDFCompare {
 	{
 		int row, cor;
 		int pdfPixel, videoPixel;
+		int temp;
 		
 		//exception case if buffered is null
 		if(fromPDF==null||fromVideo==null)
@@ -74,17 +76,34 @@ public class PDFCompare {
 			throw new NullPointerException();
 		}
 		
+		//check all pixel
 		for(row=0;row<height;row++)
 		{
 			for(cor=0;cor<width;cor++)
 			{
 				pdfPixel=fromPDF.getRGB(cor, row);
 				videoPixel=fromVideo.getRGB(cor, row);
-				dif+=getRGBdif(pdfPixel>videoPixel ? pdfPixel-videoPixel : videoPixel-pdfPixel);
+				
+				//get dif value
+				temp=getRGBsum(
+						pdfPixel>videoPixel ? pdfPixel-videoPixel : videoPixel-pdfPixel);
+				
+				//allow noise dif(maybe noise is less then 150)
+				if(temp>150)
+				{
+					dif++;
+				}
 			}
 		}
 		
-		return false;
+		if(dif<50)
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
 	}
 	
 

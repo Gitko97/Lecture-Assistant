@@ -23,7 +23,10 @@ public class Main {
 		catch(Exception e) {};
 		
 		PDFCompare p=new PDFCompare(ba, bb);
-		p.compare();
+		if(p.compare())
+			{
+				System.out.println("Diffrent");
+			};
 		System.out.println(p.show_dif());
 		return;
 	}
