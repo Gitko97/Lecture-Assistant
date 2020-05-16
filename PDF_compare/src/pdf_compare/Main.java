@@ -1,18 +1,17 @@
 //this is for testing
 package pdf_compare;
 
-import java.util.*;
-
-import javax.imageio.ImageIO;
-
 import java.awt.image.BufferedImage;
 import java.io.*;
+
+import javax.imageio.ImageIO;
 
 public class Main {
 	public static void main(String[] args)
 	{
 		File a, b;
 		BufferedImage ba=null, bb=null;
+		int temp;
 		a=new File("sampleA.bmp");
 		b=new File("sampleB.bmp");
 		
@@ -21,13 +20,10 @@ public class Main {
 		bb=ImageIO.read(b);
 		}
 		catch(Exception e) {};
+		ImgCompare.setNoise(200);
+		temp=ImgCompare.getRGBdif(ba,bb);
 		
-		PDFCompare p=new PDFCompare(ba, bb);
-		if(p.compare())
-			{
-				System.out.println("Diffrent");
-			};
-		System.out.println(p.show_dif());
+		System.out.println(temp);
 		return;
 	}
 }

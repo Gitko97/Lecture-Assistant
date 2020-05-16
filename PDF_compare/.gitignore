@@ -1,0 +1,9 @@
+/bin/
+# ignore all bin
+bin/
+# ignore .classpath
+.classpath
+# ignore .project
+.project
+# ignore testcase
+*.bmp
