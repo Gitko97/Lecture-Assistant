@@ -19,9 +19,6 @@ class DrawPanel extends JPanel{
 	public void movePos(int dx, int dy) {
 		this.xpos += dx;
 		this.ypos += dy;
-		this.removeAll();
-		revalidate();
-		repaint();
 	}
 	
 	public void paintComponent(Graphics g) {

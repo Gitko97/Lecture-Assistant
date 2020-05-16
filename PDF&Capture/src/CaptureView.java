@@ -6,10 +6,10 @@ public class CaptureView extends JFrame {
 	public CaptureView() {
 	
 
-		DrawPanel drawpanel = new DrawPanel(50,50,700,700);
+		drawpanel = new DrawPanel(50,50,700,700);
 		drawpanel.setBackground(new Color(255,0,0,0));
 		
-		CaptureEvent event = new CaptureEvent(drawpanel);
+		CaptureEvent event = new CaptureEvent(this);
 		drawpanel.addMouseListener(event);
 		drawpanel.addMouseMotionListener(event);
 		getContentPane().add(drawpanel);
@@ -23,6 +23,18 @@ public class CaptureView extends JFrame {
 		this.setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
 		this.pack();
 		this.setVisible(true);
+	}
+	
+	public void madeNew(int dx, int dy) {
+		
+		this.remove(drawpanel);
+		this.revalidate();
+		this.repaint();
+		drawpanel.movePos(dx, dy);
+		getContentPane().add(drawpanel);
+		this.revalidate();
+		this.repaint();
+		
 	}
 }
 

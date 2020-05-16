@@ -13,15 +13,17 @@ public class CaptureEvent implements MouseListener, MouseMotionListener {
 	int curX;
 	int curY;
 	boolean ready = false;
-	public CaptureEvent(DrawPanel drawpanel) {
-		this.drawpanel = drawpanel;
+	CaptureView captureView;
+
+	public CaptureEvent(CaptureView captureView) {
+		this.captureView = captureView;
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		curX = e.getX();
 		curY = e.getY();
-		drawpanel.movePos(curX-beforeX, curY-beforeY);
+		captureView.madeNew(curX-beforeX, curY-beforeY);
 		beforeX = curX;
 		beforeY = curY;
 	}
