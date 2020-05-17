@@ -6,9 +6,77 @@ import java.awt.image.*;
 
 public class PDFCompare extends ImgCompare{
 
-	static int left=0, right=0;
-	static int top=0, down=0;
-	//NOT YET
+	private static int left=0, right=0;
+	private static int top=0, down=0;
+	private static int allowDif=1;
+	
+	private static boolean cutBlank=true;
+	
+	//main method
+	//if same, return false, else, return true
+	//origin and video buffered img are not changed
+	public static boolean compare(BufferedImage origin, BufferedImage video)
+	{
+		int difValue, pixelAmount;
+		BufferedImage originTransform, videoTransform;
+		//exception task
+		if(origin==null||video==null)
+		{
+			throw new NullPointerException();
+		}
+		
+		//cut blank or not
+		if(cutBlank)
+		{
+			videoTransform=blanckCut(video);
+		}
+		else
+		{
+			videoTransform=video;
+		}
+		
+		//resize origin's size to video's size
+		originTransform=resize(origin, videoTransform.getWidth(), videoTransform.getHeight());
+		
+		difValue=getRGBdif(originTransform, videoTransform);
+		//debugging
+		System.out.println(difValue);
+		pixelAmount=videoTransform.getWidth()*videoTransform.getHeight();
+		System.out.println(pixelAmount);
+		if((pixelAmount/10000)*allowDif<difValue)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}	
+	}
+	
+	//cut video's blank
+	private static BufferedImage blanckCut(BufferedImage video)
+	{
+		int countW, countH;
+		BufferedImage result=new BufferedImage(right-left+1, down-top+1, BufferedImage.TYPE_INT_ARGB);
+		
+		for(countW=0;countW<right-left+1; countW++)
+		{
+			for(countH=0; countH<down-top+1; countH++)
+			{
+				result.setRGB(countW, countH, video.getRGB(countW+left, countH+top));
+			}
+		}
+		
+		
+		return result;
+	}
+	
+	//setting cutBlank option(default=true)
+	public static void setBlanckCut(boolean set)
+	{
+		cutBlank=set;
+		return;
+	};
 	
 	//set video's not blank area manually
 	public static void setArea(int l, int r, int t, int d)
@@ -23,25 +91,25 @@ public class PDFCompare extends ImgCompare{
 	public static void setArea(BufferedImage origin)
 	{
 		
-		int minWidth=0, maxWidth=origin.getWidth();
-		int minHeight=0, maxHeight=origin.getHeight();
+		int width=origin.getWidth();
+		int height=origin.getHeight();
 		
 		int rowMax[]= {0, 0}, carMax[]= {0,0};
 		int rowMaxPoint[]=new int[2];
 		int carMaxPoint[]=new int[2];
 		
-		int[][] rowAverge=new int[maxWidth][3];
-		int[][] carAverge=new int[maxHeight][3];
-		int[] rowDif=new int[maxWidth];
-		int[] carDif=new int[maxHeight];
+		int[][] rowAverge=new int[width][3];
+		int[][] carAverge=new int[height][3];
+		int[] rowDif=new int[width];
+		int[] carDif=new int[height];
 		int tempPixel[]=new int[3];
 		
 		int countH, countW, count;
 		
 		//calculate pixel RGB array sum value
-		for(countH=0;countH<maxHeight;countH++)
+		for(countH=0;countH<height;countH++)
 		{
-			for(countW=0;countW<maxWidth;countW++)
+			for(countW=0;countW<width;countW++)
 			{
 				tempPixel=RGBtoArray(origin.getRGB(countW, countH));
 				for(count=0;count<3;count++)
@@ -53,11 +121,11 @@ public class PDFCompare extends ImgCompare{
 		}
 		
 		//calculate pixel RGB average and compare dif value
-		for(countH=0;countH<maxHeight;countH++)
+		for(countH=0;countH<height;countH++)
 		{
 			for(count=0;count<3;count++)
 			{
-				rowAverge[countH][count]/=maxWidth;
+				rowAverge[countH][count]/=width;
 			}
 			if(countH>0)
 			{
@@ -75,11 +143,11 @@ public class PDFCompare extends ImgCompare{
 				}
 			}
 		}
-		for(countW=0;countW<maxWidth;countW++)
+		for(countW=0;countW<width;countW++)
 		{
 			for(count=0;count<3;count++)
 			{
-				carAverge[countW][count]/=maxHeight;
+				carAverge[countW][count]/=height;
 			}
 			if(countW>0)
 			{
@@ -124,22 +192,28 @@ public class PDFCompare extends ImgCompare{
 	}
 	
 	//resize img to compare
-	private static BufferedImage rezise(BufferedImage origin, int afterWidth, int afterHeight)
+	private static BufferedImage resize(BufferedImage origin, int afterWidth, int afterHeight)
 	{
 		BufferedImage result;
 		Image temp;
+		
+		//if same size
+		if(origin.getWidth()==afterWidth&&origin.getHeight()==afterHeight)
+		{
+			return origin;
+		}
 		
 		//resizing
 		temp = origin.getScaledInstance(afterWidth, afterHeight, BufferedImage.SCALE_SMOOTH);
 		
 		//convert Image output to BufferedImage
-		result=toBufferedImage(temp);
+		result=imageToBufferedImage(temp);
 		
 		return result;
 	}
 	
 	//convert Image to BufferedImage
-	public static BufferedImage toBufferedImage(Image img)
+	private static BufferedImage imageToBufferedImage(Image img)
 	{
 	    if (img instanceof BufferedImage)
 	    {

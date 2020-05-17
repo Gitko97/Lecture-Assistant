@@ -11,7 +11,6 @@ public class Main {
 	{
 		File a, b;
 		BufferedImage ba=null, bb=null;
-		int temp;
 		a=new File("sampleA.bmp");
 		b=new File("sampleB.bmp");
 		
@@ -20,10 +19,14 @@ public class Main {
 		bb=ImageIO.read(b);
 		}
 		catch(Exception e) {};
-		ImgCompare.setNoise(200);
-		temp=ImgCompare.getRGBdif(ba,bb);
 		
-		System.out.println(temp);
+		ImgCompare.setNoise(200);
+		PDFCompare.setBlanckCut(false);
+		if(PDFCompare.compare(ba,bb))
+		{
+			System.out.println("Different!");
+		}
+		
 		return;
 	}
 }
