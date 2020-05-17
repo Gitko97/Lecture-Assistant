@@ -39,10 +39,9 @@ public class PDFCompare extends ImgCompare{
 		originTransform=resize(origin, videoTransform.getWidth(), videoTransform.getHeight());
 		
 		difValue=getRGBdif(originTransform, videoTransform);
-		//debugging
-		System.out.println(difValue);
+
 		pixelAmount=videoTransform.getWidth()*videoTransform.getHeight();
-		System.out.println(pixelAmount);
+		
 		if((pixelAmount/10000)*allowDif<difValue)
 		{
 			return true;
