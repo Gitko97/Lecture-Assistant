@@ -87,7 +87,7 @@ public class PDFCompare extends ImgCompare{
 	}
 	
 	//option that get video's width area and height area that are not blank AUTO
-	public static void setArea(BufferedImage origin)
+	public static void setNoBlanckArea(BufferedImage origin)
 	{
 		
 		int width=origin.getWidth();
