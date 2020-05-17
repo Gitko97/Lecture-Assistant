@@ -12,7 +12,7 @@ public class CaptureEvent implements MouseListener, MouseMotionListener {
 	int beforeY;
 	int curX;
 	int curY;
-	boolean ready = false;
+	int clickedShape=0;
 	CaptureView captureView;
 
 	public CaptureEvent(CaptureView captureView) {
@@ -23,40 +23,23 @@ public class CaptureEvent implements MouseListener, MouseMotionListener {
 	public void mouseDragged(MouseEvent e) {
 		curX = e.getX();
 		curY = e.getY();
-		captureView.madeNew(curX-beforeX, curY-beforeY);
+		if(clickedShape == 0) captureView.MovePos(curX-beforeX, curY-beforeY);
+		else captureView.Resize(curX-beforeX, curY-beforeY, clickedShape);
 		beforeX = curX;
 		beforeY = curY;
-	}
-
-	@Override
-	public void mouseMoved(MouseEvent e) {
-		
-	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-	
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
 		beforeX = e.getX();
 		beforeY = e.getY();	
+		this.clickedShape = captureView.Clicked(beforeX,beforeY);
 	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		
-	}
-
 	
+	@Override
+	public void mouseMoved(MouseEvent e) {}
+	public void mouseClicked(MouseEvent e) {}
+	public void mouseEntered(MouseEvent e) {}
+	public void mouseExited(MouseEvent e) {}
+	public void mouseReleased(MouseEvent e) {}
 }
