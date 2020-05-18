@@ -12,7 +12,7 @@ public class Main {
 		File a, b;
 		BufferedImage ba=null, bb=null;
 		a=new File("sampleA.bmp");
-		b=new File("sampleB.bmp");
+		b=new File("sampleC.bmp");
 		
 		try {
 		ba=ImageIO.read(a);

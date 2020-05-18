@@ -8,7 +8,7 @@ public class PDFCompare extends ImgCompare{
 
 	private static int left=0, right=0;
 	private static int top=0, down=0;
-	private static int allowDif=1;
+	private static int allowDif=3;
 	
 	private static boolean cutBlank=true;
 	
@@ -41,6 +41,10 @@ public class PDFCompare extends ImgCompare{
 		difValue=getRGBdif(originTransform, videoTransform);
 
 		pixelAmount=videoTransform.getWidth()*videoTransform.getHeight();
+		
+		//debugging
+		System.out.println("difvalue: "+difValue);
+		System.out.println("allowvalue: "+(pixelAmount/10000)*allowDif);
 		
 		if((pixelAmount/10000)*allowDif<difValue)
 		{
@@ -195,6 +199,9 @@ public class PDFCompare extends ImgCompare{
 	{
 		BufferedImage result;
 		Image temp;
+		
+		//debugging
+		System.out.println("resie"+afterWidth+" "+afterHeight);
 		
 		//if same size
 		if(origin.getWidth()==afterWidth&&origin.getHeight()==afterHeight)
