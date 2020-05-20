@@ -20,14 +20,15 @@ public class Main {
 		}
 		catch(Exception e) {};
 		
+		
 		ImgCompare.setNoise(200);
-		PDFCompare.setBlanckCut(true);
-		PDFCompare.setNoBlanckArea(bb);
+		PDFCompare.setMarginCut(true);
+		PDFCompare.setNoMarginArea(bb);
 		if(PDFCompare.compare(ba,bb))
 		{
 			System.out.println("Different!");
 		}
-		
+
 		return;
 	}
 }

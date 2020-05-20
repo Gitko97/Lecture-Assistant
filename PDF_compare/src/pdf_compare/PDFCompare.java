@@ -17,7 +17,7 @@ public class PDFCompare extends ImgCompare{
 	//origin and video buffered img are not changed
 	public static boolean compare(BufferedImage origin, BufferedImage video)
 	{
-		int difValue, pixelAmount;
+		int difPixelNum, pixelAmount;
 		BufferedImage originTransform, videoTransform;
 		//exception task
 		if(origin==null||video==null)
@@ -25,28 +25,34 @@ public class PDFCompare extends ImgCompare{
 			throw new NullPointerException();
 		}
 		
+		originTransform=origin;
+		videoTransform=video;
 		//cut blank or not
 		if(cutBlank)
 		{
-			videoTransform=blanckCut(video);
+			videoTransform=marginCut(videoTransform);
+		}
+		
+		//resize each size to same
+		//resize bigger img
+		if(origin.getWidth()>videoTransform.getWidth())
+		{
+			originTransform=resize(originTransform, videoTransform.getWidth(), videoTransform.getHeight());
 		}
 		else
 		{
-			videoTransform=video;
+			videoTransform=resize(videoTransform, originTransform.getWidth(), originTransform.getHeight());
 		}
-		
-		//resize origin's size to video's size
-		originTransform=resize(origin, videoTransform.getWidth(), videoTransform.getHeight());
-		
-		difValue=getRGBdif(originTransform, videoTransform);
+		//get difValue(=number of dif pixel)
+		difPixelNum=getRGBdif(originTransform, videoTransform);
 
 		pixelAmount=videoTransform.getWidth()*videoTransform.getHeight();
 		
 		//debugging
-		System.out.println("difvalue: "+difValue);
+		System.out.println("difvalue: "+difPixelNum);
 		System.out.println("allowvalue: "+(pixelAmount/10000)*allowDif);
 		
-		if((pixelAmount/10000)*allowDif<difValue)
+		if((pixelAmount/10000)*allowDif<difPixelNum)
 		{
 			return true;
 		}
@@ -56,32 +62,21 @@ public class PDFCompare extends ImgCompare{
 		}	
 	}
 	
-	//cut video's blank
-	private static BufferedImage blanckCut(BufferedImage video)
+	//cut video's margin
+	private static BufferedImage marginCut(BufferedImage video)
 	{
-		int countW, countH;
-		BufferedImage result=new BufferedImage(right-left+1, down-top+1, BufferedImage.TYPE_INT_ARGB);
-		
-		for(countW=0;countW<right-left+1; countW++)
-		{
-			for(countH=0; countH<down-top+1; countH++)
-			{
-				result.setRGB(countW, countH, video.getRGB(countW+left, countH+top));
-			}
-		}
-		
-		
+		BufferedImage result=video.getSubimage(left, top, right-left+1, down-top+1);	
 		return result;
 	}
 	
-	//setting cutBlank option(default=true)
-	public static void setBlanckCut(boolean set)
+	//setting cut margin option(default=true)
+	public static void setMarginCut(boolean set)
 	{
 		cutBlank=set;
 		return;
 	};
 	
-	//set video's not blank area manually
+	//set video's not margin area manually
 	public static void setArea(int l, int r, int t, int d)
 	{
 		left=l;
@@ -90,8 +85,8 @@ public class PDFCompare extends ImgCompare{
 		down=d;
 	}
 	
-	//option that get video's width area and height area that are not blank AUTO
-	public static void setNoBlanckArea(BufferedImage origin)
+	//option that get video's width area and height area that are not Margin AUTO
+	public static void setNoMarginArea(BufferedImage origin)
 	{
 		
 		int width=origin.getWidth();
