@@ -20,20 +20,20 @@ public class CaptureEvent implements MouseListener, MouseMotionListener {
 	}
 
 	@Override
-	public void mouseDragged(MouseEvent e) {
+	public void mouseDragged(MouseEvent e) {	// 마우스 드레그 이벤트
 		curX = e.getX();
 		curY = e.getY();
-		if(clickedShape == 0) captureView.MovePos(curX-beforeX, curY-beforeY);
-		else captureView.Resize(curX-beforeX, curY-beforeY, clickedShape);
+		if(clickedShape == 0) captureView.MovePos(curX-beforeX, curY-beforeY);	//검은색 네모 눌렀으면 드래그시 이동
+		else captureView.Resize(curX-beforeX, curY-beforeY, clickedShape);		// 초록색 네모 눌렀으면 드래그시 resize
 		beforeX = curX;
 		beforeY = curY;
 	}
 
 	@Override
-	public void mousePressed(MouseEvent e) {
+	public void mousePressed(MouseEvent e) {	// 마우스 누를때 이벤트
 		beforeX = e.getX();
 		beforeY = e.getY();	
-		this.clickedShape = captureView.Clicked(beforeX,beforeY);
+		this.clickedShape = captureView.Clicked(beforeX,beforeY);	// 무엇을 눌렀는지 int로 저장
 	}
 	
 	@Override

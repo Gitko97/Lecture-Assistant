@@ -6,17 +6,15 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class Capture extends Thread {
+public class Capturing extends TimerTask {
 	int x;
 	int y;
 	int width;
 	int height;
-	Timer m_timer = new Timer();
-	TimerTask m_task;
 	
 	static ArrayList<BufferedImage> captureIMG = new ArrayList<>();
 	
-	public Capture(int[] information) {
+	public Capturing(int[] information) {	// 캡쳐 범위 초기화
 		this.x = information[0];
 		this.y = information[1];
 		this.width = information[2];
@@ -27,24 +25,9 @@ public class Capture extends Thread {
 		Robot robot;
 		try {
 			robot = new Robot();
-			m_task = new TimerTask() {
-
-				public void run() {
-					System.out.println("capture! "+Capture.captureIMG.size());
-					Capture.captureIMG.add(robot.createScreenCapture(new Rectangle(x,y,width,height)));
-					Thread.yield();
-				}
-				
-			};
-			m_timer.schedule(m_task, 0 ,1000);
+			Capturing.captureIMG.add(robot.createScreenCapture(new Rectangle(x+2,y+2,width-4,height-4)));	//이 클래스의 static arrayList에 이미지 추가
 		} catch (AWTException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	public void exit() {
-		System.out.println("종료");
-		m_timer.cancel();
-		m_task.cancel();
 	}
 }
