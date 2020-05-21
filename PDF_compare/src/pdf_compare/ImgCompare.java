@@ -63,23 +63,23 @@ public class ImgCompare {
 				//check how much dif hue
 				if(Math.abs(aHSL[0]-bHSL[0])>0.1&&Math.abs(aHSL[0]-bHSL[0])<0.5)
 				{
-					if((aHSL[1]+bHSL[1])/2>0.6&&(aHSL[2]+bHSL[2])/2>0.6)
+					if(((aHSL[1]+bHSL[1])/2>0.5)&&((aHSL[2]+bHSL[2])/2>0.5))
 					{
 						isDif=true;
 					}
 				}
 				
 				//check how much dif saturation
-				if(Math.abs(aHSL[1]-bHSL[1])>0.95)
+				if(Math.abs(aHSL[1]-bHSL[1])>0.5)
 				{
-					if(Math.abs(aHSL[2]-bHSL[2])>0.95)
+					if(Math.abs(aHSL[2]-bHSL[2])>0.3)
 					{
 						isDif=true;
 					}
 				}
 				
 				//check how much dif luminace
-				if(Math.abs(aHSL[2]-bHSL[2])>0.90)
+				if(Math.abs(aHSL[2]-bHSL[2])>0.3)
 				{
 					isDif=true;
 				}
@@ -114,8 +114,7 @@ public class ImgCompare {
 		return result;
 	}
 	
-	//convert RGB HEX value to Saturation
-	//Saturation: from 0.0 to 1.0
+	//convert RGB HEX value to HSL
 	protected static double[] getHSLfromRGB(int rgb)
 	{
 		double[] result=new double[3];
@@ -127,6 +126,7 @@ public class ImgCompare {
 		for(count=0;count<3;count++)
 		{
 			temp= ((double)array[count]/255.0);
+			
 			if(temp<min)
 			{
 				min=temp;
@@ -138,6 +138,7 @@ public class ImgCompare {
 			}
 		}
 		result[2]=(min+max)/2;
+		
 		
 		//second get saturation
 		if(result[2]<0.5)
@@ -155,6 +156,7 @@ public class ImgCompare {
 		{
 			result[1]=(max-min)/(2.0-(max+min));
 		}
+		
 		
 		//finally get Hue
 		if((max-min)!=0)
@@ -180,6 +182,8 @@ public class ImgCompare {
 		{
 			result[0]=0;
 		}
+		
+		
 		return result;
 	}
 	
@@ -187,13 +191,10 @@ public class ImgCompare {
 	protected static int[] RGBtoArray(int rgb)
 	{
 		int result[]=new int[3];
-		rgb=-rgb;
-		
-		rgb-=256*256;
+		rgb+=256*256*256;
 		result[0]=(rgb/(256*256));
 		result[1]=(rgb%(256*256))/256;
 		result[2]=rgb%256;
-		
 		return result;
 	}
 	

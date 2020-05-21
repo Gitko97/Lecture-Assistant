@@ -8,7 +8,7 @@ public class PDFCompare extends ImgCompare{
 
 	private static int left=0, right=0;
 	private static int top=0, down=0;
-	private static int allowDif=50;
+	private static int allowDif=200;
 	
 	private static boolean isCutMargin[]= {false, true};
 	

@@ -11,9 +11,10 @@ public class Main {
 	{
 		File a, b;
 		BufferedImage ba=null, bb=null;
+		
 		a=new File("sampleA.bmp");
 		b=new File("sampleD.bmp");
-	
+		
 		try {
 		ba=ImageIO.read(a);
 		bb=ImageIO.read(b);
