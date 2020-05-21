@@ -33,6 +33,9 @@ public class CaptureView extends JFrame {
 		this.setVisible(true);	//프레임 및 프레임에 담겨있는 패널이 보이기 시작
 	}
 	
+	public void exit() {
+		this.exit();
+	}
 	public void MovePos(int dx, int dy) {	//네모 박스 움직이기 Event에서 호출
 		this.remove(drawpanel);	//패널을 지우고
 		this.revalidate();		
@@ -76,5 +79,6 @@ public class CaptureView extends JFrame {
 				
 		return information;
 	}	
+	
 }
 
