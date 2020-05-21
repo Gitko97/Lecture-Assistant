@@ -12,8 +12,8 @@ public class Main {
 		File a, b;
 		BufferedImage ba=null, bb=null;
 		a=new File("sampleA.bmp");
-		b=new File("sampleC.bmp");
-		
+		b=new File("sampleD.bmp");
+	
 		try {
 		ba=ImageIO.read(a);
 		bb=ImageIO.read(b);
@@ -21,8 +21,7 @@ public class Main {
 		catch(Exception e) {};
 		
 		
-		ImgCompare.setNoise(200);
-		PDFCompare.setMarginCut(true);
+		PDFCompare.setAllowDif(200);
 		PDFCompare.setNoMarginArea(bb);
 		if(PDFCompare.compare(ba,bb))
 		{

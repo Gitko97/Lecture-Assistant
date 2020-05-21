@@ -7,3 +7,4 @@ bin/
 .project
 # ignore testcase
 *.bmp
+*.png

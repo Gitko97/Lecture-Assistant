@@ -8,9 +8,9 @@ public class PDFCompare extends ImgCompare{
 
 	private static int left=0, right=0;
 	private static int top=0, down=0;
-	private static int allowDif=3;
+	private static int allowDif=50;
 	
-	private static boolean cutBlank=true;
+	private static boolean isCutMargin[]= {false, true};
 	
 	//main method
 	//if same, return false, else, return true
@@ -24,18 +24,16 @@ public class PDFCompare extends ImgCompare{
 		{
 			throw new NullPointerException();
 		}
-		
+
 		originTransform=origin;
 		videoTransform=video;
-		//cut blank or not
-		if(cutBlank)
-		{
-			videoTransform=marginCut(videoTransform);
-		}
+		
+		//cut blank
+		videoTransform=marginCut(videoTransform);
 		
 		//resize each size to same
 		//resize bigger img
-		if(origin.getWidth()>videoTransform.getWidth())
+		if(originTransform.getWidth()<videoTransform.getWidth())
 		{
 			originTransform=resize(originTransform, videoTransform.getWidth(), videoTransform.getHeight());
 		}
@@ -44,7 +42,7 @@ public class PDFCompare extends ImgCompare{
 			videoTransform=resize(videoTransform, originTransform.getWidth(), originTransform.getHeight());
 		}
 		//get difValue(=number of dif pixel)
-		difPixelNum=getRGBdif(originTransform, videoTransform);
+		difPixelNum=getPixelDif(originTransform, videoTransform);
 
 		pixelAmount=videoTransform.getWidth()*videoTransform.getHeight();
 		
@@ -70,11 +68,19 @@ public class PDFCompare extends ImgCompare{
 	}
 	
 	//setting cut margin option(default=true)
-	public static void setMarginCut(boolean set)
+	public static void setIsCutMargin(boolean row, boolean car)
 	{
-		cutBlank=set;
+		isCutMargin[0]=row;
+		isCutMargin[1]=car;
 		return;
 	};
+	
+	//setting ArrowDif
+	public static void setAllowDif(int num)
+	{
+		allowDif=num;
+		return;
+	}
 	
 	//set video's not margin area manually
 	public static void setArea(int l, int r, int t, int d)
@@ -85,6 +91,7 @@ public class PDFCompare extends ImgCompare{
 		down=d;
 	}
 	
+	
 	//option that get video's width area and height area that are not Margin AUTO
 	public static void setNoMarginArea(BufferedImage origin)
 	{
@@ -92,17 +99,22 @@ public class PDFCompare extends ImgCompare{
 		int width=origin.getWidth();
 		int height=origin.getHeight();
 		
-		int rowMax[]= {0, 0}, carMax[]= {0,0};
-		int rowMaxPoint[]=new int[2];
-		int carMaxPoint[]=new int[2];
+		int rowDifMax[]= {0, 0}, carDifMax[]= {0,0};
+		int rowDifMaxPoint[]=new int[2];
+		int carDifMaxPoint[]=new int[2];
 		
-		int[][] rowAverge=new int[width][3];
-		int[][] carAverge=new int[height][3];
-		int[] rowDif=new int[width];
-		int[] carDif=new int[height];
+		int[][] rowAverge=new int[height][3];
+		int[][] carAverge=new int[width][3];
+		int[] rowDif=new int[height];
+		int[] carDif=new int[width];
 		int tempPixel[]=new int[3];
 		
 		int countH, countW, count;
+		
+		left=0;
+		right=origin.getWidth()-1;
+		top=0;
+		down=origin.getHeight()-1;
 		
 		//calculate pixel RGB array sum value
 		for(countH=0;countH<height;countH++)
@@ -119,72 +131,79 @@ public class PDFCompare extends ImgCompare{
 		}
 		
 		//calculate pixel RGB average and compare dif value
-		for(countH=0;countH<height;countH++)
+		if(isCutMargin[0])
 		{
-			for(count=0;count<3;count++)
+			for(countH=0;countH<height;countH++)
 			{
-				rowAverge[countH][count]/=width;
-			}
-			if(countH>0)
-			{
-				rowDif[countH-1]=getRGBdifSum(rowAverge[countH-1], rowAverge[countH]);
+				for(count=0;count<3;count++)
+				{
+					rowAverge[countH][count]/=width;
+				}
+				if(countH>0)
+				{
+					rowDif[countH-1]=getRGBdifSum(rowAverge[countH-1], rowAverge[countH]);
 				
-				if(rowDif[countH-1]>rowMax[0])
-				{
-					rowMax[0]=rowDif[countH-1];
-					rowMaxPoint[0]=countH-1;
-				}
-				else if(rowDif[countH-1]>rowMax[1])
-				{
-					rowMax[1]=rowDif[countH-1];
-					rowMaxPoint[1]=countH-1;
+					if(rowDif[countH-1]>rowDifMax[0])
+					{
+						rowDifMax[0]=rowDif[countH-1];
+						rowDifMaxPoint[0]=countH-1;
+					}
+					else if(rowDif[countH-1]>rowDifMax[1])
+					{
+						rowDifMax[1]=rowDif[countH-1];
+						rowDifMaxPoint[1]=countH-1;
+					}
 				}
 			}
-		}
-		for(countW=0;countW<width;countW++)
-		{
-			for(count=0;count<3;count++)
+			//setting area
+			if(rowDifMaxPoint[0]>rowDifMaxPoint[1])
 			{
-				carAverge[countW][count]/=height;
+				top=rowDifMaxPoint[1]+1;
+				down=rowDifMaxPoint[0];
 			}
-			if(countW>0)
+			else
 			{
-				carDif[countW-1]=getRGBdifSum(carAverge[countW-1], carAverge[countW]);
-				
-				if(carDif[countW-1]>carMax[0])
-				{
-					carMax[0]=carDif[countW-1];
-					carMaxPoint[0]=countW-1;
-				}
-				else if(carDif[countW-1]>carMax[1])
-				{
-					carMax[1]=carDif[countW-1];
-					carMaxPoint[1]=countW-1;
-				}
+				top=rowDifMaxPoint[0]+1;
+				down=rowDifMaxPoint[1];
 			}
-		}
-		//setting area
-		if(rowMaxPoint[0]>rowMaxPoint[1])
-		{
-			top=rowMaxPoint[1]+1;
-			down=rowMaxPoint[0];
-		}
-		else
-		{
-			top=rowMaxPoint[0]+1;
-			down=rowMaxPoint[1];
 		}
 		
-		if(carMaxPoint[0]>carMaxPoint[1])
+		if(isCutMargin[1])
 		{
-			left=carMaxPoint[1]+1;
-			right=carMaxPoint[0];
+			for(countW=0;countW<width;countW++)
+			{
+				for(count=0;count<3;count++)
+				{
+					carAverge[countW][count]/=height;
+				}
+				if(countW>0)
+				{
+					carDif[countW-1]=getRGBdifSum(carAverge[countW-1], carAverge[countW]);
+					
+					if(carDif[countW-1]>carDifMax[0])
+					{
+						carDifMax[0]=carDif[countW-1];
+						carDifMaxPoint[0]=countW-1;
+					}
+					else if(carDif[countW-1]>carDifMax[1])
+					{
+						carDifMax[1]=carDif[countW-1];
+						carDifMaxPoint[1]=countW-1;
+					}
+				}
+			}
+			if(carDifMaxPoint[0]>carDifMaxPoint[1])
+			{
+				left=carDifMaxPoint[1]+1;
+				right=carDifMaxPoint[0];
+			}
+			else
+			{
+				left=carDifMaxPoint[0]+1;
+				right=carDifMaxPoint[1];
+			}
 		}
-		else
-		{
-			left=carMaxPoint[0]+1;
-			right=carMaxPoint[1];
-		}
+		
 		
 		return;
 	}
@@ -196,7 +215,7 @@ public class PDFCompare extends ImgCompare{
 		Image temp;
 		
 		//debugging
-		System.out.println("resie"+afterWidth+" "+afterHeight);
+		System.out.println("resie: "+afterWidth+" "+afterHeight);
 		
 		//if same size
 		if(origin.getWidth()==afterWidth&&origin.getHeight()==afterHeight)
