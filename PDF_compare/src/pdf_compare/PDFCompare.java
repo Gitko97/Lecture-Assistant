@@ -9,15 +9,34 @@ public class PDFCompare extends ImgCompare{
 	private static int left=0, right=0;
 	private static int top=0, down=0;
 	private static int allowDif=200;
+	private static int pixelAmount=0;
 	
 	private static boolean isCutMargin[]= {false, true};
+	private static boolean isMarginCheckAuto=true;
 	
 	//main method
 	//if same, return false, else, return true
 	//origin and video buffered img are not changed
 	public static boolean compare(BufferedImage origin, BufferedImage video)
 	{
-		int difPixelNum, pixelAmount;
+		int difPixelNum;
+		difPixelNum=getPDFDifValue(origin, video);
+		//debugging
+		System.out.println("difvalue: "+difPixelNum);
+		System.out.println("allowvalue: "+(pixelAmount/10000)*allowDif);
+		
+		if((pixelAmount/10000)*allowDif<difPixelNum)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}	
+	}
+	
+	public static int getPDFDifValue(BufferedImage origin, BufferedImage video)
+	{
 		BufferedImage originTransform, videoTransform;
 		//exception task
 		if(origin==null||video==null)
@@ -41,24 +60,13 @@ public class PDFCompare extends ImgCompare{
 		{
 			videoTransform=resize(videoTransform, originTransform.getWidth(), originTransform.getHeight());
 		}
-		//get difValue(=number of dif pixel)
-		difPixelNum=getPixelDif(originTransform, videoTransform);
-
+		//calculate total pixel amount
 		pixelAmount=videoTransform.getWidth()*videoTransform.getHeight();
 		
-		//debugging
-		System.out.println("difvalue: "+difPixelNum);
-		System.out.println("allowvalue: "+(pixelAmount/10000)*allowDif);
-		
-		if((pixelAmount/10000)*allowDif<difPixelNum)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}	
+		//get difValue(=number of dif pixel)
+		return getPixelDif(originTransform, videoTransform);
 	}
+	
 	
 	//cut video's margin
 	private static BufferedImage marginCut(BufferedImage video)
@@ -67,7 +75,15 @@ public class PDFCompare extends ImgCompare{
 		return result;
 	}
 	
-	//setting cut margin option(default=true)
+	//set cut margin auto
+	private static void setIsCutMarginAuto(BufferedImage origin)
+	{
+		//NEED TO HELP!
+		return;
+		
+	}
+	
+	//setting cut margin option(default: row=false, cor=true)
 	public static void setIsCutMargin(boolean row, boolean car)
 	{
 		isCutMargin[0]=row;
@@ -89,6 +105,8 @@ public class PDFCompare extends ImgCompare{
 		right=r;
 		top=t;
 		down=d;
+		
+		return;
 	}
 	
 	
@@ -207,6 +225,7 @@ public class PDFCompare extends ImgCompare{
 		
 		return;
 	}
+	
 	
 	//resize img to compare
 	private static BufferedImage resize(BufferedImage origin, int afterWidth, int afterHeight)

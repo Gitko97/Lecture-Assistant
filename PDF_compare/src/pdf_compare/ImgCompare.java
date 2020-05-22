@@ -21,7 +21,6 @@ public class ImgCompare {
 		//int aPixel[], bPixel[];
 		//int difValue; (LEGACY) LEGACY
 		double aHSL[], bHSL[];
-		boolean isDif;
 		
 		//for debugging
 		BufferedImage difPartA = new BufferedImage(a.getWidth(), a.getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -38,7 +37,6 @@ public class ImgCompare {
 		{
 			for(cor=0;cor<a.getWidth();cor++)
 			{
-				isDif=false;
 				/*
 				 * LEGACY
 				//get Pixel HEX value that each point
@@ -60,31 +58,8 @@ public class ImgCompare {
 				aHSL=getHSLfromRGB(a.getRGB(cor, row));
 				bHSL=getHSLfromRGB(b.getRGB(cor, row));
 				
-				//check how much dif hue
-				if(Math.abs(aHSL[0]-bHSL[0])>0.1&&Math.abs(aHSL[0]-bHSL[0])<0.5)
-				{
-					if(((aHSL[1]+bHSL[1])/2>0.5)&&((aHSL[2]+bHSL[2])/2>0.5))
-					{
-						isDif=true;
-					}
-				}
 				
-				//check how much dif saturation
-				if(Math.abs(aHSL[1]-bHSL[1])>0.5)
-				{
-					if(Math.abs(aHSL[2]-bHSL[2])>0.3)
-					{
-						isDif=true;
-					}
-				}
-				
-				//check how much dif luminace
-				if(Math.abs(aHSL[2]-bHSL[2])>0.3)
-				{
-					isDif=true;
-				}
-				
-				if(isDif)
+				if(isHSLDiffrent(aHSL, bHSL))
 				{
 					result++;
 					if(isDebugging)
@@ -114,18 +89,54 @@ public class ImgCompare {
 		return result;
 	}
 	
+	protected static boolean isHSLDiffrent(double[] aHSL, double[] bHSL)
+	{
+		//check how much dif hue
+		if(Math.abs(aHSL[0]-bHSL[0])>0.1&&Math.abs(aHSL[0]-bHSL[0])<0.5)
+		{
+			if(((aHSL[1]+bHSL[1])/2>0.5)&&((aHSL[2]+bHSL[2])/2>0.5))
+			{
+				return true;
+			}
+		}
+		
+		//check how much dif saturation
+		if(Math.abs(aHSL[1]-bHSL[1])>0.5)
+		{
+			if(Math.abs(aHSL[2]-bHSL[2])>0.3)
+			{
+				return true;
+			}
+		}
+		
+		//check how much dif luminace
+		if(Math.abs(aHSL[2]-bHSL[2])>0.3)
+		{
+			return true;
+		}
+		
+		return false;
+	}
+	
 	//convert RGB HEX value to HSL
+	//rgb hex code input
 	protected static double[] getHSLfromRGB(int rgb)
+	{
+		int array[]=RGBtoArray(rgb);
+		
+		return getHSLfromRGBArray(array);
+	}
+	//rgb array input
+	protected static double[] getHSLfromRGBArray(int[] rgbArray)
 	{
 		double[] result=new double[3];
 		int count, maxColor=0;
-		int array[]=RGBtoArray(rgb);
 		double min=10, max=-10, temp=0;
 		
 		//first get luminace
 		for(count=0;count<3;count++)
 		{
-			temp= ((double)array[count]/255.0);
+			temp= ((double)rgbArray[count]/255.0);
 			
 			if(temp<min)
 			{
@@ -165,15 +176,15 @@ public class ImgCompare {
 			{
 			//red
 			case 0:
-				temp=((double)(array[1]-array[2])/255);
+				temp=((double)(rgbArray[1]-rgbArray[2])/255);
 				break;
 			//green
 			case 1:
-				temp=((double)(array[2]-array[0])/255);
+				temp=((double)(rgbArray[2]-rgbArray[0])/255);
 				break;
 			//blue
 			case 2:
-				temp=((double)(array[0]-array[1])/255);
+				temp=((double)(rgbArray[0]-rgbArray[1])/255);
 				break;
 			}	
 			result[0]=temp/((max-min)*6);
