@@ -10,16 +10,14 @@ import javax.imageio.ImageIO;
 
 public class ImgCompare {
 	//default noise value
-	//private static int allowNoise=300; (LEGACY)
 	private static boolean isDebugging=true;
+	private static double hueNoise=0.1, satNoise=0.35, lumNoise=0.5;
 	
 	//get each img's dif sum
 	public static int getPixelDif(BufferedImage a, BufferedImage b)
 	{
 		int result=0;
 		int row, cor;
-		//int aPixel[], bPixel[];
-		//int difValue; (LEGACY) LEGACY
 		double aHSL[], bHSL[];
 		
 		//for debugging
@@ -29,31 +27,14 @@ public class ImgCompare {
 		//exception case if buffered is null
 		if(a==null||b==null)
 		{
-			throw new NullPointerException();
+			throw new NullPointerException("Buffered Image pointer is null!");
 		}
 		
 		//check all pixel
 		for(row=0;row<a.getHeight();row++)
 		{
 			for(cor=0;cor<a.getWidth();cor++)
-			{
-				/*
-				 * LEGACY
-				//get Pixel HEX value that each point
-				aPixel=RGBtoArray(a.getRGB(cor, row));
-				bPixel=RGBtoArray(b.getRGB(cor, row));
-
-				//get dif value
-				difValue=getRGBdifSum(aPixel, bPixel);
-				
-				
-				//check how much dif rgb
-				if(difValue>allowNoise)
-				{
-					isDif=true;
-				}
-				*/
-				
+			{				
 				//get HSL value
 				aHSL=getHSLfromRGB(a.getRGB(cor, row));
 				bHSL=getHSLfromRGB(b.getRGB(cor, row));
@@ -91,26 +72,31 @@ public class ImgCompare {
 	
 	protected static boolean isHSLDifferent(double[] aHSL, double[] bHSL)
 	{
+		double aLumVar, bLumVar;
+		
+		aLumVar=1.0-2.0*Math.abs(0.5-aHSL[2]);
+		bLumVar=1.0-2.0*Math.abs(0.5-bHSL[2]);
+		
 		//check how much dif hue
-		if(Math.abs(aHSL[0]-bHSL[0])>0.1&&Math.abs(aHSL[0]-bHSL[0])<0.5)
+		//default hueNoise=0.1
+		if(Math.abs(aHSL[0]-bHSL[0])>hueNoise&&Math.abs(aHSL[0]-bHSL[0])<0.5)
 		{
-			if(((aHSL[1]+bHSL[1])/2>0.5)&&((aHSL[2]+bHSL[2])/2>0.5))
+			if((aHSL[1]*aLumVar)>0.1||(bHSL[1]*bLumVar)>0.1)
 			{
 				return true;
 			}
 		}
 		
-		//check how much dif saturation
-		if(Math.abs(aHSL[1]-bHSL[1])>0.5)
+		//check how much dif saturation(it must consider lum)
+		//default satNoise=0.35
+		if(aHSL[1]*aLumVar-bHSL[1]*bLumVar>satNoise)
 		{
-			if(Math.abs(aHSL[2]-bHSL[2])>0.3)
-			{
-				return true;
-			}
+			return true;
 		}
 		
 		//check how much dif luminace
-		if(Math.abs(aHSL[2]-bHSL[2])>0.3)
+		//default lumNoise=0.5
+		if(Math.abs(aHSL[2]-bHSL[2])>lumNoise)
 		{
 			return true;
 		}
@@ -225,9 +211,23 @@ public class ImgCompare {
 	
 
 	//set Noise value that user can allow
-	public static int setNoise()
+	public static int setNoise(double h, double s, double l)
 	{
-		//need to set how allow same to HSL different value.
+		if(h<0.0||h>0.5)
+		{
+			throw new IllegalArgumentException("Hue is over 0, under 0.5, it can't be "+h);
+		}
+		if(s<0.0||s>1.0)
+		{
+			throw new IllegalArgumentException("Saturation is over 0, under 0.5, it can't be "+s);
+		}
+		if(l<0.0||l>1.0)
+		{
+			throw new IllegalArgumentException("Luminace is over 0, under 0.5, it can't be "+l);
+		}
+		hueNoise=h;
+		satNoise=s;
+		lumNoise=l;
 		return 0;
 	}
 
