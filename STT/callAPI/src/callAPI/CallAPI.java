@@ -1,75 +1,144 @@
 package callAPI;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
+
+import com.google.api.gax.core.CredentialsProvider;
+import com.google.api.gax.core.FixedCredentialsProvider;
+import com.google.api.gax.rpc.ClientStream;
+import com.google.api.gax.rpc.ResponseObserver;
+import com.google.api.gax.rpc.StreamController;
+import com.google.auth.oauth2.ServiceAccountCredentials;
+import com.google.cloud.speech.v1.RecognitionConfig;
+import com.google.cloud.speech.v1.SpeechClient;
+import com.google.cloud.speech.v1.SpeechRecognitionAlternative;
+import com.google.cloud.speech.v1.SpeechSettings;
+import com.google.cloud.speech.v1.StreamingRecognitionConfig;
+import com.google.cloud.speech.v1.StreamingRecognitionResult;
+import com.google.cloud.speech.v1.StreamingRecognizeRequest;
+import com.google.cloud.speech.v1.StreamingRecognizeResponse;
+import com.google.protobuf.ByteString;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.DataLine.Info;
+import javax.sound.sampled.TargetDataLine;
 
-public class CallAPI {
+public class CallAPI
+{
 	
-	public static void main(String[] args) {
+	static SpeechClient client = null;
+	
+	public static void main(String[] args) throws Exception  // 실행 메소드 run
+	{	
+		authExplicit("key/key.json");
+		//initSettings();
+		streamingMicRecognize();
+	}
+	
+	static void authExplicit(String jsonPath) throws IOException  // key/key.json 파일 이용해  Credential 객체 생성 후 이를 이용해 SpeechClient 객체를 생성하여 스태틱 client에 할당
+	{	
+		CredentialsProvider credentialsProvider = FixedCredentialsProvider.create(ServiceAccountCredentials.fromStream(new FileInputStream(jsonPath)));
+		SpeechSettings settings = SpeechSettings.newBuilder().setCredentialsProvider(credentialsProvider).build();
+		client = SpeechClient.create(settings);
+	}
+	
+	static void streamingMicRecognize() throws Exception {
+		
+		
+		ResponseObserver<StreamingRecognizeResponse> responseObserver = null;
 
-		String token = "1244a9cc06ce6976036956540394cd65";// 카카오 디벨로퍼 성윤의 토큰값
-        String authKey = "KakaoAK "+ token; //
-        
-        String inputString = null;
-        StringBuffer response = new StringBuffer();
-        
-        File inputFile = new File("src/heykakao.wav");
-        AudioInputStream inputFileStream = null;
-        
-        try {
-			inputFileStream = AudioSystem.getAudioInputStream(inputFile);
-		} catch (UnsupportedAudioFileException | IOException e1) {
-			e1.printStackTrace();
-			return;
-		}
-       
-        try {
-            String apiURL = "https://kakaoi-newtone-openapi.kakao.com/v1/recognize";
-            
-            URL url = new URL(apiURL);
-            HttpURLConnection con = (HttpURLConnection)url.openConnection();
-            con.setDoOutput(true);
-            con.setRequestMethod("POST");
-            con.setRequestProperty("Content-Type", "application/octet-stream");
-            con.setRequestProperty("Transfer-Encoding","chunked");
-            con.setRequestProperty("Authorization", authKey);
-           
-            OutputStream os = con.getOutputStream();
-            
-            int count;
-            byte [] buffer = new byte[18192];
-            
-            while ((count = inputFileStream.read(buffer)) != -1)
-            {
-            	os.write(buffer,0,count);
-            }
-            
-            os.close();
-            
-            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(),"UTF-8"));
-           
-            while((inputString = in.readLine()) != null )
-            {
-            	response.append(inputString);
-            }
-            in.close();
-            System.out.println(response);
-            
-        }
-        catch (Exception e)
-        {
-            System.out.println(e);
-        }
+		try {
 
-	}	
+	        responseObserver =
+	            new ResponseObserver<StreamingRecognizeResponse>() {
+	              ArrayList<StreamingRecognizeResponse> responses = new ArrayList<>();
+
+	              public void onStart(StreamController controller) {}
+
+	              public void onResponse(StreamingRecognizeResponse response) {
+	                responses.add(response);
+	              }
+
+	              public void onComplete() {
+	                for (StreamingRecognizeResponse response : responses) {
+	                  StreamingRecognitionResult result = response.getResultsList().get(0);
+	                  SpeechRecognitionAlternative alternative = result.getAlternativesList().get(0);
+	                  System.out.printf("Transcript : %s\n", alternative.getTranscript());
+	                }
+	              }
+
+	              public void onError(Throwable t) {
+	                System.out.println(t);
+	              }
+	            };
+
+	        ClientStream<StreamingRecognizeRequest> clientStream =
+	            client.streamingRecognizeCallable().splitCall(responseObserver);
+
+	        RecognitionConfig recognitionConfig =
+	            RecognitionConfig.newBuilder()
+	                .setEncoding(RecognitionConfig.AudioEncoding.LINEAR16)
+	                .setLanguageCode("ko-KR")
+	                .setSampleRateHertz(16000)
+	                .build();
+	        StreamingRecognitionConfig streamingRecognitionConfig =
+	            StreamingRecognitionConfig.newBuilder().setConfig(recognitionConfig).build();
+
+	        StreamingRecognizeRequest request =
+	            StreamingRecognizeRequest.newBuilder()
+	                .setStreamingConfig(streamingRecognitionConfig)
+	                .build(); // The first request in a streaming call has to be a config
+
+	        clientStream.send(request);
+	        // SampleRate:16000Hz, SampleSizeInBits: 16, Number of channels: 1, Signed: true,
+	        // bigEndian: false
+	        AudioFormat audioFormat = new AudioFormat(16000, 16, 1, true, false);
+	        DataLine.Info targetInfo =
+	            new Info(
+	                TargetDataLine.class,
+	                audioFormat); // Set the system information to read from the microphone audio stream
+
+	        if (!AudioSystem.isLineSupported(targetInfo)) {
+	          System.out.println("Microphone not supported");
+	          System.exit(0);
+	        }
+	        // Target data line captures the audio stream the microphone produces.
+	        TargetDataLine targetDataLine = (TargetDataLine) AudioSystem.getLine(targetInfo);
+	        targetDataLine.open(audioFormat);
+	        targetDataLine.start();
+	        System.out.println("Start speaking");
+	        long startTime = System.currentTimeMillis();
+	        // Audio Input Stream
+	        AudioInputStream audio = new AudioInputStream(targetDataLine);
+	        while (true) {
+	          long estimatedTime = System.currentTimeMillis() - startTime;
+	          byte[] data = new byte[6400];
+	          audio.read(data);
+	          if (estimatedTime > 10000) { // 60 seconds
+	            System.out.println("Stop speaking.");
+	            targetDataLine.stop();
+	            targetDataLine.close();
+	            break;
+	          }
+	          request =
+	              StreamingRecognizeRequest.newBuilder()
+	                  .setAudioContent(ByteString.copyFrom(data))
+	                  .build();
+	          clientStream.send(request);
+	        }
+	      } catch (Exception e) {
+	        System.out.println(e);
+	      }
+	      responseObserver.onComplete();
+	    }
 }
 
