@@ -1,10 +1,9 @@
-ImgCompare
-==========
+#ImgCompare
 this class has methodes that compare 2 Buffered image
 
 
-variable
---------
+##variable
+
 * private static boolean isDebugging
 
 this is boolean variable that just can access debugging part.
@@ -12,8 +11,8 @@ when it is true, we can get 2 png image file that different part.
 
 
 
-method
--------
+##method
+
 * public static int getPixelDif(BufferedImage a, BufferedImage b)
 
 //return int variable that how much different pixel number.
@@ -69,12 +68,12 @@ this method use to compare each pixel value to rgb different.
 
 
 
-public class PDFCompare extends ImgCompare
-==========================================
+#public class PDFCompare extends ImgCompare
+
 this class has methodes that compare 2 PDF captured image
 
-variable
----------------
+##variable
+
 * private static int left=0, right=0
 * private static int top=0, down=0
 
@@ -107,8 +106,8 @@ isCutMargin[1] is meaning left and right margin.
 
 this variable is meaning that set margin area automatically or not.
 
-method
-----------------
+##method
+
 * public static boolean compare(BufferedImage origin, BufferedImage video)
 
 //return different:true, same:false.
