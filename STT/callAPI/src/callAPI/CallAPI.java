@@ -20,11 +20,7 @@ import com.google.protobuf.ByteString;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -56,7 +52,7 @@ public class CallAPI
 		
 		ResponseObserver<StreamingRecognizeResponse> responseObserver = null;
 
-		try {
+		try (SpeechClient client = SpeechClient.create()){
 
 	        responseObserver =
 	            new ResponseObserver<StreamingRecognizeResponse>() {
@@ -69,6 +65,7 @@ public class CallAPI
 	              }
 
 	              public void onComplete() {
+	            	  System.out.println(responses.toString());
 	                for (StreamingRecognizeResponse response : responses) {
 	                  StreamingRecognitionResult result = response.getResultsList().get(0);
 	                  SpeechRecognitionAlternative alternative = result.getAlternativesList().get(0);
@@ -123,7 +120,7 @@ public class CallAPI
 	          long estimatedTime = System.currentTimeMillis() - startTime;
 	          byte[] data = new byte[6400];
 	          audio.read(data);
-	          if (estimatedTime > 10000) { // 60 seconds
+	          if (estimatedTime > 8000) { // 60 seconds
 	            System.out.println("Stop speaking.");
 	            targetDataLine.stop();
 	            targetDataLine.close();
