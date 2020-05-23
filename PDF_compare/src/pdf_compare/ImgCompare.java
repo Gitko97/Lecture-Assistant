@@ -13,7 +13,7 @@ public class ImgCompare {
 	//private static int allowNoise=300; (LEGACY)
 	private static boolean isDebugging=true;
 	
-	//get each img's RGB dif sum
+	//get each img's dif sum
 	public static int getPixelDif(BufferedImage a, BufferedImage b)
 	{
 		int result=0;
@@ -59,7 +59,7 @@ public class ImgCompare {
 				bHSL=getHSLfromRGB(b.getRGB(cor, row));
 				
 				
-				if(isHSLDiffrent(aHSL, bHSL))
+				if(isHSLDifferent(aHSL, bHSL))
 				{
 					result++;
 					if(isDebugging)
@@ -89,7 +89,7 @@ public class ImgCompare {
 		return result;
 	}
 	
-	protected static boolean isHSLDiffrent(double[] aHSL, double[] bHSL)
+	protected static boolean isHSLDifferent(double[] aHSL, double[] bHSL)
 	{
 		//check how much dif hue
 		if(Math.abs(aHSL[0]-bHSL[0])>0.1&&Math.abs(aHSL[0]-bHSL[0])<0.5)
@@ -124,10 +124,10 @@ public class ImgCompare {
 	{
 		int array[]=RGBtoArray(rgb);
 		
-		return getHSLfromRGBArray(array);
+		return getHSLfromRGB(array);
 	}
 	//rgb array input
-	protected static double[] getHSLfromRGBArray(int[] rgbArray)
+	protected static double[] getHSLfromRGB(int[] rgbArray)
 	{
 		double[] result=new double[3];
 		int count, maxColor=0;
@@ -223,17 +223,12 @@ public class ImgCompare {
 		return result;
 	}
 	
-	/*
-	 * LEGACY
-	//set Noise value that user can allow(default=150)
-	public static int setNoise(int val)
+
+	//set Noise value that user can allow
+	public static int setNoise()
 	{
-		if(val<0)
-		{
-			throw new IllegalArgumentException();
-		}
-		allowNoise=val;
-		return allowNoise;
+		//need to set how allow same to HSL different value.
+		return 0;
 	}
-	*/
+
 }

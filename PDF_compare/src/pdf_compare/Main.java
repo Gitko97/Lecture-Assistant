@@ -21,7 +21,6 @@ public class Main {
 		}
 		catch(Exception e) {};
 		
-		
 		PDFCompare.setAllowDif(200);
 		PDFCompare.setNoMarginArea(bb);
 		if(PDFCompare.compare(ba,bb))

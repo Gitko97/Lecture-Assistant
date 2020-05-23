@@ -11,6 +11,8 @@ public class PDFCompare extends ImgCompare{
 	private static int allowDif=200;
 	private static int pixelAmount=0;
 	
+	//meaning that cut margin or not
+	//[0]: top and down, [1]:left and right
 	private static boolean isCutMargin[]= {false, true};
 	private static boolean isMarginCheckAuto=true;
 	
