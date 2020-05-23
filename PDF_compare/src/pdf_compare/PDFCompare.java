@@ -77,7 +77,7 @@ public class PDFCompare extends ImgCompare{
 		return result;
 	}
 	
-	//set cut margin auto
+	//set isCutMargin auto or not
 	private static void setIsCutMarginAuto(BufferedImage origin)
 	{
 		//NEED TO HELP!
