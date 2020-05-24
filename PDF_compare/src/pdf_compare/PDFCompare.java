@@ -10,11 +10,14 @@ public class PDFCompare extends ImgCompare{
 	private static int top=0, down=0;
 	private static int allowDif=200;
 	private static int pixelAmount=0;
+	public static boolean sameImage;
 	
 	//meaning that cut margin or not
 	//[0]: top and down, [1]:left and right
 	private static boolean isCutMargin[]= {false, true};
 	private static boolean isMarginCheckAuto=true;
+	
+	
 	
 	//main method
 	//if same, return false, else, return true
@@ -33,6 +36,7 @@ public class PDFCompare extends ImgCompare{
 		}
 		else
 		{
+			extract();
 			return false;
 		}	
 	}

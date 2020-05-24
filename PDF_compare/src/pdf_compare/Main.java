@@ -15,9 +15,10 @@ public class Main {
 		a=new File("sampleA.bmp");
 		b=new File("sampleD.bmp");
 		
-		try {
-		ba=ImageIO.read(a);
-		bb=ImageIO.read(b);
+		try 
+		{
+			ba=ImageIO.read(a);
+			bb=ImageIO.read(b);
 		}
 		catch(Exception e) {};
 		

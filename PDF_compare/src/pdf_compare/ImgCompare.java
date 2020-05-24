@@ -8,10 +8,13 @@ import java.math.*;
 import javax.imageio.ImageIO;
 
 
+
 public class ImgCompare {
 	//default noise value
 	private static boolean isDebugging=true;
 	private static double hueNoise=0.1, satNoise=0.35, lumNoise=0.5;
+	public static boolean sameImage;
+	public static BufferedImage partA, partB;
 	
 	//get each img's dif sum
 	public static int getPixelDif(BufferedImage a, BufferedImage b)
@@ -46,13 +49,16 @@ public class ImgCompare {
 					if(isDebugging)
 					{
 						difPartA.setRGB(cor, row, a.getRGB(cor, row));
+						partA = difPartA;
 						difPartB.setRGB(cor, row, b.getRGB(cor, row));
+						partB = difPartB;
+						
 					}
 				}
 			}
 		}
 		
-		if(isDebugging)
+/*		if(isDebugging && !sameImage)
 		{
 			//debugging where is different
 			try
@@ -66,10 +72,24 @@ public class ImgCompare {
 			{
 				System.out.println("exeption: img file saving get error!");
 			}
-		}
+		}	*/
 		return result;
 	}
 	
+	public static void extract() {
+		try
+		{
+			File outputfileA = new File("difPartA.png");
+			ImageIO.write(partA, "png", outputfileA);
+			File outputfileB = new File("difPartB.png");
+			ImageIO.write(partB, "png", outputfileB);
+		}
+		catch(IOException e)
+		{
+			System.out.println("exeption: img file saving get error!");
+		}
+	}
+		
 	protected static boolean isHSLDifferent(double[] aHSL, double[] bHSL)
 	{
 		double aLumVar, bLumVar;
@@ -83,7 +103,13 @@ public class ImgCompare {
 		{
 			if((aHSL[1]*aLumVar)>0.1||(bHSL[1]*bLumVar)>0.1)
 			{
+				sameImage = true;
 				return true;
+			}
+			else
+			{
+				sameImage = false;
+				return false;
 			}
 		}
 		
