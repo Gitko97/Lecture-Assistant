@@ -35,7 +35,7 @@ public class PDFCompare extends ImgCompare{
 		}
 		else
 		{
-			extract();
+			extractDifferentPart();
 			return false;
 		}	
 	}
@@ -81,7 +81,7 @@ public class PDFCompare extends ImgCompare{
 	//cut video's margin
 	private static BufferedImage marginCut(BufferedImage video)
 	{
-		BufferedImage result=video.getSubimage(left, top, right-left+1, down-top+1);	
+		BufferedImage result=video.getSubimage(left, top, right-left+1, down-top+1);
 		return result;
 	}
 	

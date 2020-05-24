@@ -14,7 +14,8 @@ public class ImgCompare {
 	private static boolean isDebugging=true;
 	private static double hueNoise=0.1, satNoise=0.35, lumNoise=0.5;
 	
-	public static BufferedImage partA, partB;
+	//this variable need to control semaphore
+	protected static BufferedImage partA, partB;
 	
 	
 	//get each img's dif sum
@@ -58,7 +59,6 @@ public class ImgCompare {
 				}
 			}
 		}
-		
 /*		if(isDebugging && !sameImage)
 		{
 			//debugging where is different
@@ -77,7 +77,8 @@ public class ImgCompare {
 		return result;
 	}
 	
-	public static void extract() {
+	protected static void extractDifferentPart() 
+	{
 		try
 		{
 			File outputfileA = new File("difPartA.png");
@@ -89,6 +90,7 @@ public class ImgCompare {
 		{
 			System.out.println("exeption: img file saving get error!");
 		}
+		return;
 	}
 		
 	protected static boolean isHSLDifferent(double[] aHSL, double[] bHSL)
