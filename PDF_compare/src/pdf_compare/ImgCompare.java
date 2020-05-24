@@ -59,24 +59,10 @@ public class ImgCompare {
 			}
 		}
 		
-/*		if(isDebugging && !sameImage)
-		{
-			//debugging where is different
-			try
-			{
-				File outputfileA = new File("difPartA.png");
-				ImageIO.write(difPartA, "png", outputfileA);
-				File outputfileB = new File("difPartB.png");
-				ImageIO.write(difPartB, "png", outputfileB);
-			}
-			catch(IOException e)
-			{
-				System.out.println("exeption: img file saving get error!");
-			}
-		}	*/
 		return result;
 	}
 	
+	//Image Difference Extraction
 	public static void extract() {
 		try
 		{
