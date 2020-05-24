@@ -1,6 +1,6 @@
 ImgCompare
 ==========
-this class has methodes that compare 2 Buffered image
+this class has methods that compare 2 Buffered image
 
 
 variable
@@ -66,7 +66,7 @@ Saturation also considered that how much different Luminace too.
 
 //return double array that has HSL value.
 
-these are methodes that get HSL array to RGB value(OR RGB array)
+these are methods that get HSL array to RGB value(OR RGB array)
 
 all array double value just in 0<value, AND 1>value.
 
@@ -92,7 +92,9 @@ this is method that setting noise variables.
 
 public class PDFCompare extends ImgCompare
 ==========================================
-this class has methodes that compare 2 PDF captured image
+this class has methods that compare 2 PDF captured image
+
+methods about margin are assume that using video, which is compared PDF captured image.
 
 variable
 ---------------
@@ -120,7 +122,6 @@ and this variable is set width×height value.
 * private static boolean isCutMargin[]= {false, true}
 
 this variable is meaning that cut margin or not.
-
 
 isCutMargin[0] is meaning top and down margin.
 
@@ -156,4 +157,69 @@ resizing each BufferedImage, and set pixelAmount and input each converted Buffer
 
 //return BufferedImage thar cut margin
 
-this method is convert 
+this method is convert BufferedImage that cut margin, and return converted BufferedImage.
+
+* private static void setIsCutMarginAuto(BufferedImage origin, BufferedImage video)
+
+this method is set isCutMargin automatically
+
+this method judge margin that compare each BufferedImage.
+
+if top, OR left side averge value is different, then each direction has margin.
+
+* public static void setIsCutMargin(boolean row, boolean car)
+
+this magin set isCutMargin by input two value.
+
+isCutMargin[0]=row;
+
+isCutMargin[1]=car;
+
+this method is for not automatic setting when program has mistake to search margin.
+
+* public static void setAllowDif(int num)
+
+this method is just set allowDif
+
+* public static void setArea(int l, int r, int t, int d)
+
+this method is set PDFCompare's class variables,(left, right, top, down) value.
+
+this method is for not automatic setting when program has mistake to set where is not margin area.
+
+* public static void setNoMarginArea(BufferedImage origin)
+
+this method is that get video's width area and height area that are not margin AUTOMATICALLY.
+
+when method is started,(left, right, top, down), which is PDFCompare's class variables, is set input parameter BufferedImage's value default.
+
+(
+	left=0;
+	right=origin.getWidth()-1;
+	top=0;
+	down=origin.getHeight()-1;
+)
+
+when method is processed, this method reference isCutMargin, that if isCutMargin's part is false, then program understand that direction is not margin, then that direction's no margin area is not change more.
+
+else, method calculate averge pixel line value, and compare next value.
+
+//meaning that if direction is row, compare each column pixel line's averge value. in column case, compare each row.
+
+in calculate, highest two different values are save with index level.
+
+//if direction is row, highest two different values are save with each column index value.
+
+then save each index value in (left, right), OR (top, down).
+
+* private static BufferedImage resize(BufferedImage origin, int afterWidth, int afterHeight)
+
+//return BufferedImage that resize image
+
+just resize image input afterWidth and afterHeight.
+
+* private static BufferedImage imageToBufferedImage(Image img)
+
+//return BufferedImage that converted img
+
+just convert Image variable to BufferedImage.
