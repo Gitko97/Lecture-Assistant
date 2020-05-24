@@ -171,10 +171,10 @@ public class PDFCompare extends ImgCompare{
 	}
 	
 	//setting cut margin option(default: row=false, cor=true)
-	public static void setIsCutMargin(boolean row, boolean car)
+	public static void setIsCutMargin(boolean row, boolean col)
 	{
 		isCutMargin[0]=row;
-		isCutMargin[1]=car;
+		isCutMargin[1]=col;
 		return;
 	};
 	
@@ -203,15 +203,14 @@ public class PDFCompare extends ImgCompare{
 		
 		int width=origin.getWidth();
 		int height=origin.getHeight();
-		
-		int rowDifMax[]= {0, 0}, carDifMax[]= {0,0};
+		int rowDifMax[]= {0, 0}, colDifMax[]= {0,0};
 		int rowDifMaxPoint[]=new int[2];
-		int carDifMaxPoint[]=new int[2];
+		int colDifMaxPoint[]=new int[2];
 		
 		int[][] rowAverge=new int[height][3];
-		int[][] carAverge=new int[width][3];
+		int[][] colAverge=new int[width][3];
 		int[] rowDif=new int[height];
-		int[] carDif=new int[width];
+		int[] colDif=new int[width];
 		int tempPixel[]=new int[3];
 		
 		int countH, countW, count;
@@ -230,7 +229,7 @@ public class PDFCompare extends ImgCompare{
 				for(count=0;count<3;count++)
 				{
 					rowAverge[countH][count]+=tempPixel[count];
-					carAverge[countW][count]+=tempPixel[count];
+					colAverge[countW][count]+=tempPixel[count];
 				}
 			}
 		}
@@ -279,33 +278,33 @@ public class PDFCompare extends ImgCompare{
 			{
 				for(count=0;count<3;count++)
 				{
-					carAverge[countW][count]/=height;
+					colAverge[countW][count]/=height;
 				}
 				if(countW>0)
 				{
-					carDif[countW-1]=getRGBdifSum(carAverge[countW-1], carAverge[countW]);
+					colDif[countW-1]=getRGBdifSum(colAverge[countW-1], colAverge[countW]);
 					
-					if(carDif[countW-1]>carDifMax[0])
+					if(colDif[countW-1]>colDifMax[0])
 					{
-						carDifMax[0]=carDif[countW-1];
-						carDifMaxPoint[0]=countW-1;
+						colDifMax[0]=colDif[countW-1];
+						colDifMaxPoint[0]=countW-1;
 					}
-					else if(carDif[countW-1]>carDifMax[1])
+					else if(colDif[countW-1]>colDifMax[1])
 					{
-						carDifMax[1]=carDif[countW-1];
-						carDifMaxPoint[1]=countW-1;
+						colDifMax[1]=colDif[countW-1];
+						colDifMaxPoint[1]=countW-1;
 					}
 				}
 			}
-			if(carDifMaxPoint[0]>carDifMaxPoint[1])
+			if(colDifMaxPoint[0]>colDifMaxPoint[1])
 			{
-				left=carDifMaxPoint[1]+1;
-				right=carDifMaxPoint[0];
+				left=colDifMaxPoint[1]+1;
+				right=colDifMaxPoint[0];
 			}
 			else
 			{
-				left=carDifMaxPoint[0]+1;
-				right=carDifMaxPoint[1];
+				left=colDifMaxPoint[0]+1;
+				right=colDifMaxPoint[1];
 			}
 		}
 		
