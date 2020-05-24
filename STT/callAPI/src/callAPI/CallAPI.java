@@ -1,4 +1,4 @@
-package callAPI;
+package Sound;
 
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.api.gax.core.FixedCredentialsProvider;
@@ -26,70 +26,66 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.DataLine.Info;
 import javax.sound.sampled.TargetDataLine;
 
-public class CallAPI
+public class CallAPI implements Runnable
 {
 	
 	static SpeechClient client = null;
+	static boolean exit;
 	
-	public static void main(String[] args) throws Exception  // ½ÇÇà ¸Ş¼Òµå run
-	{	
-		authExplicit("key/key.json");
-		streamingMicRecognize();
-	}
-	
-	public static void runRecognition() {
-		try
-		{
-			authExplicit("key/key.json");
-			streamingMicRecognize();
-		}
-		catch (Exception e)
-		{
+	public CallAPI(String keyPath) {
+		try {
+			authExplicit(keyPath);
+			exit = false;
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
 	}
 	
-	static void authExplicit(String jsonPath) throws IOException  // key/key.json ÆÄÀÏ ÀÌ¿ëÇØ  Credential °´Ã¼ »ı¼º ÈÄ ÀÌ¸¦ ÀÌ¿ëÇØ SpeechClient °´Ã¼¸¦ »ı¼ºÇÏ¿© ½ºÅÂÆ½ client¿¡ ÇÒ´ç
+	public void Exit() {
+		exit = true;
+	}
+	
+	static void authExplicit(String jsonPath) throws IOException  // key/key.json ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¿ï¿½ï¿½ï¿½  Credential ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ì¸ï¿½ ï¿½Ì¿ï¿½ï¿½ï¿½ SpeechClient ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½Æ½ clientï¿½ï¿½ ï¿½Ò´ï¿½
 	{	
 		CredentialsProvider credentialsProvider = FixedCredentialsProvider.create(ServiceAccountCredentials.fromStream(new FileInputStream(jsonPath)));
 		SpeechSettings settings = SpeechSettings.newBuilder().setCredentialsProvider(credentialsProvider).build();
 		client = SpeechClient.create(settings);
 	}
 	
-	static void streamingMicRecognize() throws Exception {
-		
-		
+	public void run() {
 		ResponseObserver<StreamingRecognizeResponse> responseObserver = null;
 
 		try {
 	        responseObserver =
 	            new ResponseObserver<StreamingRecognizeResponse>() {
-	              ArrayList<StreamingRecognizeResponse> responses = new ArrayList<>();
+	              //ArrayList<StreamingRecognizeResponse> responses = new ArrayList<>(); ì‘ë‹µ arrayList ì£¼ì„ì²˜ë¦¬
 
 	              public void onStart(StreamController controller) 
 	              {
 	            	  
 	              }
 
-	              public void onResponse(StreamingRecognizeResponse response) // onResponse´Â response°¡ ¿Ã ¶§ ¸¶´Ù Äİ¹éµÇ´Â ÇÔ¼ö. Áß°£Áß°£ °á°ú°ªÀ» Ãâ·ÂÇÏ´Â ÄÚµå
+	              public void onResponse(StreamingRecognizeResponse response) // onResponseï¿½ï¿½ responseï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½İ¹ï¿½Ç´ï¿½ ï¿½Ô¼ï¿½. ï¿½ß°ï¿½ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Úµï¿½
 	              {
 	            	  StreamingRecognitionResult result = response.getResultsList().get(0);
 	                  SpeechRecognitionAlternative alternative = result.getAlternativesList().get(0);
 	                  System.out.printf("Transcript : %s\n", alternative.getTranscript());
 		              
-	                  responses.add(response);
+	                 // responses.add(response); ì‘ë‹µ arrayList ì£¼ì„ì²˜ë¦¬
 		              
 	              }
 
 	              public void onComplete() 
 	              { 
+	            	  //ì‘ë‹µ arrayList ì£¼ì„ì²˜ë¦¬
+	            	  /*
 	                for (StreamingRecognizeResponse response : responses) 
 	                {
 	                  StreamingRecognitionResult result = response.getResultsList().get(0);
 	                  SpeechRecognitionAlternative alternative = result.getAlternativesList().get(0);
 	                  System.out.printf("Transcript : %s\n", alternative.getTranscript());
 	                }
+	                */
 	              }
 
 	              public void onError(Throwable t)
@@ -124,7 +120,7 @@ public class CallAPI
 		                audioFormat
 	                ); // Set the system information to read from the microphone audio stream
 
-	        // AudioSystem È®ÀÎ.
+	        // AudioSystem È®ï¿½ï¿½.
 	        if (!AudioSystem.isLineSupported(targetInfo))
 	        {
 	          System.out.println("Microphone not supported");
@@ -136,18 +132,18 @@ public class CallAPI
 	        targetDataLine.open(audioFormat);
 	        targetDataLine.start();
 	        System.out.println("Start speaking");
-	        long startTime = System.currentTimeMillis();
+	        //long startTime = System.currentTimeMillis();   ì‹œê°„ ì¸¡ì • ë©”ì†Œë“œ ì¼ë‹¨ ì£¼ì„
 	        
 	        // Audio Input Stream
 	        AudioInputStream audio = new AudioInputStream(targetDataLine);
 	        
-	        // ½ºÆ®¸®¹Ö ·çÇÁ. Á¤ÇØÁø ½Ã°£ÀÌ Áö³ª¸é break
+	        // ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ break
 	        while (true)
 	        {
-	          long estimatedTime = System.currentTimeMillis() - startTime;
+	         // long estimatedTime = System.currentTimeMillis() - startTime; ì‹œê°„ ì¸¡ì • ë©”ì†Œë“œ ì¼ë‹¨ ì£¼ì„ ì²˜ë¦¬
 	          byte[] data = new byte[6400];
 	          audio.read(data);
-	          if (estimatedTime > 290000) // ~5 minutes
+	          if (exit) // exit ê°€ true ì¼ë•Œ ê¹Œì§€
 	          { 
 	            System.out.println("Stop speaking.");
 	            targetDataLine.stop();
@@ -163,7 +159,7 @@ public class CallAPI
 	      } catch (Exception e) {
 	        System.out.println(e);
 	      }
-	      //responseObserver.onComplete();
+	      //responseObserver.onComplete(); ì‘ë‹µ arrayList ì£¼ì„ì²˜ë¦¬
 	    }
 }
 

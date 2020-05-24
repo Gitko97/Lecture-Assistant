@@ -15,21 +15,13 @@
        </dependency>
      </dependencies>
   </dependencyManagement>
-  
-  <dependencies>
-    <dependency>
-      <groupId>com.google.cloud</groupId>
-      <artifactId>google-cloud-storage</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-    </dependency>
+   <dependencies>
     <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>google-cloud-speech</artifactId>
-    </dependency>    
-  </dependencies>
+      </dependency>   
+</dependencies>
+
 
 
   <build>
