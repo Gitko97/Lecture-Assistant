@@ -106,10 +106,6 @@ public class ImgCompare {
 			{
 				return true;
 			}
-			else
-			{
-				return false;
-			}
 		}
 		
 		//check how much dif saturation(it must consider lum)

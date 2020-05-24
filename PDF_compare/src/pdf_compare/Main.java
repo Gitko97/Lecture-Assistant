@@ -13,7 +13,7 @@ public class Main {
 		BufferedImage ba=null, bb=null;
 		
 		a=new File("sampleA.bmp");
-		b=new File("sampleD.bmp");
+		b=new File("sampleC.bmp");
 		
 		try 
 		{
@@ -23,7 +23,6 @@ public class Main {
 		catch(Exception e) {};
 		
 		PDFCompare.setAllowDif(200);
-		PDFCompare.setNoMarginArea(bb);
 		PDFCompare.setNoise(0.1, 0.35, 0.5);
 		if(PDFCompare.compare(ba,bb))
 		{

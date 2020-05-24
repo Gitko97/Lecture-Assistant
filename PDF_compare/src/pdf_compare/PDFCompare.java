@@ -53,6 +53,11 @@ public class PDFCompare extends ImgCompare{
 		videoTransform=video;
 		
 		//cut blank
+		if(isMarginCheckAuto)
+		{
+			setIsCutMarginAuto(originTransform, videoTransform);
+		}
+		setNoMarginArea(videoTransform);
 		videoTransform=marginCut(videoTransform);
 		
 		//resize each size to same
@@ -87,35 +92,35 @@ public class PDFCompare extends ImgCompare{
 		int[] videoAverge=new int[3];
 		int[] temp=new int[3];
 		
-		int countA;
+		int count;
 		
 
 		//not special case, merge area is (top and down)OR(left and right), so only compare top and left
 		//first top
-		for(countA=0;countA<3;countA++)
+		for(count=0;count<3;count++)
 		{
-			originAverge[countA]=0;
-			videoAverge[countA]=0;
+			originAverge[count]=0;
+			videoAverge[count]=0;
 		}
 		
-		for(countA=0;countA<origin.getWidth();countA++)
+		for(count=0;count<origin.getWidth();count++)
 		{
-			temp=RGBtoArray(origin.getRGB(countA, 0));
-			originAverge[0]=temp[0];
-			originAverge[1]=temp[1];
-			originAverge[2]=temp[2];
+			temp=RGBtoArray(origin.getRGB(count, 0));
+			originAverge[0]+=temp[0];
+			originAverge[1]+=temp[1];
+			originAverge[2]+=temp[2];
 		}
-		for(countA=0;countA<video.getWidth();countA++)
+		for(count=0;count<video.getWidth();count++)
 		{
-			temp=RGBtoArray(video.getRGB(countA, 0));
-			videoAverge[0]=temp[0];
-			videoAverge[1]=temp[1];
-			videoAverge[2]=temp[2];
+			temp=RGBtoArray(video.getRGB(count, 0));
+			videoAverge[0]+=temp[0];
+			videoAverge[1]+=temp[1];
+			videoAverge[2]+=temp[2];
 		}		
-		for(countA=0;countA<3;countA++)
+		for(count=0;count<3;count++)
 		{
-			originAverge[countA]/=origin.getWidth();
-			videoAverge[countA]/=video.getWidth();
+			originAverge[count]/=origin.getWidth();
+			videoAverge[count]/=video.getWidth();
 		}
 		if(isHSLDifferent(getHSLfromRGB(originAverge), getHSLfromRGB(videoAverge)))
 		{
@@ -127,30 +132,30 @@ public class PDFCompare extends ImgCompare{
 		}
 		
 		//second left
-		for(countA=0;countA<3;countA++)
+		for(count=0;count<3;count++)
 		{
-			originAverge[countA]=0;
-			videoAverge[countA]=0;
+			originAverge[count]=0;
+			videoAverge[count]=0;
 		}
 		
-		for(countA=0;countA<origin.getHeight();countA++)
+		for(count=0;count<origin.getHeight();count++)
 		{
-			temp=RGBtoArray(origin.getRGB(0, countA));
-			originAverge[0]=temp[0];
-			originAverge[1]=temp[1];
-			originAverge[2]=temp[2];
+			temp=RGBtoArray(origin.getRGB(0, count));
+			originAverge[0]+=temp[0];
+			originAverge[1]+=temp[1];
+			originAverge[2]+=temp[2];
 		}
-		for(countA=0;countA<video.getHeight();countA++)
+		for(count=0;count<video.getHeight();count++)
 		{
-			temp=RGBtoArray(video.getRGB(0, countA));
-			videoAverge[0]=temp[0];
-			videoAverge[1]=temp[1];
-			videoAverge[2]=temp[2];
+			temp=RGBtoArray(video.getRGB(0, count));
+			videoAverge[0]+=temp[0];
+			videoAverge[1]+=temp[1];
+			videoAverge[2]+=temp[2];
 		}		
-		for(countA=0;countA<3;countA++)
+		for(count=0;count<3;count++)
 		{
-			originAverge[countA]/=origin.getHeight();
-			videoAverge[countA]/=video.getHeight();
+			originAverge[count]/=origin.getHeight();
+			videoAverge[count]/=video.getHeight();
 		}
 		if(isHSLDifferent(getHSLfromRGB(originAverge), getHSLfromRGB(videoAverge)))
 		{
@@ -160,7 +165,7 @@ public class PDFCompare extends ImgCompare{
 		{
 			isCutMargin[1]=false;
 		}
-
+		
 		return;
 		
 	}
