@@ -13,8 +13,9 @@ public class ImgCompare {
 	//default noise value
 	private static boolean isDebugging=true;
 	private static double hueNoise=0.1, satNoise=0.35, lumNoise=0.5;
-	public static boolean sameImage;
+	
 	public static BufferedImage partA, partB;
+	
 	
 	//get each img's dif sum
 	public static int getPixelDif(BufferedImage a, BufferedImage b)
@@ -103,12 +104,10 @@ public class ImgCompare {
 		{
 			if((aHSL[1]*aLumVar)>0.1||(bHSL[1]*bLumVar)>0.1)
 			{
-				sameImage = true;
 				return true;
 			}
 			else
 			{
-				sameImage = false;
 				return false;
 			}
 		}

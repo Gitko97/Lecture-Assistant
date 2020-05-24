@@ -10,7 +10,6 @@ public class PDFCompare extends ImgCompare{
 	private static int top=0, down=0;
 	private static int allowDif=200;
 	private static int pixelAmount=0;
-	public static boolean sameImage;
 	
 	//meaning that cut margin or not
 	//[0]: top and down, [1]:left and right
@@ -82,9 +81,86 @@ public class PDFCompare extends ImgCompare{
 	}
 	
 	//set isCutMargin auto or not
-	private static void setIsCutMarginAuto(BufferedImage origin)
+	private static void setIsCutMarginAuto(BufferedImage origin, BufferedImage video)
 	{
-		//NEED TO HELP!
+		int[] originAverge=new int[3];
+		int[] videoAverge=new int[3];
+		int[] temp=new int[3];
+		
+		int countA;
+		
+
+		//not special case, merge area is (top and down)OR(left and right), so only compare top and left
+		//first top
+		for(countA=0;countA<3;countA++)
+		{
+			originAverge[countA]=0;
+			videoAverge[countA]=0;
+		}
+		
+		for(countA=0;countA<origin.getWidth();countA++)
+		{
+			temp=RGBtoArray(origin.getRGB(countA, 0));
+			originAverge[0]=temp[0];
+			originAverge[1]=temp[1];
+			originAverge[2]=temp[2];
+		}
+		for(countA=0;countA<video.getWidth();countA++)
+		{
+			temp=RGBtoArray(video.getRGB(countA, 0));
+			videoAverge[0]=temp[0];
+			videoAverge[1]=temp[1];
+			videoAverge[2]=temp[2];
+		}		
+		for(countA=0;countA<3;countA++)
+		{
+			originAverge[countA]/=origin.getWidth();
+			videoAverge[countA]/=video.getWidth();
+		}
+		if(isHSLDifferent(getHSLfromRGB(originAverge), getHSLfromRGB(videoAverge)))
+		{
+			isCutMargin[0]=true;
+		}
+		else
+		{
+			isCutMargin[0]=false;
+		}
+		
+		//second left
+		for(countA=0;countA<3;countA++)
+		{
+			originAverge[countA]=0;
+			videoAverge[countA]=0;
+		}
+		
+		for(countA=0;countA<origin.getHeight();countA++)
+		{
+			temp=RGBtoArray(origin.getRGB(0, countA));
+			originAverge[0]=temp[0];
+			originAverge[1]=temp[1];
+			originAverge[2]=temp[2];
+		}
+		for(countA=0;countA<video.getHeight();countA++)
+		{
+			temp=RGBtoArray(video.getRGB(0, countA));
+			videoAverge[0]=temp[0];
+			videoAverge[1]=temp[1];
+			videoAverge[2]=temp[2];
+		}		
+		for(countA=0;countA<3;countA++)
+		{
+			originAverge[countA]/=origin.getHeight();
+			videoAverge[countA]/=video.getHeight();
+		}
+		if(isHSLDifferent(getHSLfromRGB(originAverge), getHSLfromRGB(videoAverge)))
+		{
+			isCutMargin[1]=true;
+		}
+		else
+		{
+			isCutMargin[1]=false;
+		}
+
 		return;
 		
 	}
