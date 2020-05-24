@@ -59,12 +59,12 @@ public class ImgCompare {
 				}
 			}
 		}
-
 		return result;
 	}
-	
+
 	//Image Difference Extraction
 	protected static void extractDifferentPart()
+	{
 		try
 		{
 			File outputfileA = new File("difPartA.png");
