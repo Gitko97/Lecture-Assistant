@@ -15,17 +15,25 @@ class DrawPanel extends JPanel{
 		rectangles.add(new Rectangle(x,y,width,height));	//검은색 박스
 		
 		//초록색 박스//
-		rectangles.add(new Rectangle(x-5, y-5, 6, 6));
-		rectangles.add(new Rectangle(x+width/2, y-5, 6, 6));
-		rectangles.add(new Rectangle(x+width, y-5, 6, 6));
-		rectangles.add(new Rectangle(x-5, y+height/2, 6, 6));
-		rectangles.add(new Rectangle(x-5, y+height, 6, 6));
-		rectangles.add(new Rectangle(x+width, y-2+height/2, 6, 6));
-		rectangles.add(new Rectangle(x+width/2, y+height, 6, 6));
-		rectangles.add(new Rectangle(x-2+width, y-2+height, 6, 6));
+		rectangles.add(new Rectangle(x+5, y+5, 10, 10));
+		rectangles.add(new Rectangle(x+width/2, y+5, 10, 10));
+		rectangles.add(new Rectangle(x-15+width, y+5, 10, 10));
+		rectangles.add(new Rectangle(x+5, y+height/2, 10, 10));
+		rectangles.add(new Rectangle(x+5, y-15+height, 10, 10));
+		rectangles.add(new Rectangle(x-15+width, y-15+height/2, 10, 10));
+		rectangles.add(new Rectangle(x+width/2, y-15+height, 10, 10));
+		rectangles.add(new Rectangle(x-15+width, y-15+height, 10, 10));
 		this.captureStart = false;
 	}
 	
+	public void captureStart() {
+		this.captureStart = true;
+		
+	}
+	
+	public void captureStop() {
+		this.captureStart = false;
+	}
 	public void makeNewSizeButton() {		// 움직였을때 이전 요소들을 지우고 새로 생성
 		for(int i = 8; i>0;i--)
 			rectangles.remove(i);
@@ -33,14 +41,14 @@ class DrawPanel extends JPanel{
 		int y = rectangles.get(0).ypos;
 		int width = rectangles.get(0).width;
 		int height = rectangles.get(0).height;
-		rectangles.add(new Rectangle(x-5, y-5, 6, 6));
-		rectangles.add(new Rectangle(x+width/2, y-5, 6, 6));
-		rectangles.add(new Rectangle(x+width, y-5, 6, 6));
-		rectangles.add(new Rectangle(x-5, y+height/2, 6, 6));
-		rectangles.add(new Rectangle(x-5, y+height, 6, 6));
-		rectangles.add(new Rectangle(x+width, y-2+height/2, 6, 6));
-		rectangles.add(new Rectangle(x+width/2, y+height, 6, 6));
-		rectangles.add(new Rectangle(x-2+width, y-2+height, 6, 6));
+		rectangles.add(new Rectangle(x+5, y+5, 10, 10));
+		rectangles.add(new Rectangle(x+width/2, y+5, 10, 10));
+		rectangles.add(new Rectangle(x-15+width, y+5, 10, 10));
+		rectangles.add(new Rectangle(x+5, y+height/2, 10, 10));
+		rectangles.add(new Rectangle(x+5, y-15+height, 10, 10));
+		rectangles.add(new Rectangle(x-15+width, y-15+height/2, 10, 10));
+		rectangles.add(new Rectangle(x+width/2, y-15+height, 10, 10));
+		rectangles.add(new Rectangle(x-15+width, y-15+height, 10, 10));
 	}
 	
 	public int Clicked(int x, int y) {	// 무엇이 클릭되었는지 판단 후 return 0은 검은 네모 나머지는 초록색 resize 네모
@@ -103,20 +111,25 @@ class DrawPanel extends JPanel{
 	}
 	
 	public void paintComponent(Graphics g) {	// drawpanel을 그리는 부분
-		int i = 0;
+		int i = 1;
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D) g;
 		float[] dash=new float[]{5,5,5,5};
-		g2.setStroke(new BasicStroke(4,0,BasicStroke.JOIN_MITER,1.0f,dash, 0));
-		rectangles.get(i++).Draw(g2);
+		if(!captureStart) g2.setColor(Color.GREEN);
+		else g2.setColor(Color.RED);
+		g2.setStroke(new BasicStroke(4,0,BasicStroke.JOIN_MITER,1.0f,null, 0.0f));
+		g.drawRect(rectangles.get(0).xpos, rectangles.get(0).ypos, rectangles.get(0).width, rectangles.get(0).height);
 		if(!captureStart) {
-			//g2.fillOval(xpos+width/2-50,ypos+height/2-50,100,100);
 			g2.setColor(Color.GREEN);
+			g2.fillOval(rectangles.get(0).xpos+rectangles.get(0).width/2-25,rectangles.get(0).ypos+rectangles.get(0).height/2-25,50,50);
 			g2.setStroke(new BasicStroke(2,BasicStroke.CAP_ROUND,0));
 			for(;i<rectangles.size();i++)
 				rectangles.get(i).Draw(g2);
 		}
-		Thread.yield();
+	}
+
+	public Thread getThread() {
+		return Thread.currentThread();
 	}
 }
 
@@ -154,7 +167,7 @@ class Rectangle{	// 모든 네모 shape의 정보와 함수를 담고있음
 	}
 	
 	public void Draw(Graphics2D g) {
-		g.drawRect(xpos, ypos, width, height);
+		g.fillRect(xpos, ypos, width, height);
 	}
 	
 	public boolean clicked(int x, int y) {

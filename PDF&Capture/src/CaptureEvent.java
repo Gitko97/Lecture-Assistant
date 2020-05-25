@@ -1,7 +1,4 @@
-import java.awt.AWTException;
-import java.awt.MouseInfo;
-import java.awt.PointerInfo;
-import java.awt.Robot;
+import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -14,7 +11,6 @@ public class CaptureEvent implements MouseListener, MouseMotionListener {
 	int curY;
 	int clickedShape=0;
 	CaptureView captureView;
-
 	public CaptureEvent(CaptureView captureView) {
 		this.captureView = captureView;
 	}
@@ -34,6 +30,8 @@ public class CaptureEvent implements MouseListener, MouseMotionListener {
 		beforeX = e.getX();
 		beforeY = e.getY();	
 		this.clickedShape = captureView.Clicked(beforeX,beforeY);	// 무엇을 눌렀는지 int로 저장
+		if(clickedShape == 0) captureView.setCursor(new Cursor(Cursor.MOVE_CURSOR));
+		else  captureView.setCursor(new Cursor(Cursor.HAND_CURSOR));
 	}
 	
 	@Override
@@ -41,5 +39,11 @@ public class CaptureEvent implements MouseListener, MouseMotionListener {
 	public void mouseClicked(MouseEvent e) {}
 	public void mouseEntered(MouseEvent e) {}
 	public void mouseExited(MouseEvent e) {}
-	public void mouseReleased(MouseEvent e) {}
+	public void mouseReleased(MouseEvent e) {
+		captureView.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+	}
+
+	public Thread getThread() {
+		return Thread.currentThread();
+	}
 }

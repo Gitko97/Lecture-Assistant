@@ -1,16 +1,27 @@
 import java.awt.*;
+import java.util.ArrayList;
+
 import javax.swing.*;
 
 public class CaptureView extends JFrame {
 	DrawPanel drawpanel ;
-	public CaptureView() {
+	CaptureEvent event;
+	
+	public ArrayList<Thread> getThread(){
+		ArrayList<Thread> threads = new ArrayList<Thread>();
+		threads.add(Thread.currentThread());
+		threads.add(event.getThread());
+		threads.add(drawpanel.getThread());
+		return threads;
+	}
+	public CaptureView(int width, int height) {
 	
 		///	패널 생성	//
-		drawpanel = new DrawPanel(50,50,900,900);
+		drawpanel = new DrawPanel(50,50,width,height);
 		drawpanel.setBackground(new Color(255,0,0,0));
 		
 		// 패널 이벤트 추가 //
-		CaptureEvent event = new CaptureEvent(this);
+		event = new CaptureEvent(this);
 		drawpanel.addMouseListener(event);				//drawPanel 에 이벤트 추가
 		drawpanel.addMouseMotionListener(event);		//drawPanel 에 이벤트 추가
 		getContentPane().add(drawpanel);				// 전체 프레임에 drawPanel을 추가
@@ -65,6 +76,16 @@ public class CaptureView extends JFrame {
 		repaint();
 	}
 
+	public void captureStart() {
+		drawpanel.captureStart();
+		repaint();
+	}
+	
+	public void captureStop() {
+		drawpanel.captureStop();
+		repaint();
+	}
+	
 	public void StartMove() {
 		drawpanel.captureStart = false;
 		repaint();
@@ -78,6 +99,9 @@ public class CaptureView extends JFrame {
 		information[3] = drawpanel.rectangles.get(0).height;
 				
 		return information;
+	}
+	public void cursorDefault(Cursor curCursor) {
+		setCursor(curCursor);
 	}	
 	
 }
