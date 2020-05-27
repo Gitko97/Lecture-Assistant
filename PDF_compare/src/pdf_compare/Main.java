@@ -12,8 +12,8 @@ public class Main {
 		File a, b;
 		BufferedImage ba=null, bb=null;
 		
-		a=new File("sampleA.bmp");
-		b=new File("sampleC.bmp");
+		a=new File("sampleC.bmp");
+		b=new File("sampleD.bmp");
 		
 		try 
 		{
@@ -24,6 +24,7 @@ public class Main {
 		
 		PDFCompare.setAllowDif(200);
 		PDFCompare.setNoise(0.1, 0.35, 0.5);
+		PDFCompare.setIsMarginCheckAuto(false);
 		if(PDFCompare.compare(ba,bb))
 		{
 			System.out.println("Different!");

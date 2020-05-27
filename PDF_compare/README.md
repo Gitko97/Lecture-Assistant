@@ -119,7 +119,7 @@ default is 0, but when compare two images, each BufferedImage is converted same 
 
 and this variable is set width×height value.
 
-* private static boolean isCutMargin[]= {false, true}
+* private static boolean isCutMargin[]= {false, false}
 
 this variable is meaning that cut margin or not.
 
@@ -152,6 +152,12 @@ this method is convert origin, and video BufferedImage to same size, and cut mar
 when check each parameters are not null value, then check margin and cut margin.
 
 resizing each BufferedImage, and set pixelAmount and input each converted BufferedImage to getPixelDif method.
+
+* public static void setIsMarginCheckAuto(boolean check)
+
+this method set isMarginCheckAuto
+
+if input is false, program is not check margin automatically, else, check margin automatically.
 
 * private static BufferedImage marginCut(BufferedImage video)
 

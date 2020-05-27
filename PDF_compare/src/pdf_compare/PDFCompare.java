@@ -13,7 +13,7 @@ public class PDFCompare extends ImgCompare{
 	
 	//meaning that cut margin or not
 	//[0]: top and down, [1]:left and right
-	private static boolean isCutMargin[]= {false, true};
+	private static boolean isCutMargin[]= {false, false};
 	private static boolean isMarginCheckAuto=true;
 	
 	
@@ -29,17 +29,20 @@ public class PDFCompare extends ImgCompare{
 		System.out.println("difvalue: "+difPixelNum);
 		System.out.println("allowvalue: "+(pixelAmount/10000)*allowDif);
 		
+		extractDifferentPart();
+		
 		if((pixelAmount/10000)*allowDif<difPixelNum)
 		{
 			return true;
 		}
 		else
 		{
-			extractDifferentPart();
+//			extractDifferentPart();
 			return false;
 		}	
 	}
 	
+	//return int value that calculate how much different
 	public static int getPDFDifValue(BufferedImage origin, BufferedImage video)
 	{
 		BufferedImage originTransform, videoTransform;
@@ -83,6 +86,15 @@ public class PDFCompare extends ImgCompare{
 	{
 		BufferedImage result=video.getSubimage(left, top, right-left+1, down-top+1);
 		return result;
+	}
+	
+	//set isMarginCheckAuto
+	//if input is false, program is not check margin automatically
+	//else, check margin automatically.
+	public static void setIsMarginCheckAuto(boolean check)
+	{
+		isMarginCheckAuto=check;
+		return;
 	}
 	
 	//set isCutMargin auto or not
