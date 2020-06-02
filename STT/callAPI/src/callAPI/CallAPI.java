@@ -31,90 +31,120 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.DataLine.Info;
 import javax.sound.sampled.TargetDataLine;
 
-public class CallAPI implements Runnable
+public class CallAPI 
 {
+	private static final int STREAMING_LIMIT = 290000; // ~5 minutes
+
+	public static final String RED = "\033[0;31m";
+	public static final String GREEN = "\033[0;32m";
+	public static final String YELLOW = "\033[0;33m";
+
+	// Creating shared object
+	private static volatile BlockingQueue<byte[]> sharedQueue = new LinkedBlockingQueue();
+	private static TargetDataLine targetDataLine;
+	private static int BYTES_PER_BUFFER = 6400; // buffer size in bytes
 	
-	static final int STREAMING_LIMIT = 290000;
-	
-	static SpeechClient client = null;
-	static boolean exit;
-	static int BYTES_PER_BUFFER = 6400;
-	
-	 private static volatile BlockingQueue<byte[]> sharedQueue = new LinkedBlockingQueue();
-	
-	private static int restartCounter = 0;
-	static ArrayList<ByteString> audioInput = new ArrayList<ByteString>();
-	static ArrayList<ByteString> lastAudioInput = new ArrayList<ByteString>();
-	static int resultEndTimeInMS = 0;
-	static int isFinalEndTime = 0;
-	static int finalRequestEndTime = 0;
-	static boolean newStream = true;
-	static double bridgingOffset = 0;
-	static boolean lastTranscriptWasFinal = false;
-	static StreamController referenceToStreamController;
-	static ByteString tempByteString;
-	
-	
-	public CallAPI(String keyPath) {
-		try {
-			authExplicit(keyPath);
-			exit = false;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+    private static int restartCounter = 0;
+    private static ArrayList<ByteString> audioInput = new ArrayList<ByteString>();
+    private static ArrayList<ByteString> lastAudioInput = new ArrayList<ByteString>();
+    private static int resultEndTimeInMS = 0;
+    private static int isFinalEndTime = 0;
+    private static int finalRequestEndTime = 0;
+    private static boolean newStream = true;
+    private static double bridgingOffset = 0;
+    private static boolean lastTranscriptWasFinal = false;
+    private static StreamController referenceToStreamController;
+    private static ByteString tempByteString;
+
 	
 	public void Exit() {
 		exit = true;
 	}
-	
-	static String convertMillisToDate(double milliSeconds)
-	{
-		long millis = (long) milliSeconds;
-	    DecimalFormat format = new DecimalFormat();
-	    format.setMinimumIntegerDigits(2);
-	    return String.format(
-		        "%s:%s /",
-		        format.format(TimeUnit.MILLISECONDS.toMinutes(millis)),
-		        format.format(
-		        		TimeUnit.MILLISECONDS.toSeconds(millis)
-		        		- TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))
-		        		)
-		        );
-	}
 
 	
-	static void authExplicit(String jsonPath) throws IOException  // key/key.json 占쏙옙占쏙옙 占싱울옙占쏙옙  Credential 占쏙옙체 占쏙옙占쏙옙 占쏙옙 占싱몌옙 占싱울옙占쏙옙 SpeechClient 占쏙옙체占쏙옙 占쏙옙占쏙옙占싹울옙 占쏙옙占쏙옙틱 client占쏙옙 占쌀댐옙
+	static void authExplicit(String jsonPath) throws IOException  // key/key.json 
 	{	
 		CredentialsProvider credentialsProvider = FixedCredentialsProvider.create(ServiceAccountCredentials.fromStream(new FileInputStream(jsonPath)));
 		SpeechSettings settings = SpeechSettings.newBuilder().setCredentialsProvider(credentialsProvider).build();
 		client = SpeechClient.create(settings);
 	}
-	
-	public void run() {
-		ResponseObserver<StreamingRecognizeResponse> responseObserver = null;
 
-		try
-		{
-			responseObserver = new ResponseObserver<StreamingRecognizeResponse>()
-			{
-				ArrayList<StreamingRecognizeResponse> responses = new ArrayList<>();
-				public void onStart(StreamController controller) 
-				{  
-                }
+	  public static void main(String... args) {
+	    InfiniteStreamRecognizeOptions options = InfiniteStreamRecognizeOptions.fromFlags(args);
 
-                public void onResponse(StreamingRecognizeResponse response) // onResponse占쏙옙 response占쏙옙 占쏙옙 占쏙옙 占쏙옙占쏙옙 占쌥뱄옙풔占� 占쌉쇽옙. 占쌩곤옙占쌩곤옙 占쏙옙占쏙옙占쏙옙占� 占쏙옙占쏙옙求占� 占쌘듸옙
-	            {
-	             responses.add(response);      	  
-	             StreamingRecognitionResult result = response.getResultsList().get(0);
-	             Duration resultEndTime = result.getResultEndTime();
-	             resultEndTimeInMS =
-	                 (int) 	((resultEndTime.getSeconds() * 1000) + (resultEndTime.getNanos() / 1000000));
+	    try {
+	      infiniteStreamingRecognize(options.langCode);
+	    } catch (Exception e) {
+	      System.out.println("Exception caught: " + e);
+	    }
+	  }
+
+	  public static String convertMillisToDate(double milliSeconds) {
+	    long millis = (long) milliSeconds;
+	    DecimalFormat format = new DecimalFormat();
+	    format.setMinimumIntegerDigits(2);
+	    return String.format(
+	        "%s:%s /",
+	        format.format(TimeUnit.MILLISECONDS.toMinutes(millis)),
+	        format.format(
+	            TimeUnit.MILLISECONDS.toSeconds(millis)
+	                - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))));
+	  }
+
+	  /** Performs infinite streaming speech recognition */
+	  public static void infiniteStreamingRecognize() throws Exception {
+
+	    // Microphone Input buffering
+	    class MicBuffer implements Runnable {
+
+	      @Override
+	      public void run() {
+	        System.out.println(YELLOW);
+	        System.out.println("Start speaking...Press Ctrl-C to stop");
+	        targetDataLine.start();
+	        byte[] data = new byte[BYTES_PER_BUFFER];
+	        while (targetDataLine.isOpen()) {
+	          try {
+	            int numBytesRead = targetDataLine.read(data, 0, data.length);
+	            if ((numBytesRead <= 0) && (targetDataLine.isOpen())) {
+	              continue;
+	            }
+	            sharedQueue.put(data.clone());
+	          } catch (InterruptedException e) {
+	            System.out.println("Microphone input buffering interrupted : " + e.getMessage());
+	          }
+	        }
+	      }
+	    }
+
+	    // Creating microphone input buffer thread
+	    MicBuffer micrunnable = new MicBuffer();
+	    Thread micThread = new Thread(micrunnable);
+	    ResponseObserver<StreamingRecognizeResponse> responseObserver = null;
+	    try (SpeechClient client = SpeechClient.create()) {
+	      ClientStream<StreamingRecognizeRequest> clientStream;
+	      responseObserver =
+	          new ResponseObserver<StreamingRecognizeResponse>() {
+
+	            ArrayList<StreamingRecognizeResponse> responses = new ArrayList<>();
+
+	            public void onStart(StreamController controller) {
+	              referenceToStreamController = controller;
+	            }
+
+	            public void onResponse(StreamingRecognizeResponse response) {
+	              responses.add(response);
+	              StreamingRecognitionResult result = response.getResultsList().get(0);
+	              Duration resultEndTime = result.getResultEndTime();
+	              resultEndTimeInMS =
+	                  (int)
+	                      ((resultEndTime.getSeconds() * 1000) + (resultEndTime.getNanos() / 1000000));
 	              double correctedTime =
 	                  resultEndTimeInMS - bridgingOffset + (STREAMING_LIMIT * restartCounter);
 
 	              SpeechRecognitionAlternative alternative = result.getAlternativesList().get(0);
 	              if (result.getIsFinal()) {
+	                System.out.print(GREEN);
 	                System.out.print("\033[2K\r");
 	                System.out.printf(
 	                    "%s: %s [confidence: %.2f]\n",
@@ -124,6 +154,7 @@ public class CallAPI implements Runnable
 	                isFinalEndTime = resultEndTimeInMS;
 	                lastTranscriptWasFinal = true;
 	              } else {
+	                System.out.print(RED);
 	                System.out.print("\033[2K\r");
 	                System.out.printf(
 	                    "%s: %s", convertMillisToDate(correctedTime), alternative.getTranscript());
@@ -131,146 +162,139 @@ public class CallAPI implements Runnable
 	              }
 	            }
 
-	            public void onComplete() 
-	            { 
-	            }
+	            public void onComplete() {}
 
-	            public void onError(Throwable t)
-	            {
-	              System.out.println(t);
-	            }
-			};
+	            public void onError(Throwable t) {}
+	          };
+	      clientStream = client.streamingRecognizeCallable().splitCall(responseObserver);
 
-	        ClientStream<StreamingRecognizeRequest> clientStream = client.streamingRecognizeCallable().splitCall(responseObserver);
+	      RecognitionConfig recognitionConfig =
+	          RecognitionConfig.newBuilder()
+	              .setEncoding(RecognitionConfig.AudioEncoding.LINEAR16)
+	              .setLanguageCode("ko-KR")
+	              .setSampleRateHertz(16000)
+	              .build();
 
-	        RecognitionConfig recognitionConfig = RecognitionConfig.newBuilder()
-	                .setEncoding(RecognitionConfig.AudioEncoding.LINEAR16)
-	                .setLanguageCode("ko-KR")
-	                .setSampleRateHertz(16000)
-	                .build();
+	      StreamingRecognitionConfig streamingRecognitionConfig =
+	          StreamingRecognitionConfig.newBuilder()
+	              .setConfig(recognitionConfig)
+	              .setInterimResults(true)
+	              .build();
 
-	        StreamingRecognitionConfig streamingRecognitionConfig = StreamingRecognitionConfig.newBuilder()
-	        		.setConfig(recognitionConfig)
-	        		.build();
+	      StreamingRecognizeRequest request =
+	          StreamingRecognizeRequest.newBuilder()
+	              .setStreamingConfig(streamingRecognitionConfig)
+	              .build(); // The first request in a streaming call has to be a config
 
-	        StreamingRecognizeRequest request = StreamingRecognizeRequest.newBuilder()
-	                .setStreamingConfig(streamingRecognitionConfig)
-	                .build(); // The first request in a streaming call has to be a config
-	        clientStream.send(request);
+	      clientStream.send(request);
 
+	      try {
 	        // SampleRate:16000Hz, SampleSizeInBits: 16, Number of channels: 1, Signed: true,
 	        // bigEndian: false
 	        AudioFormat audioFormat = new AudioFormat(16000, 16, 1, true, false);
-	        DataLine.Info targetInfo = new Info
-	        		(
-		                TargetDataLine.class,
-		                audioFormat
-	                ); // Set the system information to read from the microphone audio stream
+	        DataLine.Info targetInfo =
+	            new Info(
+	                TargetDataLine.class,
+	                audioFormat); // Set the system information to read from the microphone audio
+	        // stream
 
-	        // AudioSystem 확占쏙옙.
-	        if (!AudioSystem.isLineSupported(targetInfo))
-	        {
+	        if (!AudioSystem.isLineSupported(targetInfo)) {
 	          System.out.println("Microphone not supported");
 	          System.exit(0);
 	        }
-	        
 	        // Target data line captures the audio stream the microphone produces.
-	        TargetDataLine targetDataLine = (TargetDataLine) AudioSystem.getLine(targetInfo);
+	        targetDataLine = (TargetDataLine) AudioSystem.getLine(targetInfo);
 	        targetDataLine.open(audioFormat);
-	        targetDataLine.start();
-	        System.out.println("Start speaking");
-	        
-	        long startTime = System.currentTimeMillis();  // �떆媛� 痢≪젙 硫붿냼�뱶 �씪�떒 二쇱꽍
-	        
-	        // Audio Input Stream
-	        AudioInputStream audio = new AudioInputStream(targetDataLine);
-	        
-	        // 占쏙옙트占쏙옙占쏙옙 占쏙옙占쏙옙. 占쏙옙占쏙옙占쏙옙 占시곤옙占쏙옙 占쏙옙占쏙옙占쏙옙 break
-	        while (true)
-	        {
-	        	long estimatedTime = System.currentTimeMillis() - startTime;
+	        micThread.start();
 
-	            if (estimatedTime >= STREAMING_LIMIT) {
+	        long startTime = System.currentTimeMillis();
 
-	              clientStream.closeSend();
-	              referenceToStreamController.cancel(); // remove Observer
+	        while (true) {
 
-	              if (resultEndTimeInMS > 0) {
-	                finalRequestEndTime = isFinalEndTime;
-	              }
-	              resultEndTimeInMS = 0;
+	          long estimatedTime = System.currentTimeMillis() - startTime;
 
-	              lastAudioInput = null;
-	              lastAudioInput = audioInput;
-	              audioInput = new ArrayList<ByteString>();
+	          if (estimatedTime >= STREAMING_LIMIT) {
 
-	              restartCounter++;
+	            clientStream.closeSend();
+	            referenceToStreamController.cancel(); // remove Observer
 
-	              if (!lastTranscriptWasFinal) {
-	                System.out.print('\n');
-	              }
+	            if (resultEndTimeInMS > 0) {
+	              finalRequestEndTime = isFinalEndTime;
+	            }
+	            resultEndTimeInMS = 0;
 
-	              newStream = true;
+	            lastAudioInput = null;
+	            lastAudioInput = audioInput;
+	            audioInput = new ArrayList<ByteString>();
 
-	              clientStream = client.streamingRecognizeCallable().splitCall(responseObserver);
+	            restartCounter++;
 
-	              request =
-	                  StreamingRecognizeRequest.newBuilder()
-	                      .setStreamingConfig(streamingRecognitionConfig)
-	                      .build();
-
-	              System.out.printf("%d: RESTARTING REQUEST\n", restartCounter * STREAMING_LIMIT);
-
-	              startTime = System.currentTimeMillis();
-
-	            } else {
-
-	              if ((newStream) && (lastAudioInput.size() > 0)) {
-	                // if this is the first audio from a new request
-	                // calculate amount of unfinalized audio from last request
-	                // resend the audio to the speech client before incoming audio
-	                double chunkTime = STREAMING_LIMIT / lastAudioInput.size();
-	                // ms length of each chunk in previous request audio arrayList
-	                if (chunkTime != 0) {
-	                  if (bridgingOffset < 0) {
-	                    // bridging Offset accounts for time of resent audio
-	                    // calculated from last request
-	                    bridgingOffset = 0;
-	                  }
-	                  if (bridgingOffset > finalRequestEndTime) {
-	                    bridgingOffset = finalRequestEndTime;
-	                  }
-	                  int chunksFromMS =
-	                      (int) Math.floor((finalRequestEndTime - bridgingOffset) / chunkTime);
-	                  // chunks from MS is number of chunks to resend
-	                  bridgingOffset =
-	                      (int) Math.floor((lastAudioInput.size() - chunksFromMS) * chunkTime);
-	                  // set bridging offset for next request
-	                  for (int i = chunksFromMS; i < lastAudioInput.size(); i++) {
-	                    request =
-	                        StreamingRecognizeRequest.newBuilder()
-	                            .setAudioContent(lastAudioInput.get(i))
-	                            .build();
-	                    clientStream.send(request);
-	                  }
-	                }
-	                newStream = false;
-	              }
-
-	              tempByteString = ByteString.copyFrom(sharedQueue.take());
-
-	              request =
-	                  StreamingRecognizeRequest.newBuilder().setAudioContent(tempByteString).build();
-
-	              audioInput.add(tempByteString);
+	            if (!lastTranscriptWasFinal) {
+	              System.out.print('\n');
 	            }
 
-	            clientStream.send(request);
+	            newStream = true;
+
+	            clientStream = client.streamingRecognizeCallable().splitCall(responseObserver);
+
+	            request =
+	                StreamingRecognizeRequest.newBuilder()
+	                    .setStreamingConfig(streamingRecognitionConfig)
+	                    .build();
+
+	            System.out.println(YELLOW);
+	            System.out.printf("%d: RESTARTING REQUEST\n", restartCounter * STREAMING_LIMIT);
+
+	            startTime = System.currentTimeMillis();
+
+	          } else {
+
+	            if ((newStream) && (lastAudioInput.size() > 0)) {
+	              // if this is the first audio from a new request
+	              // calculate amount of unfinalized audio from last request
+	              // resend the audio to the speech client before incoming audio
+	              double chunkTime = STREAMING_LIMIT / lastAudioInput.size();
+	              // ms length of each chunk in previous request audio arrayList
+	              if (chunkTime != 0) {
+	                if (bridgingOffset < 0) {
+	                  // bridging Offset accounts for time of resent audio
+	                  // calculated from last request
+	                  bridgingOffset = 0;
+	                }
+	                if (bridgingOffset > finalRequestEndTime) {
+	                  bridgingOffset = finalRequestEndTime;
+	                }
+	                int chunksFromMS =
+	                    (int) Math.floor((finalRequestEndTime - bridgingOffset) / chunkTime);
+	                // chunks from MS is number of chunks to resend
+	                bridgingOffset =
+	                    (int) Math.floor((lastAudioInput.size() - chunksFromMS) * chunkTime);
+	                // set bridging offset for next request
+	                for (int i = chunksFromMS; i < lastAudioInput.size(); i++) {
+	                  request =
+	                      StreamingRecognizeRequest.newBuilder()
+	                          .setAudioContent(lastAudioInput.get(i))
+	                          .build();
+	                  clientStream.send(request);
+	                }
+	              }
+	              newStream = false;
+	            }
+
+	            tempByteString = ByteString.copyFrom(sharedQueue.take());
+
+	            request =
+	                StreamingRecognizeRequest.newBuilder().setAudioContent(tempByteString).build();
+
+	            audioInput.add(tempByteString);
+	          }
+
+	          clientStream.send(request);
 	        }
 	      } catch (Exception e) {
 	        System.out.println(e);
 	      }
-	      //responseObserver.onComplete(); �쓳�떟 arrayList 二쇱꽍泥섎━
 	    }
-}
-
+	  }
+	}
+	// [END speech_transcribe_infinite_streaming]
