@@ -38,10 +38,7 @@ public class CaptureView extends JFrame {
 		this.setExtendedState(JFrame.MAXIMIZED_BOTH);	// 프레임을 모니터 최대 크기로
 		this.pack();
 		this.setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
-	}
-	
-	public void run() {
-		this.setVisible(true);	//프레임 및 프레임에 담겨있는 패널이 보이기 시작
+		this.setVisible(true);
 	}
 	
 	public void exit() {

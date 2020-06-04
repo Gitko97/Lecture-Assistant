@@ -1,5 +1,6 @@
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -33,10 +34,9 @@ public class PDFandIMG{
 		return false;
 	}
 	
-	public ArrayList<BufferedImage> PDFtoIMG(String filePath) { //매개변수로 받은 filePath의 PDF를 IMG로 변환후 ArrayList로 반환
+	public ArrayList<BufferedImage> PDFtoIMG(String filePath) throws IOException { //매개변수로 받은 filePath의 PDF를 IMG로 변환후 ArrayList로 반환
 		ArrayList<BufferedImage> imgs = new ArrayList<>();
 		File readFile = new File(filePath);
-		try {
 			PDDocument document = PDDocument.load(readFile);
 			int pageCount = document.getNumberOfPages();
 			PDFRenderer pdfRenderer = new PDFRenderer(document);
@@ -44,9 +44,6 @@ public class PDFandIMG{
 				imgs.add(pdfRenderer.renderImageWithDPI(i, 100, ImageType.RGB));
 			}
 			document.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 		return imgs;
 	}
 }
