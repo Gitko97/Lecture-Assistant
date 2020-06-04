@@ -54,9 +54,11 @@ public class CallAPI {
 	private static StreamController referenceToStreamController;
 	private static ByteString tempByteString;
 	private static SpeechClient client = null;
+	
+	private static boolean exit = true;
 
 	public void Exit() {
-		// exit = true;
+		exit = false;
 	}
 
 	static void authExplicit(String jsonPath) throws IOException // key/key.json
@@ -196,7 +198,7 @@ public class CallAPI {
 
 				long startTime = System.currentTimeMillis();
 
-				while (true) {
+				while (exit) {
 					long estimatedTime = System.currentTimeMillis() - startTime;
 
 					if (estimatedTime >= STREAMING_LIMIT) {
