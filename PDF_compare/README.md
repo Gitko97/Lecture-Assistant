@@ -105,12 +105,6 @@ these variables are meaning that set no margin area.
 
 default values are all 0, but when need to cut margin, these variables are set each values meaning no margin area.
 
-* private static int allowDif=200
-
-this variable is meaning that how much allow different pixel
-
-default is 200.
-
 * private static int pixelAmount=0
 
 this variable is meaning that how much size of image.
@@ -133,15 +127,15 @@ this variable is meaning that set margin area automatically or not.
 
 method
 ----------------
-* public static boolean compare(BufferedImage origin, BufferedImage video)
+* public static double getDifRatio(BufferedImage origin, BufferedImage video)
 
-//return different:true, same:false.
+//return ((double)difPixelNum/(double)pixelAmount);
 
-this method is meaning that each BufferedImage is same or not.
+this method is meaning that each BufferedImage is how much same.
 
 when it get different Pixel number to getPDFDifValue,
 
-it calculate with pixelAmount and allowDif that it can set same judge or not.
+it calculate with pixelAmount and return double value.
 
 * public static int getPDFDifValue(BufferedImage origin, BufferedImage video)
 
@@ -182,10 +176,6 @@ isCutMargin[0]=row;
 isCutMargin[1]=car;
 
 this method is for not automatic setting when program has mistake to search margin.
-
-* public static void setAllowDif(int num)
-
-this method is just set allowDif
 
 * public static void setArea(int l, int r, int t, int d)
 
