@@ -12,7 +12,7 @@ public class Main {
 		File a, b;
 		BufferedImage ba=null, bb=null;
 		
-		a=new File("sampleB.bmp");
+		a=new File("sampleC.bmp");
 		b=new File("sampleD.bmp");
 		
 		try 
@@ -22,8 +22,13 @@ public class Main {
 		}
 		catch(Exception e) {};
 		
-//		PDFCompare.setNoise(0.1, 0.35, 0.5);
-		System.out.println(PDFCompare.getDifRatio(ba,bb));
+		PDFCompare.setAllowDif(200);
+		PDFCompare.setNoise(0.1, 0.35, 0.5);
+		PDFCompare.setIsMarginCheckAuto(false);
+		if(PDFCompare.compare(ba,bb))
+		{
+			System.out.println("Different!");
+		}
 
 		return;
 	}

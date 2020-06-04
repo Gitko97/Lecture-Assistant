@@ -8,6 +8,7 @@ public class PDFCompare extends ImgCompare{
 
 	private static int left=0, right=0;
 	private static int top=0, down=0;
+	private static int allowDif=200;
 	private static int pixelAmount=0;
 	
 	//meaning that cut margin or not
@@ -20,17 +21,25 @@ public class PDFCompare extends ImgCompare{
 	//main method
 	//if same, return false, else, return true
 	//origin and video buffered img are not changed
-	public static double getDifRatio(BufferedImage origin, BufferedImage video)
+	public static boolean compare(BufferedImage origin, BufferedImage video)
 	{
 		int difPixelNum;
 		difPixelNum=getPDFDifValue(origin, video);
 		//debugging
 		System.out.println("difvalue: "+difPixelNum);
-		System.out.println("pixelAmount: "+pixelAmount);
+		System.out.println("allowvalue: "+(pixelAmount/10000)*allowDif);
 		
 		extractDifferentPart();
 		
-		return ((double)difPixelNum/(double)pixelAmount);
+		if((pixelAmount/10000)*allowDif<difPixelNum)
+		{
+			return true;
+		}
+		else
+		{
+//			extractDifferentPart();
+			return false;
+		}	
 	}
 	
 	//return int value that calculate how much different
@@ -181,6 +190,12 @@ public class PDFCompare extends ImgCompare{
 		return;
 	};
 	
+	//setting ArrowDif
+	public static void setAllowDif(int num)
+	{
+		allowDif=num;
+		return;
+	}
 	
 	//set video's not margin area manually
 	public static void setArea(int l, int r, int t, int d)
