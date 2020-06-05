@@ -12,17 +12,22 @@ public class BorderedImage extends PDFCompare {
 	public static void setBufferedImage(BufferedImage a, BufferedImage b) {
 		imageA = a;
 		imageB = b;
+		setSearch();
 		searchImage();
 		return;
+	}
+	public static void setSearch() {
+		
+		startPos[0] = imageB.getWidth()-1;
+		startPos[1] = imageB.getHeight()-1;
+		for(int i = 0; i < 2; i++)
+		{
+			endPos[i] = 0;
+		}
 	}
 	
 	public static void searchImage() {
 		
-		for(int i = 0; i < 2; i++)
-		{
-			startPos[i] = 0;
-			endPos[i] = 0;
-		}
 		getSearchStart();
 		getSearchEnd();
 		
@@ -30,13 +35,11 @@ public class BorderedImage extends PDFCompare {
 	public static void getSearchStart() {
 		int row, col;
 		
-		int tmp[] = new int[2];
-		
-		for(row = 0; row < imageB.getHeight(); row++)
+		for(row = imageB.getHeight()-1; row >= 0; row--)
 		{
-			for(col =0; col < imageB.getWidth(); col++)
+			for(col =imageB.getWidth()-1; col >= 0; col--)
 			{
-				if(imageA.getRGB(0, 0) != imageB.getRGB(col, row))
+				if(imageB.getRGB(0, 0) != imageB.getRGB(col, row))
 				{
 					if(startPos[0] > col) 
 					{
@@ -50,7 +53,7 @@ public class BorderedImage extends PDFCompare {
 				
 			}
 		}
-		System.out.println("x: " + startPos[0] + " y: " + startPos[1]);
+		System.out.println("Start Position : " +"x: " + startPos[0] + " y: " + startPos[1]);
 	}		
 
 	public static void getSearchEnd() {
@@ -73,7 +76,7 @@ public class BorderedImage extends PDFCompare {
 				}
 			}
 		}
-		System.out.println("x: " + endPos[0] + " y: " + endPos[1]);
+		System.out.println("End Position " + " x: " + endPos[0] + " y: " + endPos[1]);
 	}
 	public static BufferedImage extract() {
 		return imageB.getSubimage(startPos[0], startPos[1], endPos[0]-startPos[0], endPos[1]-startPos[1]);
