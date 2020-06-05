@@ -14,6 +14,7 @@ public class Main extends Application {
 		Parent root = FXMLLoader.load(getClass().getResource("button.fxml"));
 		primaryStage.setScene(new Scene(root));
 		primaryStage.setTitle("Lecture Assistant");
+		primaryStage.setResizable(false);
 		primaryStage.show();
 	}
 

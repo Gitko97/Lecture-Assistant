@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>GUI</name>
+	<name>gui</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -20,4 +20,11 @@
 		<nature>org.eclipse.xtext.ui.shared.xtextNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>src/application/button.fxml</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/button.fxml</locationURI>
+		</link>
+	</linkedResources>
 </projectDescription>
