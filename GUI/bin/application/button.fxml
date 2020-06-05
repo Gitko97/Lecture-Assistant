@@ -5,16 +5,15 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:controller = "application.Controller" prefHeight="400.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="400.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.Controller">
    <children>
-      <Button layoutX="459.0" layoutY="349.0" mnemonicParsing="false" prefWidth="54.5" text="Start" />
-      <Button layoutX="602.0" layoutY="349.0" mnemonicParsing="false" prefWidth="54.5" text="Exit" />
-      <Button layoutX="532.0" layoutY="349.0" mnemonicParsing="false" prefWidth="54.5" text="Stop" />
-      <Button layoutX="511.0" layoutY="108.0" mnemonicParsing="false" text="Select Pdf File" onAction="#pdfChoose"/>
-      <Button layoutX="511.0" layoutY="249.0" mnemonicParsing="false" text="Select Key File" onAction="#pdfChoose"/>
+      <Button layoutX="489.0" layoutY="348.0" mnemonicParsing="false" prefWidth="54.5" text="Start" />
+      <Button layoutX="598.0" layoutY="348.0" mnemonicParsing="false" prefWidth="54.5" text="Exit" />
+      <Button layoutX="511.0" layoutY="108.0" mnemonicParsing="false" onAction="#pdfChoose" text="Select Pdf File" />
+      <Button layoutX="511.0" layoutY="249.0" mnemonicParsing="false" onAction="#keyChoose" text="Select Key File" />
       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1f96ff27" height="23.0" layoutX="463.0" layoutY="73.0" stroke="BLACK" strokeType="INSIDE" width="200.0" />
       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1f93ff27" height="23.0" layoutX="463.0" layoutY="210.0" stroke="BLACK" strokeType="INSIDE" width="200.0" />
-      <Text layoutX="551.0" layoutY="89.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
-      <Text layoutX="551.0" layoutY="226.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+      <Text fx:id="pdfName" layoutX="468.0" layoutY="89.0" strokeType="OUTSIDE" strokeWidth="0.0" text=" " wrappingWidth="196.94500732421875" />
+      <Text fx:id="keyName" layoutX="468.0" layoutY="227.0" strokeType="OUTSIDE" strokeWidth="0.0" text=" " wrappingWidth="196.94500732421875" />
    </children>
 </AnchorPane>
