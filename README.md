@@ -1,7 +1,15 @@
+<img width="599" alt="la3" src="https://user-images.githubusercontent.com/47098720/83945872-6727e180-a848-11ea-85fc-28d00e09bd5a.png">
+
+
 # About Lecture Assistant
 Lecture Assistant is a tool to support students who take online classes. It provides not only voice dictation and handwriting dictation but also mapping those two. Students can relive their burden on taking online classes and easily review what they've learned.
 
 
+
+# How to use Lecture Assistant
+## Google API(speech-to-text)
+We are using Google api so you need to download it for using our Lecture Assistant.
+This is [a link to Google speech-to-text api](https://cloud.google.com/speech-to-text)
 
 # How to get Notes
 
@@ -41,8 +49,10 @@ Lecture Assistant is a tool to support students who take online classes. It prov
 ![83271875-674f2e00-a205-11ea-8b12-2f3a5df74119](https://user-images.githubusercontent.com/47098720/83944863-a6066900-a841-11ea-901b-6e0d024e7984.png)
 
 
-# Speech To Text
-We are using Google api so you must download it to use our Lecture Assistant.
+# How to use 
+We are using Google api so you need to download it for using our Lecture Assistant.
 
 This is [a link to Google speech-to-text api](https://cloud.google.com/speech-to-text)
+
+
 
