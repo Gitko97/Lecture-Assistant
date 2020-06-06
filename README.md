@@ -34,7 +34,7 @@ screenshot 첨부
 
 # How to get Notes
 
-1. This is the simple algorithm how we **compare images**.
+## 1. This is the simple algorithm how we **compare images**.
 
 <img width="602" alt="comparepdf2" src="https://user-images.githubusercontent.com/47098720/83944111-f24eaa80-a83b-11ea-8818-b865959099e4.png">
 
@@ -42,7 +42,7 @@ screenshot 첨부
 
 
 
-2. This is the simple algorithm  how we **compare notes**. Each number represents a single screenshot.
+## 2. This is the simple algorithm  how we **compare notes**. Each number represents a single screenshot.
 
 * *case 1*
 
