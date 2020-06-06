@@ -37,6 +37,7 @@ public class PDFCompare extends ImgCompare{
 	public static int getPDFDifValue(BufferedImage origin, BufferedImage video)
 	{
 		BufferedImage originTransform, videoTransform;
+		
 		//exception task
 		if(origin==null||video==null)
 		{

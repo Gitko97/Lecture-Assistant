@@ -74,7 +74,7 @@ public class ImgCompare {
 		}
 		catch(IOException e)
 		{
-			System.out.println("exeption: img file saving get error!");
+			System.out.println(e.getMessage());
 		}
 		return;
 	}
