@@ -9,8 +9,14 @@ Lecture Assistant is a tool to support students who take online classes. It prov
 # How to use Lecture Assistant
 ## Google API(speech-to-text)
 We are using Google api so you need to download it for using our Lecture Assistant.
-This is [a link to Google speech-to-text api](https://cloud.google.com/speech-to-text)
 
+This is [a link to Google speech-to-text api.](https://cloud.google.com/speech-to-text)
+
+## Step1
+Select .pdf file on your computer.
+
+## step2
+Select .json file on your computer. 
 # How to get Notes
 
 1. This is the simple algorithm how we **compare images**.
@@ -49,10 +55,6 @@ This is [a link to Google speech-to-text api](https://cloud.google.com/speech-to
 ![83271875-674f2e00-a205-11ea-8b12-2f3a5df74119](https://user-images.githubusercontent.com/47098720/83944863-a6066900-a841-11ea-901b-6e0d024e7984.png)
 
 
-# How to use 
-We are using Google api so you need to download it for using our Lecture Assistant.
-
-This is [a link to Google speech-to-text api](https://cloud.google.com/speech-to-text)
 
 
 
