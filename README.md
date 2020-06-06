@@ -1,4 +1,4 @@
-<img width="599" alt="la3" src="https://user-images.githubusercontent.com/47098720/83945872-6727e180-a848-11ea-85fc-28d00e09bd5a.png">
+<img width="601" alt="LA logo2" src="https://user-images.githubusercontent.com/47098720/83949882-533ca980-a861-11ea-9f2a-7137893aaa6c.png">
 
 
 # About Lecture Assistant
