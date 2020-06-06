@@ -2,6 +2,7 @@
 Lecture Assistant is a tool to support students who take online classes. It provides not only voice dictation and handwriting dictation but also mapping those two. Students can relive their burden on taking online classes and easily review what they've learned.
 
 
+
 # How to get Notes
 
 1. This is the simple algorithm how we **compare images**.
@@ -32,6 +33,12 @@ Lecture Assistant is a tool to support students who take online classes. It prov
 
 
 
+
+
+
+# Relation between Classes
+## Relation between the Compare class and others.
+![83271875-674f2e00-a205-11ea-8b12-2f3a5df74119](https://user-images.githubusercontent.com/47098720/83944863-a6066900-a841-11ea-901b-6e0d024e7984.png)
 
 
 # Speech To Text
