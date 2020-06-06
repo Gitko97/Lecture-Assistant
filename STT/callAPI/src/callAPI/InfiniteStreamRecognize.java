@@ -76,6 +76,12 @@ public class InfiniteStreamRecognize implements Runnable{
   private String languageCode;
   private SpeechClient client;
   private static ArrayList<StreamingRecognizeResponse> responses = new ArrayList<>();
+  private ResponseObserver<StreamingRecognizeResponse> responseObserver = null;
+  private ClientStream<StreamingRecognizeRequest> clientStream;
+  RecognitionConfig recognitionConfig;
+  StreamingRecognitionConfig streamingRecognitionConfig;
+  StreamingRecognizeRequest request;
+    		  
   public void init(String... args) {
 	exit = false;
     InfiniteStreamRecognizeOptions options = InfiniteStreamRecognizeOptions.fromFlags(args);
@@ -85,6 +91,7 @@ public class InfiniteStreamRecognize implements Runnable{
       System.exit(1);
     }
       languageCode = options.langCode;
+      this.setting();
   }
 
   public static String convertMillisToDate(double milliSeconds) {
@@ -136,6 +143,76 @@ public class InfiniteStreamRecognize implements Runnable{
         return changed_string;
 	}
   /** Performs infinite streaming speech recognition */
+	
+  public void setting() {
+	      responseObserver =
+	          new ResponseObserver<StreamingRecognizeResponse>() {
+	            String curTime = "";
+	            
+	            public void onStart(StreamController controller) {
+	              referenceToStreamController = controller;
+	            }
+
+	            public void onResponse(StreamingRecognizeResponse response) {
+	            	
+	            	StreamingRecognitionResult result = response.getResultsList().get(0);
+	                Duration resultEndTime = result.getResultEndTime();
+	                resultEndTimeInMS =
+	                    (int)
+	                        ((resultEndTime.getSeconds() * 1000) + (resultEndTime.getNanos() / 1000000));
+	                double correctedTime =
+	                    resultEndTimeInMS - bridgingOffset + (STREAMING_LIMIT * restartCounter);
+	                String resulttime = convertMillisToDate(correctedTime);
+	                if (!result.getIsFinal()) {
+	                	if(!curTime.equals(resulttime)) {
+	                		curTime = resulttime;
+	                		System.out.println(curTime);
+	                    	InfiniteStreamRecognize.responses.add(response);
+	                    	lastTranscriptWasFinal = false;
+	                	}
+	                }else {
+	                	isFinalEndTime = resultEndTimeInMS;
+	                	lastTranscriptWasFinal = true;
+	                }
+
+	                /*
+	                SpeechRecognitionAlternative alternative ;
+	                for(StreamingRecognizeResponse respon : responses) {
+	                	  if(respon == null) {
+	                		  System.out.printf("NULL:  ");
+	                	  }else {
+	                	  result = respon.getResultsList().get(0);
+	                	  alternative = result.getAlternativesList().get(0);
+	                	  System.out.printf("%s:  ", alternative.getTranscript());
+	                	  }
+	                  }*/
+	            }
+
+	            public void onComplete() {}
+
+	            public void onError(Throwable t) {}
+	          };
+	      clientStream = client.streamingRecognizeCallable().splitCall(responseObserver);
+	      recognitionConfig =
+	          RecognitionConfig.newBuilder()
+	              .setEncoding(RecognitionConfig.AudioEncoding.LINEAR16)
+	              .setLanguageCode(languageCode)
+	              .setSampleRateHertz(16000)
+	              .build();
+
+	      streamingRecognitionConfig =
+	          StreamingRecognitionConfig.newBuilder()
+	              .setConfig(recognitionConfig)
+	              .setInterimResults(true)
+	              .build();
+
+	      request =
+	          StreamingRecognizeRequest.newBuilder()
+	              .setStreamingConfig(streamingRecognitionConfig)
+	              .build(); // The first request in a streaming call has to be a config
+
+	      clientStream.send(request);
+  }
   public void run(){
     // Microphone Input buffering
     class MicBuffer implements Runnable {
@@ -162,75 +239,7 @@ public class InfiniteStreamRecognize implements Runnable{
     // Creating microphone input buffer thread
     MicBuffer micrunnable = new MicBuffer();
     Thread micThread = new Thread(micrunnable);
-    ResponseObserver<StreamingRecognizeResponse> responseObserver = null;
-      ClientStream<StreamingRecognizeRequest> clientStream;
-      responseObserver =
-          new ResponseObserver<StreamingRecognizeResponse>() {
-            String curTime = "";
-            
-            public void onStart(StreamController controller) {
-              referenceToStreamController = controller;
-            }
-
-            public void onResponse(StreamingRecognizeResponse response) {
-            	
-            	StreamingRecognitionResult result = response.getResultsList().get(0);
-                Duration resultEndTime = result.getResultEndTime();
-                resultEndTimeInMS =
-                    (int)
-                        ((resultEndTime.getSeconds() * 1000) + (resultEndTime.getNanos() / 1000000));
-                double correctedTime =
-                    resultEndTimeInMS - bridgingOffset + (STREAMING_LIMIT * restartCounter);
-                String resulttime = convertMillisToDate(correctedTime);
-                if (!result.getIsFinal()) {
-                	if(!curTime.equals(resulttime)) {
-                		curTime = resulttime;
-                		System.out.println(curTime);
-                    	InfiniteStreamRecognize.responses.add(response);
-                    	lastTranscriptWasFinal = false;
-                	}
-                }else {
-                	isFinalEndTime = resultEndTimeInMS;
-                	lastTranscriptWasFinal = true;
-                }
-
-                /*
-                SpeechRecognitionAlternative alternative ;
-                for(StreamingRecognizeResponse respon : responses) {
-                	  if(respon == null) {
-                		  System.out.printf("NULL:  ");
-                	  }else {
-                	  result = respon.getResultsList().get(0);
-                	  alternative = result.getAlternativesList().get(0);
-                	  System.out.printf("%s:  ", alternative.getTranscript());
-                	  }
-                  }*/
-            }
-
-            public void onComplete() {}
-
-            public void onError(Throwable t) {}
-          };
-      clientStream = client.streamingRecognizeCallable().splitCall(responseObserver);
-      RecognitionConfig recognitionConfig =
-          RecognitionConfig.newBuilder()
-              .setEncoding(RecognitionConfig.AudioEncoding.LINEAR16)
-              .setLanguageCode(languageCode)
-              .setSampleRateHertz(16000)
-              .build();
-
-      StreamingRecognitionConfig streamingRecognitionConfig =
-          StreamingRecognitionConfig.newBuilder()
-              .setConfig(recognitionConfig)
-              .setInterimResults(true)
-              .build();
-
-      StreamingRecognizeRequest request =
-          StreamingRecognizeRequest.newBuilder()
-              .setStreamingConfig(streamingRecognitionConfig)
-              .build(); // The first request in a streaming call has to be a config
-
-      clientStream.send(request);
+    micThread.setPriority(10);
 
       try {
         // SampleRate:16000Hz, SampleSizeInBits: 16, Number of channels: 1, Signed: true,

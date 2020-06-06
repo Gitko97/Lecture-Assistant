@@ -11,7 +11,7 @@ public class Main {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		stt.init("");
+		stt.init();
 		Thread thread = new Thread(stt);
 		thread.start();
 		try {
