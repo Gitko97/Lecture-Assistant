@@ -71,7 +71,7 @@ screenshot 첨부
 
 # Contribution Guidelines
 **This project adheres to Lecture-Assistant's [code of conduct.](https://github.com/Gitko97/Lecture-Assistant/blob/master/CODE_OF_CONDUCT.md)
-**We use [GitHub issues](https://github.com/Gitko97/Lecture-Assistant/issues) for tracking requests and bugs.
+We use [GitHub issues](https://github.com/Gitko97/Lecture-Assistant/issues) for tracking requests and bugs.**
 
 # LICENSE
 
