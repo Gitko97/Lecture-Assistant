@@ -21,6 +21,8 @@ public class Compare implements Runnable {
 	private final double DIF_PAGE=0.1;
 	
 	private int startPage=0;
+	private int sameImg;
+	private int capStartIndex;
 	private final int NO_WRITE_SECONDS=3;
 	
 	public Compare(
@@ -38,15 +40,12 @@ public class Compare implements Runnable {
 		//initialize
 		int pdfPage=startPage;
 		int captureCount=0;
-		int capSaveIndex;
-		int sameImg=0;
-		double difLevel;
 		
 		getNextPage=true;
 		capNoteStart=null;
 		capNoteFinish=null;
 		lastPage=false;
-		
+		sameImg=0;
 		
 		//check exception
 		if(
@@ -58,43 +57,13 @@ public class Compare implements Runnable {
 		}
 		
 		//main part
-		while(!exit&&!lastPage){
+		while(!exit&&!lastPage) {
 			try {
 				if(getNextPage) {//get next page
 					pdfPage=pageChange(pdfPage, captureCount);
 				}
-				else{//compare captured image
-					
-					if(capNoteStart==null) {//first compare after change page
-						capNoteStart=capturing.getCaptureImg(captureCount);
-					}
-					
-					if(capturing.endPos(captureCount+1)) {//check if next page is last page
-						lastPage=true;
-					}
-					
-					capTemp1=capturing.getCaptureImg(captureCount);
-					capTemp2=capturing.getCaptureImg(captureCount+1);
-					difLevel=PDFCompare.getDifRatio(capTemp1, capTemp2);
-					
-					if(difLevel>DIF_PAGE) {//different case
-						//input how to work in different case
-						getNextPage=true;
-						capNoteStart=null;
-					}
-					else if (difLevel>SAME_CAP) {//write case
-						
-						//tracked same case
-						sameImg=0;
-					}
-					else {//nothing case
-						sameImg++;
-						
-						if(sameImg>=NO_WRITE_SECONDS) {
-							//save writing
-							capNoteStart=capturing.getCaptureImg(captureCount+1);
-						}
-					}
+				else {//compare captured image
+					compareCapturedImage(captureCount);
 				}
 			}
 			catch(Exception e){
@@ -106,14 +75,13 @@ public class Compare implements Runnable {
 		return;
 	}
 	
-	
-	
 	//return value: recent pdfPage
 	private int pageChange(int pdfPage, int capCount)
 	{
 		double difLevel;
 		pdfTemp=originImgArray.get(pdfPage);
 		capNoteStart=capturing.getCaptureImg(capCount);
+		capStartIndex=capCount;
 		difLevel=PDFCompare.getDifRatio(pdfTemp, capNoteStart);
 		if(difLevel<SAME_PAGE) {
 			//같은 페이지 인정
@@ -133,6 +101,41 @@ public class Compare implements Runnable {
 		
 		getNextPage=false;
 		return pdfPage;
+	}
+	
+	private void compareCapturedImage(int captureCount) {
+		double difLevel;
+		if(capNoteStart==null) {//first compare after change page
+			capNoteStart=capturing.getCaptureImg(captureCount);
+		}
+		
+		if(capturing.endPos(captureCount+1)) {//check if next page is last page
+			lastPage=true;
+		}
+		
+		capTemp1=capturing.getCaptureImg(captureCount);
+		capTemp2=capturing.getCaptureImg(captureCount+1);
+		difLevel=PDFCompare.getDifRatio(capTemp1, capTemp2);
+		
+		if(difLevel>DIF_PAGE) {//different case
+			//input how to work in different case
+			getNextPage=true;
+			capNoteStart=null;
+		}
+		else if (difLevel>SAME_CAP) {//write case
+			
+			//tracked same case
+			sameImg=0;
+		}
+		else {//nothing case
+			sameImg++;
+			
+			if(sameImg>=NO_WRITE_SECONDS) {
+				//save writing
+				capNoteStart=capturing.getCaptureImg(captureCount+1);
+			}
+		}
+		return;
 	}
 	
 	public void setStartPage(int num){
