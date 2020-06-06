@@ -15,8 +15,23 @@ This is [a link to Google speech-to-text api.](https://cloud.google.com/speech-t
 ## Step1
 Select .pdf file on your computer.
 
-## step2
-Select .json file on your computer. 
+screenshots 첨부
+
+## Step2
+Select .json file on your computer. It is a Google Api speech-to-text **Key File**.
+
+screenshots 첨부
+
+## Step3
+Select the range of screen of the video lecture. This range will make screenshot files which will be used to compare with the original pdf file.
+
+sreenshot 첨부
+
+## step4
+Press Exit button. Now you get a completed lecture pdf note!
+
+screenshot 첨부
+
 # How to get Notes
 
 1. This is the simple algorithm how we **compare images**.
@@ -55,6 +70,9 @@ Select .json file on your computer.
 ![83271875-674f2e00-a205-11ea-8b12-2f3a5df74119](https://user-images.githubusercontent.com/47098720/83944863-a6066900-a841-11ea-901b-6e0d024e7984.png)
 
 
+# LICENSE
+
+[Apache License 2.0](https://github.com/Gitko97/Lecture-Assistant/blob/master/LICENSE)
 
 
 
