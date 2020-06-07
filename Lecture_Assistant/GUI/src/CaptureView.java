@@ -26,7 +26,7 @@ public class CaptureView extends JFrame {
 	}
 	public CaptureView(int width, int height) {
 		
-		panelPos = new Point(1200,200);
+		panelPos = new Point(100,100);
 		panelSize = new Point(313, 304);
 		panel = new JPanel();
 		panel.setLayout(null);
@@ -35,45 +35,37 @@ public class CaptureView extends JFrame {
 
 		event = new CaptureEvent(this);
 		
-		lblNewLabel = new JLabel("your_pdf_file_path");
-		lblNewLabel.setFont(new Font("Dialog",Font.ITALIC, 12));
-		lblNewLabel.setHorizontalAlignment(JLabel.CENTER);
-		lblNewLabel.setBounds(20, 40, 270, 15);
-		lblNewLabel.setOpaque(true);
-		lblNewLabel.setBackground(Color.lightGray);
+		lblNewLabel = new JLabel("New label");
+		lblNewLabel.setBounds(100, 58, 105, 15);
 		panel.add(lblNewLabel);
 		
-		lblNewLabel_1 = new JLabel("your_key_file_path");
-		lblNewLabel_1.setFont(new Font("Dialog",Font.ITALIC, 12));
-		lblNewLabel_1.setHorizontalAlignment(JLabel.CENTER);
-		lblNewLabel_1.setBounds(20, 155, 270, 15);
-		lblNewLabel_1.setOpaque(true);
-		lblNewLabel_1.setBackground(Color.lightGray);
+		lblNewLabel_1 = new JLabel("New label");
+		lblNewLabel_1.setBounds(100, 155, 84, 15);
 		panel.add(lblNewLabel_1);
 		
 		JButton btnNewButton = new JButton("Lecture_PDF");
-		btnNewButton.setBounds(90, 70, 127, 23);
+		btnNewButton.setBounds(91, 83, 127, 23);
 		btnNewButton.addActionListener(event.new PDFButtonEvent());
 		panel.add(btnNewButton);
 		
 		JButton btnNewButton_1 = new JButton("STT KEY");
-		btnNewButton_1.setBounds(110, 185, 97, 23);
+		btnNewButton_1.setBounds(100, 175, 97, 23);
 		btnNewButton_1.addActionListener(event.new KeyButtonEvent());
 		panel.add(btnNewButton_1);
 		
 		btnNewButton_2 = new JButton("Start");
-		btnNewButton_2.setBounds(50, 254, 97, 23);
+		btnNewButton_2.setBounds(100, 254, 97, 23);
 		btnNewButton_2.addActionListener(event.new StartButtonEvent());
 		panel.add(btnNewButton_2);
 		
 		btnNewButton_3 = new JButton("Exit");
-		btnNewButton_3.setBounds(50, 254, 97, 23);
+		btnNewButton_3.setBounds(100, 254, 97, 23);
 		btnNewButton_3.addActionListener(event.new ExitButtonEvent());
 		btnNewButton_3.setVisible(false);
 		panel.add(btnNewButton_3);
 		
 		JButton btnNewButton_4 = new JButton("Close");
-		btnNewButton_4.setBounds(170, 256, 97, 23);
+		btnNewButton_4.setBounds(100, 20, 97, 23);
 		btnNewButton_4.addActionListener(event.new CloseButtonEvent());
 		panel.add(btnNewButton_4);
 		///	패널 생성	//
@@ -98,12 +90,6 @@ public class CaptureView extends JFrame {
 		this.pack();
 		this.setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
 		this.setVisible(true);
-		
-		 try { 
-	        	UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-	        }catch(Exception e) { 
-	        		System.out.println("Error setting Java LAF: " + e);
-	        }
 	}
 	
 	public void setLabel1(String content) {
