@@ -13,26 +13,34 @@ We are using Google api so you need to download it for using our Lecture Assista
 This is [a link to Google speech-to-text api.](https://cloud.google.com/speech-to-text)
 
 ## Step1
-Select .pdf file on your computer.
+Select the range of screen size of your video lecture. This range will make screenshot files which will be used to compare with the original pdf file. You can easily adjust the size of the green square using dragging your mouse.
 
-screenshots 첨부
+<img width="1474" alt="스크린샷 2020-06-07 오후 5 49 02" src="https://user-images.githubusercontent.com/47098720/83964364-7a3dbe80-a8e7-11ea-9f46-e81f7430c8af.png">
 
 ## Step2
-Select .json file on your computer. It is a Google Api speech-to-text **Key File**.
+Select .pdf file on your computer.
 
-screenshots 첨부
+<img width="313" alt="스크린샷 2020-06-07 오후 5 49 23" src="https://user-images.githubusercontent.com/47098720/83964433-1ec00080-a8e8-11ea-9f85-b26dbde5f7be.png">
+
 
 ## Step3
-Select the range of screen of the video lecture. This range will make screenshot files which will be used to compare with the original pdf file.
+Select .json file on your computer. It is a Google Api speech-to-text **Key File**.
 
-sreenshot 첨부
+<img width="306" alt="스크린샷 2020-06-07 오후 5 57 13" src="https://user-images.githubusercontent.com/47098720/83964478-6050ab80-a8e8-11ea-9a3b-f81be3445010.png">
 
 ## Step4
-Press Exit button. Now you get a completed lecture pdf note!
+Press **Start** button.
 
-screenshot 첨부
+<img width="306" alt="스크린샷 2020-06-07 오후 5 57 13" src="https://user-images.githubusercontent.com/47098720/83964496-78282f80-a8e8-11ea-81e1-fabcac406e5d.png">
 
-# How to get Notes
+
+## Step4
+Press **Close** button. Now you get a completed lecture pdf note!
+
+<img width="306" alt="스크린샷 2020-06-07 오후 5 57 13" src="https://user-images.githubusercontent.com/47098720/83964513-8b3aff80-a8e8-11ea-830b-8ecabe33ca6b.png">
+
+
+# How Lecture Assistant makes Notes
 
 ## This is the simple algorithm how we **compare images**.
 
@@ -72,6 +80,7 @@ screenshot 첨부
 # Contribution Guidelines
 **This project adheres to Lecture-Assistant's [code of conduct.](https://github.com/Gitko97/Lecture-Assistant/blob/master/CODE_OF_CONDUCT.md)
 We use [GitHub issues](https://github.com/Gitko97/Lecture-Assistant/issues) for tracking requests and bugs.**
+You can see the specific README.md in each brach which helps you understand the details.
 
 # LICENSE
 
