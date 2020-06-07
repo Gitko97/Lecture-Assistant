@@ -67,7 +67,7 @@ public class CaptureView extends JFrame {
 		panel.add(btnNewButton_2);
 		
 		btnNewButton_3 = new JButton("Exit");
-		btnNewButton_3.setBounds(100, 284, 97, 23);
+		btnNewButton_3.setBounds(50, 254, 97, 23);
 		btnNewButton_3.addActionListener(event.new ExitButtonEvent());
 		btnNewButton_3.setVisible(false);
 		panel.add(btnNewButton_3);
@@ -98,6 +98,12 @@ public class CaptureView extends JFrame {
 		this.pack();
 		this.setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
 		this.setVisible(true);
+		
+		 try { 
+	        	UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+	        }catch(Exception e) { 
+	        		System.out.println("Error setting Java LAF: " + e);
+	        }
 	}
 	
 	public void setLabel1(String content) {
