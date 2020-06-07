@@ -1,3 +1,4 @@
+package src;
 /*
  * Copyright 2018 Google LLC
  *
@@ -14,7 +15,6 @@
  * limitations under the License.
  */
 
-package callAPI;
 
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.api.gax.core.FixedCredentialsProvider;
@@ -49,7 +49,7 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.DataLine.Info;
 import javax.sound.sampled.TargetDataLine;
 
-public class InfiniteStreamRecognize implements Runnable{
+public class SpeechToText implements Runnable{
 	
 	private static final int STREAMING_LIMIT = 290000*12;
   //private static final int STREAMING_LIMIT = 290000*12; // ~5 minutes
@@ -111,6 +111,7 @@ public class InfiniteStreamRecognize implements Runnable{
 		CredentialsProvider credentialsProvider = FixedCredentialsProvider.create(ServiceAccountCredentials.fromStream(new FileInputStream(filePath)));
 		SpeechSettings settings = SpeechSettings.newBuilder().setCredentialsProvider(credentialsProvider).build();
 		this.client = SpeechClient.create(settings);
+		System.out.println("인증완료");
 	}
 	
 	public void exit() {
@@ -131,13 +132,27 @@ public class InfiniteStreamRecognize implements Runnable{
       	  alternative = result.getAlternativesList().get(0);
       	  origin.add(alternative.getTranscript());
         }
+        if(origin.size() == 0) return null;
         System.out.println(origin);
-        String final_string = origin.get(origin.size()-1);
-        k=0;
-        for(String index : origin) {
-        	if(k<index.length()) {
-        		changed_string.add(final_string.substring(k, index.length()));
-        		k=index.length();
+        int j=0;
+        for(i=0;i<origin.size()-1;i++) {
+        	int subindex = 0;
+        	if(origin.get(i).length()-10 > origin.get(i+1).length()) {
+        		String final_string = origin.get(i);
+        		for(;j<i+1;j++) {
+        			if(subindex < origin.get(j).length()) {
+        				changed_string.add(final_string.substring(subindex, origin.get(j).length()));
+        				subindex =  origin.get(j).length();
+        			}
+        		}
+        	}else if(i+1 == origin.size()-1){
+        		String final_string = origin.get(i+1);
+        		for(;j<=i+1;j++) {
+        			if(subindex < origin.get(j).length()) {
+        				changed_string.add(final_string.substring(subindex, origin.get(j).length()));
+        				subindex =  origin.get(j).length();
+        			}
+        		}
         	}
         }
         return changed_string;
@@ -166,8 +181,7 @@ public class InfiniteStreamRecognize implements Runnable{
 	                if (!result.getIsFinal()) {
 	                	if(!curTime.equals(resulttime)) {
 	                		curTime = resulttime;
-	                		System.out.println(curTime);
-	                    	InfiniteStreamRecognize.responses.add(response);
+	                    	SpeechToText.responses.add(response);
 	                    	lastTranscriptWasFinal = false;
 	                	}
 	                }else {
@@ -175,17 +189,7 @@ public class InfiniteStreamRecognize implements Runnable{
 	                	lastTranscriptWasFinal = true;
 	                }
 
-	                /*
-	                SpeechRecognitionAlternative alternative ;
-	                for(StreamingRecognizeResponse respon : responses) {
-	                	  if(respon == null) {
-	                		  System.out.printf("NULL:  ");
-	                	  }else {
-	                	  result = respon.getResultsList().get(0);
-	                	  alternative = result.getAlternativesList().get(0);
-	                	  System.out.printf("%s:  ", alternative.getTranscript());
-	                	  }
-	                  }*/
+	                  SpeechRecognitionAlternative alternative = result.getAlternativesList().get(0);
 	            }
 
 	            public void onComplete() {}
@@ -263,11 +267,9 @@ public class InfiniteStreamRecognize implements Runnable{
         long startTime = System.currentTimeMillis();
 
         while (true) {
-
           long estimatedTime = System.currentTimeMillis() - startTime;
 
           if (estimatedTime >= STREAMING_LIMIT || exit) {
-
             clientStream.closeSend();
             referenceToStreamController.cancel(); // remove Observer
 
@@ -283,7 +285,7 @@ public class InfiniteStreamRecognize implements Runnable{
             restartCounter++;
 
             if (!lastTranscriptWasFinal) {
-              System.out.print('\n');
+              break;
             }
 
             newStream = true;
@@ -299,7 +301,6 @@ public class InfiniteStreamRecognize implements Runnable{
             startTime = System.currentTimeMillis();
 
           } else {
-
             if ((newStream) && (lastAudioInput.size() > 0)) {
               // if this is the first audio from a new request
               // calculate amount of unfinalized audio from last request
@@ -326,20 +327,19 @@ public class InfiniteStreamRecognize implements Runnable{
                       StreamingRecognizeRequest.newBuilder()
                           .setAudioContent(lastAudioInput.get(i))
                           .build();
+                  
                   clientStream.send(request);
+                 
                 }
               }
               newStream = false;
             }
-
             tempByteString = ByteString.copyFrom(sharedQueue.take());
 
             request =
                 StreamingRecognizeRequest.newBuilder().setAudioContent(tempByteString).build();
-
             audioInput.add(tempByteString);
           }
-
           clientStream.send(request);
         }
       } catch (Exception e) {
