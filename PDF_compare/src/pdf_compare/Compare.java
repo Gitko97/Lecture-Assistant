@@ -23,6 +23,7 @@ public class Compare implements Runnable {
 	private int startPage=0;
 	private int sameImg;
 	private int capStartIndex;
+	private int pdfPage;
 	private final int NO_WRITE_SECONDS=3;
 	
 	public Compare(
@@ -38,9 +39,9 @@ public class Compare implements Runnable {
 	
 	public void run(){
 		//initialize
-		int pdfPage=startPage;
 		int captureCount=0;
 		
+		pdfPage=startPage;
 		getNextPage=true;
 		capNoteStart=null;
 		capNoteFinish=null;
@@ -60,7 +61,7 @@ public class Compare implements Runnable {
 		while(!exit&&!lastPage) {
 			try {
 				if(getNextPage) {//get next page
-					pdfPage=pageChange(pdfPage, captureCount);
+					pageChange(captureCount);
 				}
 				else {//compare captured image
 					compareCapturedImage(captureCount);
@@ -76,7 +77,7 @@ public class Compare implements Runnable {
 	}
 	
 	//return value: recent pdfPage
-	private int pageChange(int pdfPage, int capCount)
+	private int pageChange(int capCount)
 	{
 		double difLevel;
 		pdfTemp=originImgArray.get(pdfPage);
@@ -105,14 +106,12 @@ public class Compare implements Runnable {
 	
 	private void compareCapturedImage(int captureCount) {
 		double difLevel;
-		if(capNoteStart==null) {//first compare after change page
-			capNoteStart=capturing.getCaptureImg(captureCount);
-		}
 		
 		if(capturing.endPos(captureCount+1)) {//check if next page is last page
 			lastPage=true;
 		}
 		
+		//compare and check how amount different
 		capTemp1=capturing.getCaptureImg(captureCount);
 		capTemp2=capturing.getCaptureImg(captureCount+1);
 		difLevel=PDFCompare.getDifRatio(capTemp1, capTemp2);
@@ -121,18 +120,26 @@ public class Compare implements Runnable {
 			//input how to work in different case
 			getNextPage=true;
 			capNoteStart=null;
+			capNoteFinish=null;
 		}
 		else if (difLevel>SAME_CAP) {//write case
-			
-			//tracked same case
+			if(capNoteStart==null) {//save first point after change page
+				capNoteStart=capturing.getCaptureImg(captureCount);
+				capStartIndex=captureCount;
+			}
+			capNoteFinish=null;
 			sameImg=0;
 		}
 		else {//nothing case
+			if(capNoteStart!=null&&capNoteFinish==null) {//save last different point if start point is save
+			capNoteFinish=capturing.getCaptureImg(captureCount+1);
+			}
 			sameImg++;
 			
 			if(sameImg>=NO_WRITE_SECONDS) {
 				//save writing
 				capNoteStart=capturing.getCaptureImg(captureCount+1);
+				capStartIndex=captureCount+1;
 			}
 		}
 		return;
