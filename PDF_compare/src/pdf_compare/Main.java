@@ -3,7 +3,7 @@ package pdf_compare;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
-
+import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class Main {
@@ -13,7 +13,7 @@ public class Main {
 		BufferedImage ba=null, bb=null;
 		
 		a=new File("sampleB.bmp");
-		b=new File("sampleD.bmp");
+		b=new File("sampleC.bmp");
 		
 		try 
 		{
@@ -24,7 +24,28 @@ public class Main {
 		
 //		PDFCompare.setNoise(0.1, 0.35, 0.5);
 		System.out.println(PDFCompare.getDifRatio(ba,bb));
-
-		return;
+		
+		File difA, difB;
+		BufferedImage dA = null, dB = null;
+		
+		difA = new File("difPartA.png");
+		difB = new File("difPartB.png");
+		
+		try 
+		{
+			dA=ImageIO.read(difA);
+			dB=ImageIO.read(difB);
+		}
+		catch(Exception e) {};
+		BorderedImage.setBufferedImage(dA, dB);
+		try
+		{
+			File outputImage = new File("writeDown.png");
+			ImageIO.write(BorderedImage.extract(), "png", outputImage);
+		}
+		catch(IOException e)
+		{
+			System.out.println("exeption: img file saving get error!");
+		}
 	}
 }
