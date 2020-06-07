@@ -5,12 +5,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.io.File;
 import java.io.IOException;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 
 public class CaptureEvent implements MouseListener, MouseMotionListener {
@@ -29,6 +28,7 @@ public class CaptureEvent implements MouseListener, MouseMotionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
+			
 		   JFileChooser fc = new JFileChooser("/Users/");
 		   fc.setDialogTitle("Select pdf file");
 		   /*
@@ -49,11 +49,17 @@ public class CaptureEvent implements MouseListener, MouseMotionListener {
 			}
 	    	   
 	       });*/
-	        fc.showOpenDialog(null); // showOpenDialog는 창을 띄우는데 어느 위치에 띄울건지 인자를 받고
-	                                                      // 그리고 선택한 파일의 경로값을 반환한다.	  
+		   
+		   fc.setFileFilter(new FileNameExtensionFilter("pdf", "pdf")); //.pdf 파일만 선택하도록
+		   fc.setMultiSelectionEnabled(false);                          //다중 선택 불가
+
+	       fc.showOpenDialog(null); // showOpenDialog는 창을 띄우는데 어느 위치에 띄울건지 인자를 받고
+	                                                      // 그리고 선택한 파일의 경로값을 반환한다.
+	        
+	        
 	        if(fc.getSelectedFile() != null) {
 	        	pdfPath = fc.getSelectedFile().toString();
-	        	pdfPath = "C:\\Users\\xcvds\\Downloads\\[Lecture12] Code optimization part 1.pdf";
+	        	pdfPath = "/Users/changseon/Desktop/acp.pdf";
 	        	try {
 	        		controller.GetLecturePDF(pdfPath);
 	        		captureView.setLabel1(pdfPath);
@@ -112,11 +118,14 @@ public class CaptureEvent implements MouseListener, MouseMotionListener {
 			// TODO Auto-generated method stub
 			JFileChooser fc = new JFileChooser("/Users/");
 			fc.setDialogTitle("Select Key file");
+			fc.setFileFilter(new FileNameExtensionFilter("json", "json")); //.pdf 파일만 선택하도록
+			fc.setMultiSelectionEnabled(false);                          //다중 선택 불가
 	        fc.showOpenDialog(null); // showOpenDialog는 창을 띄우는데 어느 위치에 띄울건지 인자를 받고
-	                                                      // 그리고 선택한 파일의 경로값을 반환한다.	  
+	                                                      // 그리고 선택한 파일의 경로값을 반환한다.
+
 	        if(fc.getSelectedFile() != null)  {
 	        		keyPath = fc.getSelectedFile().toString();
-	        		keyPath = "C:\\Users\\xcvds\\Desktop\\key.json";
+	        		keyPath = "";
 	        		try {
 	        			controller.Authentication(keyPath);
 	        			captureView.setLabel2(keyPath);
