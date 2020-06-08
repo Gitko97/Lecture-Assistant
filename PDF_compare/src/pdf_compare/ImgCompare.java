@@ -10,8 +10,8 @@ import javax.imageio.ImageIO;
 
 
 public class ImgCompare {
+
 	//default noise value
-	private static boolean isDebugging=true;
 	private static double hueNoise=0.1, satNoise=0.35, lumNoise=0.5;
 
 	//this variable need to control semaphore
@@ -48,35 +48,14 @@ public class ImgCompare {
 				if(isHSLDifferent(aHSL, bHSL))
 				{
 					result++;
-					if(isDebugging)
-					{
-						difPartA.setRGB(cor, row, a.getRGB(cor, row));
-						partA = difPartA;
-						difPartB.setRGB(cor, row, b.getRGB(cor, row));
-						partB = difPartB;
-
-					}
+					difPartA.setRGB(cor, row, a.getRGB(cor, row));
+					difPartB.setRGB(cor, row, b.getRGB(cor, row));
 				}
 			}
 		}
+		partA = difPartA;
+		partB = difPartB;
 		return result;
-	}
-
-	//Image Difference Extraction
-	protected static void extractDifferentPart()
-	{
-		try
-		{
-			File outputfileA = new File("difPartA.png");
-			ImageIO.write(partA, "png", outputfileA);
-			File outputfileB = new File("difPartB.png");
-			ImageIO.write(partB, "png", outputfileB);
-		}
-		catch(IOException e)
-		{
-			System.out.println(e.getMessage());
-		}
-		return;
 	}
 
 	protected static boolean isHSLDifferent(double[] aHSL, double[] bHSL)

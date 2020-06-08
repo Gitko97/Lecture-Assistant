@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 public class Compare implements Runnable {
 	
-	
 	private ArrayList<BufferedImage> originImgArray;
 	private Capturing capturing;
 	private LA_Controller controller;
@@ -16,13 +15,15 @@ public class Compare implements Runnable {
 	private boolean getNextPage;
 	private boolean lastPage;
 	
-	private final double SAME_CAP=0.0003;
+	private final double SAME_CAP=0.0005;
 	private final double SAME_PAGE=0.05;
 	private final double DIF_PAGE=0.1;
 	
 	private int startPage=0;
 	private int sameImg;
-	private int capStartIndex;
+	private int captureCount;
+	private int capNoteStartIndex;
+	private int capPageStartIndex;
 	private int pdfPage;
 	private final int NO_WRITE_SECONDS=3;
 	
@@ -39,14 +40,15 @@ public class Compare implements Runnable {
 	
 	public void run(){
 		//initialize
-		int captureCount=0;
-		
+		captureCount=0;
+		sameImg=0;
+		capPageStartIndex=0;
 		pdfPage=startPage;
-		getNextPage=true;
+		getNextPage=false;
 		capNoteStart=null;
 		capNoteFinish=null;
 		lastPage=false;
-		sameImg=0;
+		
 		
 		//check exception
 		if(
@@ -61,10 +63,10 @@ public class Compare implements Runnable {
 		while(!exit&&!lastPage) {
 			try {
 				if(getNextPage) {//get next page
-					pageChange(captureCount);
+					pageChange();
 				}
 				else {//compare captured image
-					compareCapturedImage(captureCount);
+					compareCapturedImage();
 				}
 			}
 			catch(Exception e){
@@ -77,34 +79,43 @@ public class Compare implements Runnable {
 	}
 	
 	//return value: recent pdfPage
-	private int pageChange(int capCount)
+	private void pageChange()
 	{
 		double difLevel;
+		BufferedImage temp;
+		
 		pdfTemp=originImgArray.get(pdfPage);
-		capNoteStart=capturing.getCaptureImg(capCount);
-		capStartIndex=capCount;
-		difLevel=PDFCompare.getDifRatio(pdfTemp, capNoteStart);
+		temp=capturing.getCaptureImg(captureCount);
+		
+		difLevel=PDFCompare.getDifRatio(pdfTemp, temp);
 		if(difLevel<SAME_PAGE) {
-			//같은 페이지 인정
+			controller.ADD_Note(temp, capPageStartIndex, captureCount);
 		}
 		else{
-			pdfTemp=originImgArray.get(pdfPage+1);
-			difLevel=PDFCompare.getDifRatio(pdfTemp, capNoteStart);
+			/* NOT YET CONSTRUCT
+			pdfTemp=originImgArray.get(++pdfPage);
+			difLevel=PDFCompare.getDifRatio(pdfTemp, temp);
 			if(difLevel<SAME_PAGE) {
-				//다음 페이지 인정
-				pdfPage++;
+				//compare next page
+				//NOT YET
+			 
 			}
+			
 			else {//fail to search same PDF page
 				throw new IllegalArgumentException("Fail to search same PDF page");
 			}
+			*/
+			
+			throw new IllegalArgumentException("Fail to search same PDF page");
 		}
-		
+		capPageStartIndex=captureCount+1;
+		pdfPage++;
 		
 		getNextPage=false;
-		return pdfPage;
+		return;
 	}
 	
-	private void compareCapturedImage(int captureCount) {
+	private void compareCapturedImage() {
 		double difLevel;
 		
 		if(capturing.endPos(captureCount+1)) {//check if next page is last page
@@ -114,18 +125,17 @@ public class Compare implements Runnable {
 		//compare and check how amount different
 		capTemp1=capturing.getCaptureImg(captureCount);
 		capTemp2=capturing.getCaptureImg(captureCount+1);
-		difLevel=PDFCompare.getDifRatio(capTemp1, capTemp2);
+		difLevel=BorderedImage.getDifRatio(capTemp1, capTemp2);
 		
 		if(difLevel>DIF_PAGE) {//different case
-			//input how to work in different case
+			saveWriting();
 			getNextPage=true;
-			capNoteStart=null;
-			capNoteFinish=null;
+			captureCount--;
 		}
 		else if (difLevel>SAME_CAP) {//write case
 			if(capNoteStart==null) {//save first point after change page
 				capNoteStart=capturing.getCaptureImg(captureCount);
-				capStartIndex=captureCount;
+				capNoteStartIndex=captureCount;
 			}
 			capNoteFinish=null;
 			sameImg=0;
@@ -137,11 +147,24 @@ public class Compare implements Runnable {
 			sameImg++;
 			
 			if(sameImg>=NO_WRITE_SECONDS) {
-				//save writing
+				saveWriting();
 				capNoteStart=capturing.getCaptureImg(captureCount+1);
-				capStartIndex=captureCount+1;
+				capNoteStartIndex=captureCount+1;
 			}
 		}
+		return;
+	}
+	
+	private void saveWriting() {
+		BufferedImage temp;
+		//import note part
+		BorderedImage.setBufferedImage();//already compare each other, so it use least compare data
+		temp=BorderedImage.extractBufferedImage();
+		
+		//saving
+		controller.ADD_Note(temp, capNoteStartIndex, captureCount);
+		capNoteStart=null;
+		capNoteFinish=null;
 		return;
 	}
 	
@@ -169,6 +192,8 @@ public class Compare implements Runnable {
 		
 	}
 	public interface LA_Controller{
-		
+
+		void ADD_Note(BufferedImage temp, int capStartIndex, int captureCount);
+		void ADD_CompletePDF(BufferedImage lastImg, int changePageIndex);
 	}
 }

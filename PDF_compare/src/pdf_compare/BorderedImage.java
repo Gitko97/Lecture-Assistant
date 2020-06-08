@@ -20,6 +20,14 @@ public class BorderedImage extends PDFCompare {
 		searchImage();		
 		return;
 	}
+	public static void setBufferedImage() {	//already extracted image import
+		imageA = partA;
+		imageB = partB;
+		setSearch();		
+		searchImage();		
+		return;
+	}
+	
 	private static void setSearch() {		// 차이가 있는 곳의 좌표를 구하기 위한 변수들을 초기화
 		
 		startPos[0] = imageB.getWidth()-1;
@@ -168,9 +176,13 @@ public class BorderedImage extends PDFCompare {
 	}
 	
 		
-	public static BufferedImage extract() 
+	public static BufferedImage extractBufferedImage() 
 	{
-		return PDFCompare.extractImage.getSubimage(startPos[0], startPos[1], endPos[0]-startPos[0], endPos[1]-startPos[1]);
+		return partB.getSubimage(startPos[0], startPos[1], endPos[0]-startPos[0], endPos[1]-startPos[1]);
 	//	return PDFCompare.extractImage.getSubimage(0, 0, PDFCompare.extractImage.getWidth(), PDFCompare.extractImage.getHeight());
+	}
+	public static int[] extractPoint()
+	{
+		return startPos;
 	}
 }

@@ -15,10 +15,6 @@ public class PDFCompare extends ImgCompare{
 	private static boolean isCutMargin[]= {false, false};
 	private static boolean isMarginCheckAuto=true;
 	
-	protected static BufferedImage extractImage;	//변경사항  by eaststarmmt
-	
-	
-	
 	//main method
 	//if same, return false, else, return true
 	//origin and video buffered img are not changed
@@ -29,8 +25,6 @@ public class PDFCompare extends ImgCompare{
 		//debugging
 		System.out.println("difvalue: "+difPixelNum);
 		System.out.println("pixelAmount: "+pixelAmount);
-		
-		extractDifferentPart();
 		
 		return ((double)difPixelNum/(double)pixelAmount);
 	}
@@ -69,7 +63,6 @@ public class PDFCompare extends ImgCompare{
 		}
 		//calculate total pixel amount
 		pixelAmount=videoTransform.getWidth()*videoTransform.getHeight();
-		getExtractImage(videoTransform);
 		//get difValue(=number of dif pixel)
 		return getPixelDif(originTransform, videoTransform);
 	}
@@ -355,11 +348,6 @@ public class PDFCompare extends ImgCompare{
 
 	    // Return the buffered image
 	    return bimage;
-	}
-	private static void getExtractImage(BufferedImage img) //변경사항 by eaststarmmt
-	{
-		extractImage = img;
-		return;
 	}
 
 }
