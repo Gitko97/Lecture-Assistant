@@ -21,6 +21,7 @@ public class TextToImgDemo
 		index.add(new Point(50, 55));
 		index.add(new Point(60, 70)); // 드는~
 		System.out.println(sttstring[50]);
+		System.out.println(sttstring[70]);
 		
 		ArrayList<Note> notes = new ArrayList<>();
 		ArrayList<BufferedImage> imgs = new ArrayList<>();
@@ -40,6 +41,8 @@ public class TextToImgDemo
 		}
 		TextToImg textToimg = new TextToImg(sttarray,notes,change, imgs.get(0).getWidth(), imgs.get(0).getHeight());
 		//textToImg 실행
+		textToimg.convert();
+		
 	}
  
 }

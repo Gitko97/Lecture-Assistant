@@ -13,8 +13,8 @@ public class IMG_Resize {
 	public BufferedImage ResizeIMG(BufferedImage img) {	//매개변수 img를  새로운 높이 폭으로 바꾼뒤 return 
 
 		BufferedImage changed = new BufferedImage (newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
-	    Graphics2D bGr = img.createGraphics();
-	    bGr.drawImage(img, 0, 0, null);
+	    Graphics2D bGr = changed.createGraphics();
+	    bGr.drawImage(img.getScaledInstance(newWidth, newHeight, BufferedImage.SCALE_SMOOTH), 0, 0, null);
 	    bGr.dispose();
 		return changed;
 	}
