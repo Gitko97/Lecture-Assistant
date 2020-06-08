@@ -11,5 +11,7 @@ public class Note {
 		this.note = note;
 		this.startIndex = startIndex;
 		this.endIndex = endIndex;
+		
+		
 	}
 }
