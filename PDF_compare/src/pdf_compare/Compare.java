@@ -69,7 +69,7 @@ public class Compare implements Runnable {
 					compareCapturedImage();
 				}
 			}
-			catch(Exception e){
+			catch(Exception e) {
 				Thread.yield();
 			}
 			captureCount++;
@@ -79,8 +79,7 @@ public class Compare implements Runnable {
 	}
 	
 	//return value: recent pdfPage
-	private void pageChange()
-	{
+	private void pageChange() {
 		double difLevel;
 		BufferedImage temp;
 		
@@ -142,7 +141,7 @@ public class Compare implements Runnable {
 		}
 		else {//nothing case
 			if(capNoteStart!=null&&capNoteFinish==null) {//save last different point if start point is save
-			capNoteFinish=capturing.getCaptureImg(captureCount+1);
+				capNoteFinish=capturing.getCaptureImg(captureCount+1);
 			}
 			sameImg++;
 			
@@ -168,7 +167,7 @@ public class Compare implements Runnable {
 		return;
 	}
 	
-	public void setStartPage(int num){
+	public void setStartPage(int num) {
 		if(num<0){
 			throw new IllegalArgumentException(
 					"input value must be pasitive number, not "+num+" that nagative number or zero");
@@ -177,23 +176,8 @@ public class Compare implements Runnable {
 		return;
 	}
 	
-	public void exit(){
+	public void exit() {
 		exit=true;
 		return;
-	}
-	
-	
-	//legacy
-	public interface Capturing{
-
-		BufferedImage getCaptureImg(int capCount);
-
-		boolean endPos(int index);
-		
-	}
-	public interface LA_Controller{
-
-		void ADD_Note(BufferedImage temp, int capStartIndex, int captureCount);
-		void ADD_CompletePDF(BufferedImage lastImg, int changePageIndex);
 	}
 }

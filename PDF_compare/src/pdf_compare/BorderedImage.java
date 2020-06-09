@@ -13,7 +13,7 @@ public class BorderedImage extends PDFCompare {
 	protected static int countX = 0;
 	protected static int countY = 0;
 	
-	public static void setBufferedImage(BufferedImage a, BufferedImage b) {		//difPartA와 difPartB를 불러옴
+	public static void setBufferedImage(BufferedImage a, BufferedImage b) {	//import difPartA and difPartB
 		imageA = a;
 		imageB = b;
 		setSearch();		
@@ -28,7 +28,7 @@ public class BorderedImage extends PDFCompare {
 		return;
 	}
 	
-	private static void setSearch() {		// 차이가 있는 곳의 좌표를 구하기 위한 변수들을 초기화
+	private static void setSearch() { // 차이가 있는 곳의 좌표를 구하기 위한 변수들을 초기화
 		
 		startPos[0] = imageB.getWidth()-1;
 		startPos[1] = imageB.getHeight()-1;
