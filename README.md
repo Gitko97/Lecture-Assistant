@@ -45,7 +45,7 @@ Select .json file on your computer. It is a Google Api speech-to-text **Key File
 <img width="306" alt="스크린샷 2020-06-07 오후 5 57 13" src="https://user-images.githubusercontent.com/47098720/83964478-6050ab80-a8e8-11ea-9a3b-f81be3445010.png">
 <img width="310" alt="스크린샷 2020-06-07 오후 9 53 48" src="https://user-images.githubusercontent.com/47098720/83969892-80469600-a90d-11ea-8079-d0324b581a0a.png">
 
-You can choose **a language option** for Korean or English.
+You should select what a lecture's language is.
 
 ![image](https://user-images.githubusercontent.com/47098720/84114471-5e612680-aa67-11ea-940c-830f31d70ba2.png)
 
