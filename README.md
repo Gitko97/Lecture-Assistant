@@ -5,12 +5,26 @@
 Lecture Assistant is a tool to support students who take online classes. It provides not only voice dictation and handwriting dictation but also mapping those two. Students can relive their burden on taking online classes and easily review what they've learned.
 
 
-
-# How to use Lecture Assistant
+# Install
 ## Google API(speech-to-text)
 We are using Google api so you need to download it for using our Lecture Assistant.
 
 This is [a link to Google speech-to-text api.](https://cloud.google.com/speech-to-text)
+
+## Libraries
+* **Apache PDFBox**
+This is [a link to Apache PDFBox.](https://pdfbox.apache.org/)
+
+* **Recommand to use JDK 13.0.2**
+This is [a link to download jdk13.0.2](https://www.oracle.com/java/technologies/javase/jdk13-archive-downloads.html)
+
+* **JRE 1.8 for GUI**
+We are using JRE 1.8 for GUI.
+
+## Stereo Mix
+Please enable **stereo mix** on your computer.
+[This link let you know how to enble stereo mix.](https://www.howtogeek.com/howto/39532/how-to-enable-stereo-mix-in-windows-7-to-record-audio/)
+If you still have a problem, [this link will help you out.](https://answers.microsoft.com/en-us/windows/forum/all/how-to-enable-stereo-mix-in-windows-10/4c51b5da-d56c-42c1-bb9d-bc9fccf8fa48)
 
 ## Step1
 Select the range of screen size of your video lecture. This range will make screenshot files which will be used to compare with the original pdf file. You can easily adjust the size of the green square using dragging your mouse.
@@ -31,6 +45,11 @@ Select .json file on your computer. It is a Google Api speech-to-text **Key File
 <img width="306" alt="스크린샷 2020-06-07 오후 5 57 13" src="https://user-images.githubusercontent.com/47098720/83964478-6050ab80-a8e8-11ea-9a3b-f81be3445010.png">
 <img width="310" alt="스크린샷 2020-06-07 오후 9 53 48" src="https://user-images.githubusercontent.com/47098720/83969892-80469600-a90d-11ea-8079-d0324b581a0a.png">
 
+You can choose **a language option** for Korean or English.
+
+![image](https://user-images.githubusercontent.com/47098720/84114471-5e612680-aa67-11ea-940c-830f31d70ba2.png)
+
+
 ## Step4
 Press **Start** button.
 
@@ -39,7 +58,7 @@ Press **Start** button.
 
 
 
-## Step4
+## Step5
 Press **EIXT** button. Now you get a completed lecture pdf note!
 
 <img width="307" alt="2" src="https://user-images.githubusercontent.com/47098720/83970073-96088b00-a90e-11ea-8e9b-a7968152bb09.png">
