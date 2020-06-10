@@ -1,100 +1,99 @@
 package src;
 import java.awt.Point;
-
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Timer;
-
 import src.CaptureView;
 import src.Capturing;
 import src.PDFandIMG;
 import src.SpeechToText;
-public class LA_controller {
-	CaptureView captureView;
-	Capturing capturing;
-	//Compare compare;
-	SpeechToText speechToText;
-	PDFandIMG pdfAndimg;
-	//TextToImg textToimg;
-	ArrayList<BufferedImage> complete_PDF;
-	ArrayList<Note> notes;
-	ArrayList<Integer> change_pos;
-	String savePos;
-	int PDFwidth;
-	int PDFheight;
-	Thread compare_thread;
-	Thread stt_thread;
-	Timer capturing_Timer;
-	
-	public LA_controller(CaptureView captureView){
-		pdfAndimg = new PDFandIMG();
-		this.captureView =  captureView;
-		notes = new ArrayList<Note>();
-		complete_PDF = new ArrayList<BufferedImage>();
-		change_pos = new ArrayList<Integer>();
 
-		capturing_Timer = new Timer();
-	}
+public class LA_controller {
+  CaptureView captureView;
+  Capturing capturing;
+  // Compare compare;
+  SpeechToText speechToText;
+  PDFandIMG pdfAndimg;
+  // TextToImg textToimg;
+  ArrayList<BufferedImage> completePdf;
+  ArrayList<Note> notes;
+  ArrayList<Integer> changePos;
+  String savePos;
+  int pdfWidth;
+  int pdfHeight;
+  Thread compareThread;
+  Thread sttThread;
+  Timer capturingTimer;
 	
-	public void GetLecturePDF(String filePath) throws IOException { // pdf 가져오기 버튼 누르고 실행 
-		//compare = new Compare(pdfAndimg.PDFtoIMG(filePath), capturing, this);
-		//PDFwidth = pdfAndimg.get(0).getWidth();
-		//PDFhidth = pdfAndimg.get(0).getHeight();
-		this.savePos = filePath;
-	}
+  public LA_controller(CaptureView captureView){
+    pdfAndimg = new PDFandIMG();
+	this.captureView =  captureView;
+	notes = new ArrayList<Note>();
+	completePdf = new ArrayList<BufferedImage>();
+	changePos = new ArrayList<Integer>();
+
+	capturingTimer = new Timer();
+  }
 	
-	public void Authentication(String filePath,String langCode) throws IOException {
-			speechToText = new SpeechToText();
-			speechToText.Authentiation(filePath,langCode);
-			speechToText.init(null);
+  public void GetLecturePDF(String filePath) throws IOException { // pdf 媛��졇�삤湲� 踰꾪듉 �늻瑜닿퀬 �떎�뻾 
+    //compare = new Compare(pdfAndimg.PDFtoIMG(filePath), capturing, this);
+	//PDFwidth = pdfAndimg.get(0).getWidth();
+	//PDFhidth = pdfAndimg.get(0).getHeight();
+	this.savePos = filePath;
+  }
+	
+  public void Authentication(String filePath,String langCode) throws IOException {
+    speechToText = new SpeechToText();
+	speechToText.Authentiation(filePath, langCode);
+	speechToText.init(null);
 			
-	}
+  }
 	
-	public void start() throws InterruptedException {
-		Thread.currentThread().setPriority(10);
-		stt_thread = new Thread(speechToText);
-		//compare_thread = new Thread(compare);
-		captureView.captureStart();
-		capturing = new Capturing(captureView.getInfo());
+  public void start() throws InterruptedException {
+    Thread.currentThread().setPriority(10);
+	sttThread = new Thread(speechToText);
+	//compare_thread = new Thread(compare);
+	captureView.captureStart();
+	capturing = new Capturing(captureView.getInfo());
 		
-		stt_thread.setPriority(9);
-		//compare_thread.setPriority(5);
-		capturing_Timer.schedule(capturing, 0, 1000);
-		stt_thread.start();
-		//compare_thread.run();
+	sttThread.setPriority(9);
+	//compare_thread.setPriority(5);
+	capturingTimer.schedule(capturing, 0, 1000);
+	sttThread.start();
+	//compare_thread.run();
 		
-		Thread.currentThread().setPriority(1);
-	}
+	Thread.currentThread().setPriority(1);
+  }
 	
-	public void pause() {
+  public void pause() {
 		
-	}
+  }
 	
-	public boolean exit() {
-		captureView.captureStop();
-		speechToText.exit();
-		capturing_Timer.cancel();
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		//if(!compare.exit()) return false;
-		System.out.println(speechToText.getString());
-		//textToimg = new TextToImg(speechToText.getString(),notes,change_pos, PDFwidth, PDFheight);
-		//pdfAndimg.IMGtoPDF(textToimg.change(), this.savePos+"_script");
-		//pdfAndimg.IMGtoPDF(complete_PDF, this.savePos+"_complete");
-		return true;
+  public boolean exit() {
+    captureView.captureStop();
+	speechToText.exit();
+	capturingTimer.cancel();
+	try {
+	  Thread.sleep(1000);
+	} catch (InterruptedException e) {
+	  e.printStackTrace();
 	}
+	//if(!compare.exit()) return false;
+	System.out.println(speechToText.getString());
+	//textToimg = new TextToImg(speechToText.getString(),notes,change_pos, PDFwidth, PDFheight);
+	//pdfAndimg.IMGtoPDF(textToimg.change(), this.savePos+"_script");
+	//pdfAndimg.IMGtoPDF(complete_PDF, this.savePos+"_complete");
+	return true;
+  }
 	
-	public void ADD_Note(BufferedImage note, int start, int end) {
-		notes.add(new Note(note, start, end));
-	}
+  public void ADD_Note(BufferedImage note, int start, int end) {
+	notes.add(new Note(note, start, end));
+  }
 	
-	public void ADD_CompletePDF(BufferedImage completePDF, int changePos) {
-		complete_PDF.add(completePDF);
-		change_pos.add(changePos);
-	}
+  public void ADD_CompletePDF(BufferedImage completePDF, int changePos2) {
+	completePdf.add(completePDF);
+	changePos.add(changePos2);
+  }
 }
