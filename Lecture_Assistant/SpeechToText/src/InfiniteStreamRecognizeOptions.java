@@ -29,8 +29,8 @@ public class InfiniteStreamRecognizeOptions {
   /** Construct an InfiniteStreamRecognizeOptions class from command line flags. */
   public static InfiniteStreamRecognizeOptions fromFlags(String[] args) {
     Options options = new Options();
-    options.addOption(
-        Option.builder()
+    options.addOption (
+      Option.builder()
             .type(String.class)
             .longOpt("lang_code")
             .hasArg()
