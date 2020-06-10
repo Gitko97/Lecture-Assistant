@@ -47,6 +47,7 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.DataLine.Info;
+import javax.swing.JOptionPane;
 import javax.sound.sampled.TargetDataLine;
 
 public class SpeechToText implements Runnable{
@@ -81,9 +82,11 @@ public class SpeechToText implements Runnable{
   RecognitionConfig recognitionConfig;
   StreamingRecognitionConfig streamingRecognitionConfig;
   StreamingRecognizeRequest request;
-    		  
+  private String langCode;
+  
   public void init(String... args) {
 	exit = false;
+	InfiniteStreamRecognizeOptions.langCode = langCode;
     InfiniteStreamRecognizeOptions options = InfiniteStreamRecognizeOptions.fromFlags(args);
     if (options == null) {
       // Could not parse.
@@ -106,11 +109,12 @@ public class SpeechToText implements Runnable{
                 - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))));
   }
 
-	public void Authentiation(String filePath) throws IOException  // key/key.json ���� �̿���  Credential ��ü ���� �� �̸� �̿��� SpeechClient ��ü�� �����Ͽ� ����ƽ client�� �Ҵ�
+	public void Authentiation(String filePath,String langCode) throws IOException  // key/key.json ���� �̿���  Credential ��ü ���� �� �̸� �̿��� SpeechClient ��ü�� �����Ͽ� ����ƽ client�� �Ҵ�
 	{	
 		CredentialsProvider credentialsProvider = FixedCredentialsProvider.create(ServiceAccountCredentials.fromStream(new FileInputStream(filePath)));
 		SpeechSettings settings = SpeechSettings.newBuilder().setCredentialsProvider(credentialsProvider).build();
 		this.client = SpeechClient.create(settings);
+		this.langCode = langCode;
 		System.out.println("인증완료");
 	}
 	
@@ -189,7 +193,8 @@ public class SpeechToText implements Runnable{
 	                	lastTranscriptWasFinal = true;
 	                }
 
-	                  SpeechRecognitionAlternative alternative = result.getAlternativesList().get(0);
+	                 // SpeechRecognitionAlternative alternative = result.getAlternativesList().get(0);
+	                  //System.out.println(alternative.getTranscript()); //for console debugging
 	            }
 
 	            public void onComplete() {}
@@ -223,7 +228,6 @@ public class SpeechToText implements Runnable{
 
       @Override
       public void run() {
-        System.out.println("Start speaking...Press Ctrl-C to stop");
         targetDataLine.start();
         byte[] data = new byte[BYTES_PER_BUFFER];
         while (targetDataLine.isOpen()) {
@@ -234,7 +238,7 @@ public class SpeechToText implements Runnable{
             }
             sharedQueue.put(data.clone());
           } catch (InterruptedException e) {
-            System.out.println("Microphone input buffering interrupted : " + e.getMessage());
+        	  JOptionPane.showMessageDialog(null, "Microphone input buffering interrupted");
           }
         }
       }
@@ -256,8 +260,7 @@ public class SpeechToText implements Runnable{
         // stream
 
         if (!AudioSystem.isLineSupported(targetInfo)) {
-          System.out.println("Microphone not supported");
-          System.exit(0);
+          throw new InterruptedException();
         }
         // Target data line captures the audio stream the microphone produces.
         targetDataLine = (TargetDataLine) AudioSystem.getLine(targetInfo);

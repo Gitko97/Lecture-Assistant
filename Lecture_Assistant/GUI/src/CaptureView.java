@@ -95,7 +95,6 @@ public class CaptureView extends JFrame {
 		this.setBackground(new Color(255, 0, 0, 0));	// 프레임을 투명하게
 		this.setAlwaysOnTop(true);						// 프레임 위치를 항상 위로
 		this.setExtendedState(JFrame.MAXIMIZED_BOTH);	// 프레임을 모니터 최대 크기로
-		this.pack();
 		this.setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
 		this.setVisible(true);
 		

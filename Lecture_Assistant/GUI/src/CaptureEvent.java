@@ -28,27 +28,8 @@ public class CaptureEvent implements MouseListener, MouseMotionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			
 		   JFileChooser fc = new JFileChooser("/Users/");
 		   fc.setDialogTitle("Select pdf file");
-		   /*
-	       fc.setFileFilter(new FileFilter() {
-
-			@Override
-			public boolean accept(File f) {
-				if(f.getName().endsWith(".pdf")) {
-					return true;
-				}
-				return false;
-			}
-
-			@Override
-			public String getDescription() {
-				// TODO Auto-generated method stub
-				return "PDF Files";
-			}
-	    	   
-	       });*/
 		   
 		   fc.setFileFilter(new FileNameExtensionFilter("pdf", "pdf")); //.pdf 파일만 선택하도록
 		   fc.setMultiSelectionEnabled(false);                          //다중 선택 불가
@@ -58,8 +39,7 @@ public class CaptureEvent implements MouseListener, MouseMotionListener {
 	        
 	        
 	        if(fc.getSelectedFile() != null) {
-	        	pdfPath = fc.getSelectedFile().toString();
-	        	pdfPath = "/Users/changseon/Desktop/acp.pdf";
+	        	pdfPath = fc.getSelectedFile().toString(); 
 	        	try {
 	        		controller.GetLecturePDF(pdfPath);
 	        		captureView.setLabel1(pdfPath);
@@ -90,7 +70,15 @@ public class CaptureEvent implements MouseListener, MouseMotionListener {
 			if(pdfPath == null || keyPath == null) {
 				JOptionPane.showMessageDialog(null, "You have to input PDF File and Key File");
 			}
-			else { start = true; controller.start();}
+			else { 
+				start = true; 
+				try {
+					controller.start();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					JOptionPane.showMessageDialog(null, "Microphone not support");
+				}
+			}
 		}
 		
 	}
@@ -124,18 +112,29 @@ public class CaptureEvent implements MouseListener, MouseMotionListener {
 	                                                      // 그리고 선택한 파일의 경로값을 반환한다.
 
 	        if(fc.getSelectedFile() != null)  {
+	        	String []language = {"한국어", "English"};
+	        	int selected = JOptionPane.showOptionDialog(null, "Language", "The language is the lecture in",
+	        	  JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,language, language[0]);
+	        	if(selected != JOptionPane.CLOSED_OPTION) {
 	        		keyPath = fc.getSelectedFile().toString();
-	        		keyPath = "";
 	        		try {
-	        			controller.Authentication(keyPath);
+	        			controller.Authentication(keyPath,langCode(language[selected]));
 	        			captureView.setLabel2(keyPath);
 	        		} catch (IOException e) {
 	        			keyPath = null;
 	        			JOptionPane.showMessageDialog(null, "This key file does not work.");
 	        		}
+	        	}
 	        }
 		}
 		
+		public String langCode(String lang) {
+			switch(lang) {
+				case "한국어": return "ko-KR";
+				case "English" : return "en-US";
+			}
+			return "en-US";
+		}
 	}
 	
 	public CaptureEvent(CaptureView captureView) {

@@ -43,21 +43,21 @@ public class LA_controller {
 		//PDFwidth = pdfAndimg.get(0).getWidth();
 		//PDFhidth = pdfAndimg.get(0).getHeight();
 		this.savePos = filePath;
-		//compare_thread = new Thread(compare);
 	}
 	
-	public void Authentication(String filePath) throws IOException {
+	public void Authentication(String filePath,String langCode) throws IOException {
 			speechToText = new SpeechToText();
-			speechToText.Authentiation(filePath);
+			speechToText.Authentiation(filePath,langCode);
 			speechToText.init(null);
-			stt_thread = new Thread(speechToText);
+			
 	}
 	
-	public void start() {
+	public void start() throws InterruptedException {
 		Thread.currentThread().setPriority(10);
+		stt_thread = new Thread(speechToText);
+		//compare_thread = new Thread(compare);
 		captureView.captureStart();
 		capturing = new Capturing(captureView.getInfo());
-		
 		
 		stt_thread.setPriority(9);
 		//compare_thread.setPriority(5);
@@ -84,8 +84,8 @@ public class LA_controller {
 		//if(!compare.exit()) return false;
 		System.out.println(speechToText.getString());
 		//textToimg = new TextToImg(speechToText.getString(),notes,change_pos, PDFwidth, PDFheight);
-		//pdfAndimg.IMGtoPDF(textToimg.change(), this.savePos);
-		//pdfAndimg.IMGtoPDF(complete_PDF, this.savePos);
+		//pdfAndimg.IMGtoPDF(textToimg.change(), this.savePos+"_script");
+		//pdfAndimg.IMGtoPDF(complete_PDF, this.savePos+"_complete");
 		return true;
 	}
 	
