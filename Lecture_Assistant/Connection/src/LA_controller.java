@@ -92,8 +92,8 @@ public class LA_controller {
 	notes.add(new Note(note, start, end));
   }
 	
-  public void ADD_CompletePDF(BufferedImage completePDF, int changePos2) {
-	completePdf.add(completePDF);
+  public void ADD_CompletePDF(BufferedImage completePdf2, int changePos2) {
+	completePdf.add(completePdf2);
 	changePos.add(changePos2);
   }
 }
