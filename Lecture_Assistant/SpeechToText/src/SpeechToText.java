@@ -51,10 +51,8 @@ import javax.sound.sampled.TargetDataLine;
 
 public class SpeechToText implements Runnable{
 	
-	private static final int STREAMING_LIMIT = 290000*12;
+  private static final int STREAMING_LIMIT = 290000*12;
   //private static final int STREAMING_LIMIT = 290000*12; // ~5 minutes
-
-
   // Creating shared object
   private static volatile BlockingQueue<byte[]> sharedQueue = new LinkedBlockingQueue();
   private static TargetDataLine targetDataLine;
@@ -90,8 +88,8 @@ public class SpeechToText implements Runnable{
       System.out.println("Failed to parse options.");
       System.exit(1);
     }
-      languageCode = options.langCode;
-      this.setting();
+    languageCode = options.langCode;
+    this.setting();
   }
 
   public static String convertMillisToDate(double milliSeconds) {
@@ -106,116 +104,116 @@ public class SpeechToText implements Runnable{
                 - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))));
   }
 
-	public void Authentiation(String filePath) throws IOException  // key/key.json ���� �̿���  Credential ��ü ���� �� �̸� �̿��� SpeechClient ��ü�� �����Ͽ� ����ƽ client�� �Ҵ�
-	{	
-		CredentialsProvider credentialsProvider = FixedCredentialsProvider.create(ServiceAccountCredentials.fromStream(new FileInputStream(filePath)));
-		SpeechSettings settings = SpeechSettings.newBuilder().setCredentialsProvider(credentialsProvider).build();
-		this.client = SpeechClient.create(settings);
-		System.out.println("인증완료");
-	}
+  public void Authentiation(String filePath) throws IOException {  // key/key.json 占쏙옙占쏙옙 占싱울옙占쏙옙  Credential 占쏙옙체 占쏙옙占쏙옙 占쏙옙 占싱몌옙 占싱울옙占쏙옙 SpeechClient 占쏙옙체占쏙옙 占쏙옙占쏙옙占싹울옙 占쏙옙占쏙옙틱 client占쏙옙 占쌀댐옙
+    CredentialsProvider credentialsProvider = FixedCredentialsProvider.create(ServiceAccountCredentials.fromStream(new FileInputStream(filePath)));
+	SpeechSettings settings = SpeechSettings.newBuilder().setCredentialsProvider(credentialsProvider).build();
+	this.client = SpeechClient.create(settings);
+	System.out.println("�씤利앹셿猷�");
+  }
 	
-	public void exit() {
-		this.exit = true;
-	}
+  public void exit() {
+    this.exit = true;
+  }
 	
-	public ArrayList<String> getString(){
+  public ArrayList<String> getString() {
 		
-		
-		ArrayList<String> origin = new ArrayList<>();
-		ArrayList<String> changed_string = new ArrayList<>(); 
-		 StreamingRecognitionResult result;
-        SpeechRecognitionAlternative alternative ;
-        int k = 0;
-        int i;
-        for(i = 0; i<responses.size();i++) {
-      	  result = responses.get(i).getResultsList().get(0);
-      	  alternative = result.getAlternativesList().get(0);
-      	  origin.add(alternative.getTranscript());
+    ArrayList<String> origin = new ArrayList<>();
+	ArrayList<String> changed_string = new ArrayList<>(); 
+	StreamingRecognitionResult result;
+    SpeechRecognitionAlternative alternative ;
+    int k = 0;
+    int i;
+    for(i = 0; i<responses.size();i++) {
+      result = responses.get(i).getResultsList().get(0);
+      alternative = result.getAlternativesList().get(0);
+      origin.add(alternative.getTranscript());
+    }
+    if(origin.size() == 0) {
+      return null;
+    }
+    System.out.println(origin);
+    int j=0;
+    for(i=0;i<origin.size()-1;i++) {
+      int subindex = 0;
+      if(origin.get(i).length()-10 > origin.get(i+1).length()) {
+        String final_string = origin.get(i);
+        for(;j<i+1;j++) {
+          if(subindex < origin.get(j).length()) {
+            changed_string.add(final_string.substring(subindex, origin.get(j).length()));
+        	subindex =  origin.get(j).length();
+          }
         }
-        if(origin.size() == 0) return null;
-        System.out.println(origin);
-        int j=0;
-        for(i=0;i<origin.size()-1;i++) {
-        	int subindex = 0;
-        	if(origin.get(i).length()-10 > origin.get(i+1).length()) {
-        		String final_string = origin.get(i);
-        		for(;j<i+1;j++) {
-        			if(subindex < origin.get(j).length()) {
-        				changed_string.add(final_string.substring(subindex, origin.get(j).length()));
-        				subindex =  origin.get(j).length();
-        			}
-        		}
-        	}else if(i+1 == origin.size()-1){
-        		String final_string = origin.get(i+1);
-        		for(;j<=i+1;j++) {
-        			if(subindex < origin.get(j).length()) {
-        				changed_string.add(final_string.substring(subindex, origin.get(j).length()));
-        				subindex =  origin.get(j).length();
-        			}
-        		}
-        	}
+      } else if(i+1 == origin.size()-1) {
+        String final_string = origin.get(i+1);
+        for(;j<=i+1;j++) {
+          if(subindex < origin.get(j).length()) {
+            changed_string.add(final_string.substring(subindex, origin.get(j).length()));
+        	subindex =  origin.get(j).length();
+            }
         }
-        return changed_string;
-	}
+      }
+    }
+    return changed_string;
+  }
   /** Performs infinite streaming speech recognition */
 	
   public void setting() {
-	      responseObserver =
-	          new ResponseObserver<StreamingRecognizeResponse>() {
-	            String curTime = "";
+	responseObserver =
+	new ResponseObserver<StreamingRecognizeResponse>() {
+	  String curTime = "";
 	            
-	            public void onStart(StreamController controller) {
-	              referenceToStreamController = controller;
-	            }
+	  public void onStart(StreamController controller) {
+	    referenceToStreamController = controller;
+	  }
 
-	            public void onResponse(StreamingRecognizeResponse response) {
-	            	
-	            	StreamingRecognitionResult result = response.getResultsList().get(0);
-	                Duration resultEndTime = result.getResultEndTime();
-	                resultEndTimeInMS =
-	                    (int)
-	                        ((resultEndTime.getSeconds() * 1000) + (resultEndTime.getNanos() / 1000000));
-	                double correctedTime =
-	                    resultEndTimeInMS - bridgingOffset + (STREAMING_LIMIT * restartCounter);
-	                String resulttime = convertMillisToDate(correctedTime);
-	                if (!result.getIsFinal()) {
-	                	if(!curTime.equals(resulttime)) {
-	                		curTime = resulttime;
-	                    	SpeechToText.responses.add(response);
-	                    	lastTranscriptWasFinal = false;
-	                	}
-	                }else {
-	                	isFinalEndTime = resultEndTimeInMS;
-	                	lastTranscriptWasFinal = true;
-	                }
+	  public void onResponse(StreamingRecognizeResponse response) {
+	    
+		StreamingRecognitionResult result = response.getResultsList().get(0);
+	    Duration resultEndTime = result.getResultEndTime();
+	    resultEndTimeInMS =
+	      (int)((resultEndTime.getSeconds() * 1000) + (resultEndTime.getNanos() / 1000000));
+	    double correctedTime =
+	      resultEndTimeInMS - bridgingOffset + (STREAMING_LIMIT * restartCounter);
+	    String resulttime = convertMillisToDate(correctedTime);
+	    if (!result.getIsFinal()) {
+	      if(!curTime.equals(resulttime)) {
+	        curTime = resulttime;
+	        SpeechToText.responses.add(response);
+	        lastTranscriptWasFinal = false;
+	      }
+	    } else {
+	      isFinalEndTime = resultEndTimeInMS;
+	      lastTranscriptWasFinal = true;
+	    }
 
-	                  SpeechRecognitionAlternative alternative = result.getAlternativesList().get(0);
-	            }
+	    SpeechRecognitionAlternative alternative = result.getAlternativesList().get(0);
+	  }
 
-	            public void onComplete() {}
+	  public void onComplete() {}
 
-	            public void onError(Throwable t) {}
-	          };
-	      clientStream = client.streamingRecognizeCallable().splitCall(responseObserver);
-	      recognitionConfig =
-	          RecognitionConfig.newBuilder()
-	              .setEncoding(RecognitionConfig.AudioEncoding.LINEAR16)
-	              .setLanguageCode(languageCode)
-	              .setSampleRateHertz(16000)
-	              .build();
+	  public void onError(Throwable t) {}
+    };
+    
+    clientStream = client.streamingRecognizeCallable().splitCall(responseObserver);
+	recognitionConfig =
+	  RecognitionConfig.newBuilder()
+	    .setEncoding(RecognitionConfig.AudioEncoding.LINEAR16)
+	    .setLanguageCode(languageCode)
+	    .setSampleRateHertz(16000)
+	    .build();
 
-	      streamingRecognitionConfig =
-	          StreamingRecognitionConfig.newBuilder()
-	              .setConfig(recognitionConfig)
-	              .setInterimResults(true)
-	              .build();
+	streamingRecognitionConfig =
+	  StreamingRecognitionConfig.newBuilder()
+	    .setConfig(recognitionConfig)
+	    .setInterimResults(true)
+	    .build();
 
-	      request =
-	          StreamingRecognizeRequest.newBuilder()
-	              .setStreamingConfig(streamingRecognitionConfig)
-	              .build(); // The first request in a streaming call has to be a config
+	request =
+	  StreamingRecognizeRequest.newBuilder()
+	    .setStreamingConfig(streamingRecognitionConfig)
+	    .build(); // The first request in a streaming call has to be a config
 
-	      clientStream.send(request);
+	clientStream.send(request);
   }
   public void run(){
     // Microphone Input buffering
@@ -245,14 +243,14 @@ public class SpeechToText implements Runnable{
     Thread micThread = new Thread(micrunnable);
     micThread.setPriority(10);
 
-      try {
-        // SampleRate:16000Hz, SampleSizeInBits: 16, Number of channels: 1, Signed: true,
-        // bigEndian: false
-        AudioFormat audioFormat = new AudioFormat(16000, 16, 1, true, false);
-        DataLine.Info targetInfo =
-            new Info(
-                TargetDataLine.class,
-                audioFormat); // Set the system information to read from the microphone audio
+    try {
+      // SampleRate:16000Hz, SampleSizeInBits: 16, Number of channels: 1, Signed: true,
+      // bigEndian: false
+      AudioFormat audioFormat = new AudioFormat(16000, 16, 1, true, false);
+      DataLine.Info targetInfo =
+        new Info(
+          TargetDataLine.class,
+          audioFormat); // Set the system information to read from the microphone audio
         // stream
 
         if (!AudioSystem.isLineSupported(targetInfo)) {
@@ -293,58 +291,57 @@ public class SpeechToText implements Runnable{
             clientStream = client.streamingRecognizeCallable().splitCall(responseObserver);
 
             request =
-                StreamingRecognizeRequest.newBuilder()
-                    .setStreamingConfig(streamingRecognitionConfig)
-                    .build();
+              StreamingRecognizeRequest.newBuilder()
+                .setStreamingConfig(streamingRecognitionConfig).build();
 
 
             startTime = System.currentTimeMillis();
 
           } else {
-            if ((newStream) && (lastAudioInput.size() > 0)) {
-              // if this is the first audio from a new request
-              // calculate amount of unfinalized audio from last request
-              // resend the audio to the speech client before incoming audio
-              double chunkTime = STREAMING_LIMIT / lastAudioInput.size();
-              // ms length of each chunk in previous request audio arrayList
-              if (chunkTime != 0) {
-                if (bridgingOffset < 0) {
-                  // bridging Offset accounts for time of resent audio
-                  // calculated from last request
-                  bridgingOffset = 0;
-                }
-                if (bridgingOffset > finalRequestEndTime) {
-                  bridgingOffset = finalRequestEndTime;
-                }
-                int chunksFromMS =
-                    (int) Math.floor((finalRequestEndTime - bridgingOffset) / chunkTime);
+          if ((newStream) && (lastAudioInput.size() > 0)) {
+            // if this is the first audio from a new request
+            // calculate amount of unfinalized audio from last request
+            // resend the audio to the speech client before incoming audio
+            double chunkTime = STREAMING_LIMIT / lastAudioInput.size();
+            // ms length of each chunk in previous request audio arrayList
+            if (chunkTime != 0) {
+              if (bridgingOffset < 0) {
+                // bridging Offset accounts for time of resent audio
+                // calculated from last request
+                bridgingOffset = 0;
+              }
+              if (bridgingOffset > finalRequestEndTime) {
+                bridgingOffset = finalRequestEndTime;
+              }
+              int chunksFromMS =
+                (int) Math.floor((finalRequestEndTime - bridgingOffset) / chunkTime);
                 // chunks from MS is number of chunks to resend
-                bridgingOffset =
-                    (int) Math.floor((lastAudioInput.size() - chunksFromMS) * chunkTime);
+              bridgingOffset =
+                (int) Math.floor((lastAudioInput.size() - chunksFromMS) * chunkTime);
                 // set bridging offset for next request
                 for (int i = chunksFromMS; i < lastAudioInput.size(); i++) {
                   request =
-                      StreamingRecognizeRequest.newBuilder()
-                          .setAudioContent(lastAudioInput.get(i))
-                          .build();
+                    StreamingRecognizeRequest.newBuilder()
+                      .setAudioContent(lastAudioInput.get(i))
+                      .build();
                   
                   clientStream.send(request);
                  
                 }
-              }
-              newStream = false;
             }
-            tempByteString = ByteString.copyFrom(sharedQueue.take());
-
-            request =
-                StreamingRecognizeRequest.newBuilder().setAudioContent(tempByteString).build();
-            audioInput.add(tempByteString);
+            newStream = false;
           }
-          clientStream.send(request);
-        }
-      } catch (Exception e) {
-        System.out.println(e);
+          tempByteString = ByteString.copyFrom(sharedQueue.take());
+
+          request =
+            StreamingRecognizeRequest.newBuilder().setAudioContent(tempByteString).build();
+          audioInput.add(tempByteString);
+          }
+        clientStream.send(request);
       }
+    } catch (Exception e) {
+      System.out.println(e);
+    }
   }
 }
 // [END speech_transcribe_infinite_streaming]

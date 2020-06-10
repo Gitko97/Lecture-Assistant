@@ -30,12 +30,12 @@ public class InfiniteStreamRecognizeOptions {
   public static InfiniteStreamRecognizeOptions fromFlags(String[] args) {
     Options options = new Options();
     options.addOption(
-        Option.builder()
-            .type(String.class)
-            .longOpt("lang_code")
-            .hasArg()
-            .desc("Language code")
-            .build());
+      Option.builder()
+      .type(String.class)
+      .longOpt("lang_code")
+      .hasArg()
+      .desc("Language code")
+      .build());
 
     CommandLineParser parser = new DefaultParser();
     CommandLine commandLine;
