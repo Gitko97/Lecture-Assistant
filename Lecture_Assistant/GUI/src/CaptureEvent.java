@@ -21,7 +21,7 @@ public class CaptureEvent implements MouseListener, MouseMotionListener {
   int clickedShape=0;
   boolean start;
   CaptureView captureView;
-  LA_controller controller;
+  LaController controller;
   public class PDFButtonEvent implements ActionListener {
 
     @Override
@@ -89,7 +89,7 @@ public class CaptureEvent implements MouseListener, MouseMotionListener {
 	    if(controller.exit()) {
 		  JOptionPane.showMessageDialog(null, "Save Complete!");
 		  start = false;
-		  controller = new LA_controller(captureView);
+		  controller = new LaController(captureView);
 		}
 	  }
     }
@@ -127,7 +127,7 @@ public class CaptureEvent implements MouseListener, MouseMotionListener {
 		
 	public String langCode(String lang) {
 	  switch(lang) {
-	    case "�븳援��뼱": return "ko-KR";
+	    case "한국어": return "ko-KR";
 		case "English" : return "en-US";
 	  }
 	  return "en-US";
@@ -135,7 +135,7 @@ public class CaptureEvent implements MouseListener, MouseMotionListener {
   }
 	
   public CaptureEvent(CaptureView captureView) {
-    controller = new LA_controller(captureView);
+    controller = new LaController(captureView);
 	this.captureView = captureView;
 	start = false;
   }

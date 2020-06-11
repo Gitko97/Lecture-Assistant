@@ -25,6 +25,13 @@ public class Capturing extends TimerTask {
 	this.height = information[3];
   }
 	
+  public Capturing() {
+		this.x = 50;
+		this.y = 50;
+		this.width = 900;
+		this.height = 900;
+	}
+  
   public void run() {
     Robot robot;
 	try {

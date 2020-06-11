@@ -7,19 +7,20 @@ import java.util.ArrayList;
 import java.util.Timer;
 import src.CaptureView;
 import src.Capturing;
-import src.PDFandIMG;
+import src.PdfAndImg;
 import src.SpeechToText;
 
-public class LA_controller {
+public class LaController {
   CaptureView captureView;
   Capturing capturing;
   // Compare compare;
   SpeechToText speechToText;
-  PDFandIMG pdfAndimg;
+  PdfAndImg pdfAndimg;
   // TextToImg textToimg;
   ArrayList<BufferedImage> completePdf;
   ArrayList<Note> notes;
   ArrayList<Integer> changePos;
+  ArrayList<BufferedImage> origin_PDF;
   String savePos;
   int pdfWidth;
   int pdfHeight;
@@ -27,21 +28,21 @@ public class LA_controller {
   Thread sttThread;
   Timer capturingTimer;
 	
-  public LA_controller(CaptureView captureView){
-    pdfAndimg = new PDFandIMG();
+  public LaController(CaptureView captureView){
+    pdfAndimg = new PdfAndImg();
+    origin_PDF = new ArrayList<>();
 	this.captureView =  captureView;
 	notes = new ArrayList<Note>();
 	completePdf = new ArrayList<BufferedImage>();
 	changePos = new ArrayList<Integer>();
+	capturing = new Capturing();
 
-	capturingTimer = new Timer();
   }
 	
   public void GetLecturePDF(String filePath) throws IOException { // pdf 媛��졇�삤湲� 踰꾪듉 �늻瑜닿퀬 �떎�뻾 
-    //compare = new Compare(pdfAndimg.PDFtoIMG(filePath), capturing, this);
-	//PDFwidth = pdfAndimg.get(0).getWidth();
-	//PDFhidth = pdfAndimg.get(0).getHeight();
-	this.savePos = filePath;
+		origin_PDF = pdfAndimg.PdfToImg(filePath);
+		//compare = new Compare(origin_PDF, capturing, this);
+		this.savePos = filePath;
   }
 	
   public void Authentication(String filePath,String langCode) throws IOException {
@@ -52,18 +53,23 @@ public class LA_controller {
   }
 	
   public void start() throws InterruptedException {
-    Thread.currentThread().setPriority(10);
-	sttThread = new Thread(speechToText);
-	//compare_thread = new Thread(compare);
+	Thread.currentThread().setPriority(10);
+	
 	captureView.captureStart();
-	capturing = new Capturing(captureView.getInfo());
-		
+	capturingTimer = new Timer();
+	capturing.syncPosition(captureView.getInfo());
+   
+	sttThread = new Thread(speechToText);
 	sttThread.setPriority(9);
+	
+	//compare_thread = new Thread(compare);
 	//compare_thread.setPriority(5);
+	
+	
 	capturingTimer.schedule(capturing, 0, 1000);
 	sttThread.start();
-	//compare_thread.run();
-		
+	//compare_thread.start();
+	
 	Thread.currentThread().setPriority(1);
   }
 	

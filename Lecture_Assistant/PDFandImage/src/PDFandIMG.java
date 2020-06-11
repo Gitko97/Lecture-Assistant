@@ -14,7 +14,7 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 
-public class PDFandIMG{
+public class PdfAndImg{
 	
   public boolean IMGtoPDF(ArrayList<BufferedImage> imgs, String filePath) {	// 留ㅺ컻蹂��닔濡� 諛쏆� imgs�뱾�쓣 filePath�뿉 ���옣
     PDDocument document = new PDDocument();
