@@ -82,7 +82,7 @@ public class TextToImg {
 			// note의 startIndex과 string의 index가 같다면 같은 초이므로 노트의 이미지를 그릴 준비.
 			if (note.startIndex == i ) {
 				wordStart = 10;
-				if (lineStart + fontSize * (3 * 2) > height ) {	// 하단 여백이 모자랄 경우 다음 장으로 넘기기
+				if (lineStart + fontSize * 6 > height ) {	// 하단 여백이 모자랄 경우 다음 장으로 넘기기
 					imageWrite();
 					initGraphic();
 					lineStart = fontSize * 3;
