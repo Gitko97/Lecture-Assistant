@@ -13,6 +13,13 @@ public class BorderedImage extends PDFCompare {
 	protected static int countX = 0;
 	protected static int countY = 0;
 	
+	public static void setBufferedImage(BufferedImage a, BufferedImage b) {	//import difPartA and difPartB
+		BorderedImage.imageA = a;
+		BorderedImage.imageB = b;
+		setSearch();		
+		searchImage();		
+		return;
+	}
 	public static void setBufferedImage() {	//already extracted image import
 		imageA = partA;
 		imageB = partB;
@@ -21,7 +28,7 @@ public class BorderedImage extends PDFCompare {
 		return;
 	}
 	
-	private static void setSearch() { // Â÷ÀÌ°¡ ÀÖ´Â °÷ÀÇ ÁÂÇ¥¸¦ ±¸ÇÏ±â À§ÇÑ º¯¼öµéÀ» ÃÊ±âÈ­
+	private static void setSearch() { // ï¿½ï¿½ï¿½Ì°ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­
 		
 		startPos[0] = imageB.getWidth()-1;
 		startPos[1] = imageB.getHeight()-1;
@@ -37,15 +44,13 @@ public class BorderedImage extends PDFCompare {
 		getSearchEnd();
 		
 	}
-	private static void getSearchStart() { //ÃßÃâÇÒ ÀÌ¹ÌÁöÀÇ ¿ÞÂÊ À§ ¸ð¼­¸® ÁÂÇ¥¸¦ Ã£À½
+	private static void getSearchStart() { //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ð¼­¸ï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ Ã£ï¿½ï¿½
 		int row, col;
 		int tmp[] = new int[2];
 		tmp[0] = imageB.getWidth()-1;
 		tmp[1] = imageB.getHeight()-1;
-		countX =0;
-		countY =0;
 		
-		//¿ÞÂÊ ¸ð¼­¸®ÀÇ XÁÂÇ¥¸¦ ±¸ÇÔ
+		//ï¿½ï¿½ï¿½ï¿½ ï¿½ð¼­¸ï¿½ï¿½ï¿½ Xï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		for(row = imageB.getHeight()-1; row >= 0; row--)
 		{
 			for(col =imageB.getWidth()-1; col >= 0; col--)
@@ -54,14 +59,14 @@ public class BorderedImage extends PDFCompare {
 				{
 					if(row == tmp[1] && Math.abs(col-tmp[0])==1) 
 					{
-						countX++;			//noise¸¦ ÀÎ½ÄÇÏÁö ¾Ê±â À§ÇØ ÇÈ¼¿Å©±â ÃøÁ¤
+						countX++;			//noiseï¿½ï¿½ ï¿½Î½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½È¼ï¿½Å©ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 					}
 					else
 					{
-						countX = 1;			//X°¡ Áß°£¿¡ ²÷±â¸é 1·Î ÃÊ±âÈ­
+						countX = 1;			//Xï¿½ï¿½ ï¿½ß°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ 1ï¿½ï¿½ ï¿½Ê±ï¿½È­
 					}
 					
-					if(startPos[0] > col && countX >=5)		//Â÷ÀÌ°¡ ¹ß»ýÇÑ ºÎºÐÀÇ ±æÀÌ°¡ 5px ÀÌ»óÀÏ¶§  XÁÂÇ¥ ÀúÀå
+					if(startPos[0] > col && countX >=5)		//ï¿½ï¿½ï¿½Ì°ï¿½ ï¿½ß»ï¿½ï¿½ï¿½ ï¿½Îºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì°ï¿½ 5px ï¿½Ì»ï¿½ï¿½Ï¶ï¿½  Xï¿½ï¿½Ç¥ ï¿½ï¿½ï¿½ï¿½
 					{
 						startPos[0] = col;
 					}
@@ -73,7 +78,7 @@ public class BorderedImage extends PDFCompare {
 		tmp[0] = imageB.getWidth()-1;
 		tmp[1] = imageB.getHeight()-1;
 		
-		//¿ÞÂÊ ¸ð¼­¸®¿¡ YÁÂÇ¥¸¦ ±¸ÇÔ
+		//ï¿½ï¿½ï¿½ï¿½ ï¿½ð¼­¸ï¿½ï¿½ï¿½ Yï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		for(col = imageB.getWidth()-1; col >= 0; col--) 
 		{
 
@@ -83,14 +88,14 @@ public class BorderedImage extends PDFCompare {
 					
 					if(col == tmp[0] && Math.abs(row-tmp[1])==1) 
 					{
-						countY++;		//noise¸¦ ÀÎ½ÄÇÏÁö ¾Ê±â À§ÇØ ÇÈ¼¿Å©±â ÃøÁ¤
+						countY++;		//noiseï¿½ï¿½ ï¿½Î½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½È¼ï¿½Å©ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 					}
 					else
 					{
 						countY = 1;
 					}
 					
-					if(startPos[1] > row && countY >=5)		//Â÷ÀÌ°¡ ¹ß»ýÇÑ ºÎºÐÀÇ ±æÀÌ°¡ 5px ÀÌ»óÀÏ¶§  YÁÂÇ¥ ÀúÀå
+					if(startPos[1] > row && countY >=5)		//ï¿½ï¿½ï¿½Ì°ï¿½ ï¿½ß»ï¿½ï¿½ï¿½ ï¿½Îºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì°ï¿½ 5px ï¿½Ì»ï¿½ï¿½Ï¶ï¿½  Yï¿½ï¿½Ç¥ ï¿½ï¿½ï¿½ï¿½
 					{
 						startPos[1] = row;
 					}
@@ -99,9 +104,10 @@ public class BorderedImage extends PDFCompare {
 				}
 			}
 		}
+		System.out.println("Start Position : " +"x: " + startPos[0] + " y: " + startPos[1]);
 	}		
 
-	private static void getSearchEnd() {		//ÃßÃâÇÒ ÀÌ¹ÌÁöÀÇ ¿À¸¥ÂÊ ¾Æ·¡ ¸ð¼­¸® ÁÂÇ¥¸¦ Ã£À½
+	private static void getSearchEnd() {		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Æ·ï¿½ ï¿½ð¼­¸ï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ Ã£ï¿½ï¿½
 		int row, col;
 		int tmp[] = new int[2];
 		tmp[0] = imageB.getWidth()-1;
@@ -111,7 +117,7 @@ public class BorderedImage extends PDFCompare {
 		tmp[0] = 0;
 		tmp[1] = 0;
 		
-		//¿À¸¥ÂÊ ¸ð¼­¸®ÀÇ XÁÂÇ¥¸¦ ±¸ÇÔ
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ð¼­¸ï¿½ï¿½ï¿½ Xï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		for(row = 0; row < imageB.getHeight(); row++) 
 		{
 
@@ -121,14 +127,14 @@ public class BorderedImage extends PDFCompare {
 					
 					if(row == tmp[1] && Math.abs(col-tmp[0])==1) 
 					{
-						countX++;		//noise¸¦ ÀÎ½ÄÇÏÁö ¾Ê±â À§ÇØ ÇÈ¼¿Å©±â ÃøÁ¤
+						countX++;		//noiseï¿½ï¿½ ï¿½Î½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½È¼ï¿½Å©ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 					}
 					else
 					{
 						countX = 1;
 					}
 					
-					if(endPos[0] < col && countX >=5)		//Â÷ÀÌ°¡ ¹ß»ýÇÑ ºÎºÐÀÇ ±æÀÌ°¡ 5px ÀÌ»óÀÏ¶§  XÁÂÇ¥ ÀúÀå
+					if(endPos[0] < col && countX >=5)		//ï¿½ï¿½ï¿½Ì°ï¿½ ï¿½ß»ï¿½ï¿½ï¿½ ï¿½Îºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì°ï¿½ 5px ï¿½Ì»ï¿½ï¿½Ï¶ï¿½  Xï¿½ï¿½Ç¥ ï¿½ï¿½ï¿½ï¿½
 					{
 						endPos[0] = col;
 					}
@@ -140,7 +146,7 @@ public class BorderedImage extends PDFCompare {
 		tmp[0] = 0;
 		tmp[1] = 0;
 		
-		//¿À¸¥ÂÊ ¸ð¼­¸®ÀÇ YÁÂÇ¥¸¦ ±¸ÇÔ
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ð¼­¸ï¿½ï¿½ï¿½ Yï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		for(col = 0; col < imageB.getWidth(); col++) 
 		{
 
@@ -150,14 +156,14 @@ public class BorderedImage extends PDFCompare {
 					
 					if(col == tmp[0] && Math.abs(row-tmp[1])==1) 
 					{
-						countY++;		//noise¸¦ ÀÎ½ÄÇÏÁö ¾Ê±â À§ÇØ ÇÈ¼¿Å©±â ÃøÁ¤
+						countY++;		//noiseï¿½ï¿½ ï¿½Î½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½È¼ï¿½Å©ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 					}
 					else
 					{
 						countY = 1;
 					}
 					
-					if(endPos[1] < row && countY >=5)		//Â÷ÀÌ°¡ ¹ß»ýÇÑ ºÎºÐÀÇ ±æÀÌ°¡ 5px ÀÌ»óÀÏ¶§  YÁÂÇ¥ ÀúÀå
+					if(endPos[1] < row && countY >=5)		//ï¿½ï¿½ï¿½Ì°ï¿½ ï¿½ß»ï¿½ï¿½ï¿½ ï¿½Îºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì°ï¿½ 5px ï¿½Ì»ï¿½ï¿½Ï¶ï¿½  Yï¿½ï¿½Ç¥ ï¿½ï¿½ï¿½ï¿½
 					{
 						endPos[1] = row;
 					}
@@ -166,15 +172,27 @@ public class BorderedImage extends PDFCompare {
 				}
 			}
 		}
+		System.out.println("End Position " + " x: " + endPos[0] + " y: " + endPos[1]);
 	}
 	
-		
+	   public static int[] extractBufferedImage() 
+	   {
+	      int[] subPos = new int[4]; 
+	      subPos[0] = Math.min(startPos[0], endPos[0]);
+	      subPos[1] = Math.min(startPos[1], endPos[1]);
+	      subPos[2] =  Math.abs(endPos[0]-startPos[0]);
+	      subPos[3] = Math.abs(endPos[1]-startPos[1]);
+	      return subPos;
+	   }
+		/*
 	public static BufferedImage extractBufferedImage() 
 	{
-		System.out.println("extractBufferedImage: "+startPos[0]+", "+ startPos[1]+", "+ (endPos[0]-startPos[0])+", " +(endPos[1]-startPos[1]));
-		return partB.getSubimage(startPos[0], startPos[1], endPos[0]-startPos[0], endPos[1]-startPos[1]);
+		int startX = Math.min(startPos[0], endPos[0]);
+		int startY = Math.min(startPos[1], endPos[1]);
+		return partB.getSubimage(startX, startY, Math.abs(endPos[0]-startPos[0]), Math.abs(endPos[1]-startPos[1]));
 	//	return PDFCompare.extractImage.getSubimage(0, 0, PDFCompare.extractImage.getWidth(), PDFCompare.extractImage.getHeight());
 	}
+	*/
 	public static int[] extractPoint()
 	{
 		return startPos;

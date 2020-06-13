@@ -10,6 +10,7 @@ public class Compare implements Runnable {
 	private LA_controller controller;
 	
 	private BufferedImage pdfTemp, capTemp1, capTemp2;
+	private BufferedImage startBufImg, endBufImg;
 	
 	private static boolean exit;
 	private boolean getNextPage;
@@ -39,7 +40,7 @@ public class Compare implements Runnable {
 	
 	public void run(){
 		//initialize
-		captureCount=0;
+		captureCount=1;
 		sameImg=0;
 		pdfPage=startPage;
 		getNextPage=false;
@@ -54,12 +55,10 @@ public class Compare implements Runnable {
 		while(!exit&&captureCount<1000) { //main part
 			
 			//real case
-			/*
 			if(!capturing.endPos(captureCount+1)) { //ready to captured img
 				Thread.yield();
 				continue;
 			}
-			*/
 			
 			System.out.println("index "+captureCount+" compare, getNextPage: "+getNextPage+", capNoteStart, capNoteFinish: "+capNoteStart+", "+capNoteFinish);
 			try {
@@ -95,35 +94,25 @@ public class Compare implements Runnable {
 	
 	
 	//return value: recent pdfPage
-	private void pageChange() {
+	private void pageChange() throws Exception {
+		int count=0;
 		double difLevel;
 		BufferedImage temp;
 		
-		pdfTemp=originImgArray.get(pdfPage);
-		temp=PDFCompare.marginCut(capturing.getCaptureImg(captureCount));
-		
-		difLevel=PDFCompare.getDifRatio(pdfTemp, temp);
-		if(difLevel<SAME_PAGE) { //last same page save
-			controller.ADD_CompletePDF(temp, captureCount+1);
-		}
-		else{
-			pdfTemp=originImgArray.get(++pdfPage);
+		while(originImgArray.size()>pdfPage+count) {
+			pdfTemp=originImgArray.get(pdfPage+count);
+			temp=PDFCompare.marginCut(capturing.getCaptureImg(captureCount));
+			
 			difLevel=PDFCompare.getDifRatio(pdfTemp, temp);
-			
-			if(difLevel<SAME_PAGE) {
+			if(difLevel<SAME_PAGE) { //last same page save
 				controller.ADD_CompletePDF(temp, captureCount+1);
+				pdfPage=pdfPage+count;
+				getNextPage=false;
+				return;
 			}
-			/*
-			else {//fail to search same PDF page
-				throw new IllegalArgumentException("Fail to search same PDF page");
-			}
-			*/
-			
-			throw new IllegalArgumentException("Fail to search same PDF page");
+			count++;
 		}
-		pdfPage++;
-		getNextPage=false;
-		return;
+		throw new Exception("Not same page!");
 	}
 	
 	private void compareCapturedImage() {
@@ -150,6 +139,7 @@ public class Compare implements Runnable {
 			System.out.println("compare Capture img: write case");
 			if(!capNoteStart) {//save first point after change page
 				capNoteStart=true;
+				startBufImg=capTemp1;
 				capNoteStartIndex=captureCount;
 			}
 			capNoteFinish=false;
@@ -158,6 +148,7 @@ public class Compare implements Runnable {
 		else {//nothing case
 			if(capNoteStart&&!capNoteFinish) {//save last different point if start point is save
 				capNoteFinish=true;
+				endBufImg=capTemp1;
 			}
 			sameImg++;
 			
@@ -166,7 +157,6 @@ public class Compare implements Runnable {
 			if(sameImg>=NO_WRITE_SECONDS) {//save write
 				System.out.println("save writing enter");
 				saveWriting();
-				capNoteStart=true;
 				capNoteStartIndex=captureCount+1;
 			}
 		}
@@ -176,22 +166,36 @@ public class Compare implements Runnable {
 	private void saveWriting() {
 		BufferedImage temp;
 		
+		if(!capNoteStart) {
+			return;
+		}
+		
 		
 		try { //import note part
-		BorderedImage.setBufferedImage();//already compare each other, so it use least compare data
-		temp=BorderedImage.extractBufferedImage();
+			BorderedImage.getDifRatio(startBufImg, endBufImg);
+			BorderedImage.setBufferedImage();
+			int subPos[]=BorderedImage.extractBufferedImage();//already compare each other, so it use least compare data
+			//temp=BorderedImage.extractBufferedImage();
+			
+			//saving
+		    if(capNoteStart) {//when write is exist
+		    	  
+		          System.out.println("ADD!");
+		          controller.ADD_Note(endBufImg.getSubimage(subPos[0], subPos[1], subPos[2], subPos[3]), capNoteStartIndex, captureCount);
+		       
+		    }
+			
 		}
 		catch(Exception e) { //excetion find
 			System.out.println("ERROR OCCURED IN saveWriting");
 			System.out.println(e);
 			return;
 		}
-		System.out.println("save writing");
+		System.out.println("save get ready");
 		
-		//saving
-		if(capNoteStart) {//when write is exist
-			controller.ADD_Note(temp, capNoteStartIndex, captureCount);
-		}
+		
+//		controller.ADD_Note(temp, capNoteStartIndex, captureCount);
+		System.out.println("save!");
 
 		capNoteStart=false;
 		capNoteFinish=false;
@@ -207,8 +211,9 @@ public class Compare implements Runnable {
 		return;
 	}
 	
-	public void exit() {
+	public boolean exit() {
 		exit=true;
-		return;
+		//거기서 captureImg의 마지막 index가아니면 false값 반환해주세요
+		return true;
 	}
 }
