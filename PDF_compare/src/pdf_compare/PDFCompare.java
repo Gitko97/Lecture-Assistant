@@ -1,4 +1,4 @@
-package pdf_compare;
+package src;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -21,9 +21,8 @@ public class PDFCompare extends ImgCompare{
 	public static double getDifRatio(BufferedImage origin, BufferedImage video) {
 		int difPixelNum;
 		difPixelNum=getPDFDifValue(origin, video);
-		//debugging
+
 		System.out.println("difvalue: "+difPixelNum);
-		System.out.println("pixelAmount: "+pixelAmount);
 		
 		return ((double)difPixelNum/(double)pixelAmount);
 	}
@@ -63,7 +62,7 @@ public class PDFCompare extends ImgCompare{
 	
 	
 	//cut video's margin
-	private static BufferedImage marginCut(BufferedImage video) {
+	public static BufferedImage marginCut(BufferedImage video) {
 		BufferedImage result=video.getSubimage(left, top, right-left+1, down-top+1);
 		return result;
 	}
@@ -267,9 +266,6 @@ public class PDFCompare extends ImgCompare{
 	private static BufferedImage resize(BufferedImage origin, int afterWidth, int afterHeight) {
 		BufferedImage result;
 		Image temp;
-		
-		//debugging
-		System.out.println("resie: "+afterWidth+" "+afterHeight);
 		
 		//if same size
 		if(origin.getWidth()==afterWidth&&origin.getHeight()==afterHeight) {

@@ -1,4 +1,4 @@
-package pdf_compare;
+package src;
 
 import java.awt.image.*;
 
@@ -13,13 +13,6 @@ public class BorderedImage extends PDFCompare {
 	protected static int countX = 0;
 	protected static int countY = 0;
 	
-	public static void setBufferedImage(BufferedImage a, BufferedImage b) {	//import difPartA and difPartB
-		imageA = a;
-		imageB = b;
-		setSearch();		
-		searchImage();		
-		return;
-	}
 	public static void setBufferedImage() {	//already extracted image import
 		imageA = partA;
 		imageB = partB;
@@ -44,11 +37,13 @@ public class BorderedImage extends PDFCompare {
 		getSearchEnd();
 		
 	}
-	private static void getSearchStart() {		//추출할 이미지의 왼쪽 위 모서리 좌표를 찾음
+	private static void getSearchStart() { //추출할 이미지의 왼쪽 위 모서리 좌표를 찾음
 		int row, col;
 		int tmp[] = new int[2];
 		tmp[0] = imageB.getWidth()-1;
 		tmp[1] = imageB.getHeight()-1;
+		countX =0;
+		countY =0;
 		
 		//왼쪽 모서리의 X좌표를 구함
 		for(row = imageB.getHeight()-1; row >= 0; row--)
@@ -104,7 +99,6 @@ public class BorderedImage extends PDFCompare {
 				}
 			}
 		}
-		System.out.println("Start Position : " +"x: " + startPos[0] + " y: " + startPos[1]);
 	}		
 
 	private static void getSearchEnd() {		//추출할 이미지의 오른쪽 아래 모서리 좌표를 찾음
@@ -172,12 +166,12 @@ public class BorderedImage extends PDFCompare {
 				}
 			}
 		}
-		System.out.println("End Position " + " x: " + endPos[0] + " y: " + endPos[1]);
 	}
 	
 		
 	public static BufferedImage extractBufferedImage() 
 	{
+		System.out.println("extractBufferedImage: "+startPos[0]+", "+ startPos[1]+", "+ (endPos[0]-startPos[0])+", " +(endPos[1]-startPos[1]));
 		return partB.getSubimage(startPos[0], startPos[1], endPos[0]-startPos[0], endPos[1]-startPos[1]);
 	//	return PDFCompare.extractImage.getSubimage(0, 0, PDFCompare.extractImage.getWidth(), PDFCompare.extractImage.getHeight());
 	}

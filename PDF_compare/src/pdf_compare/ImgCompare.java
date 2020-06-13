@@ -1,4 +1,4 @@
-package pdf_compare;
+package src;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
