@@ -13,11 +13,17 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+// Class TextToImg
+// 1. args are ArrayList<String> STTString, ArrayList<Note> notes, ArrayLise<Integer> changedPosition, int width, int height
+// 2. method convert return void : Run a conversion of whole STTString and notes into an image. External calls.
+// 3. method initGraphic return void : Initialize a imageBuffer to draw
+// 4. method imageWrite return void : Convert the graphic buffer that method 'convert' drew into images
+// 5. method spaceRemover return String : Remove space
+// 6. method secondToMinute return String: Convert seconds into minutes.
 public class TextToImg {
 	
 	private ArrayList<Note> notes;
 	private ArrayList<String> string;
-	private ArrayList<Integer> it;
 	private ArrayList<Integer> changedP;
 	private int width;
 	private int height;
@@ -33,17 +39,17 @@ public class TextToImg {
 
 	private String headLine = "";
 	
+	// TextToImg Constructor. 
 	public TextToImg(ArrayList<String> sttString, ArrayList<Note> notes, ArrayList<Integer> changedPosition, int width, int height) throws Exception {
 		this.string = sttString;
 		this.notes = notes;
 		this.changedP = changedPosition;
 		this.width = width;
 		this.height = height;
-		
-		this.font = new Font(fontFamily,Font.PLAIN,fontSize);
-		
-		
+		this.font = new Font(fontFamily,Font.PLAIN,fontSize);	
 	}
+	
+	// method convert
 	public void convert() throws Exception{
 		fileName = Integer.toString(outputCount)+".png";
 		initGraphic();
@@ -78,11 +84,11 @@ public class TextToImg {
 				//System.out.println("페이지 넘김");
 			}
 			
-			// ---------------------- 노트 출력 --------------------------------
-			// note의 startIndex과 string의 index가 같다면 같은 초이므로 노트의 이미지를 그릴 준비.
+			// ---------------------- print notations from Note class --------------------------------
+			// When note's startIndex and STTString's index i is same, ready to draw an notation from Note
 			if (note.startIndex == i ) {
 				wordStart = 10;
-				if (lineStart + fontSize * 6 > height ) {	// 하단 여백이 모자랄 경우 다음 장으로 넘기기
+				if (lineStart + fontSize * 6 > height ) {	// In the case of lack of bottom margins
 					imageWrite();
 					initGraphic();
 					lineStart = fontSize * 3;
@@ -90,20 +96,20 @@ public class TextToImg {
 				else lineStart += fontSize * 2;
 				notePrinted = true;
 				noteImg = note.note;
-				headLine = "<"+secondToMinute(i)+"'s note>";
+				headLine = "<"+secondToMinute(i)+"'s note>";	// print a note's index to identify
 				graphics.drawString(headLine, wordStart, lineStart);
 				wordStart += headLine.length() * (fontSize - 3);
 			}
 				
-				//System.out.println(noteIndex + "번째 그림과 " + i + "초의 텍스트 그리기");
+				//System.out.println(noteIndex + "th image and " + i + "'s text"); // debugging
 			
 			if (noteImg != null) {
 				//System.out.println("그림");
-				if (wordStart + noteImg.getWidth() + 5 > width) {	// 우측 여백이 모자랄 경우 한 줄 띄우기
+				if (wordStart + noteImg.getWidth() + 5 > width) {	// line spacing due to lack of right margins
 					lineStart += fontSize * 2;
 					wordStart = 10;
 				}
-				if (lineStart + noteImg.getHeight() > height ) {	// 하단 여백이 모자랄 경우 다음 장으로 넘기기
+				if (lineStart + noteImg.getHeight() > height ) {	// init new page when there is no margins to draw notation
 					imageWrite();
 					initGraphic();
 					wordStart = 10;
@@ -129,13 +135,13 @@ public class TextToImg {
 					}
 				}
 			}
-			// --------------------------노트 출력 끝 ---------------------------------
+			// --------------------------print end ---------------------------------
 
 			String word = string.get(i);
 			// i초의 word이다. 
-			if (wordStart + word.length() * (fontSize - 4) + fontSize> widthMargin) {	// 가로의 남은 공간이 불충분하여 줄 띄움
+			if (wordStart + word.length() * (fontSize - 4) + fontSize> widthMargin) {	// line spacing due to lack of right margins
 				wordStart = 10;
-				if (lineStart > height - fontSize * 2){	// 줄 띄울만한 여백이 존재하지 않아 다음 장으로 넘어감
+				if (lineStart > height - fontSize * 2){	// init new page when there is no margins to space a line
 					imageWrite();
 					initGraphic();
 					lineStart = fontSize;
@@ -143,8 +149,8 @@ public class TextToImg {
 				lineStart += fontSize * 2;
 			}
 			word = " " + spaceRemover(word);
-			//System.out.println("wordStart = " + wordStart + " | lineStart = " + lineStart);
-			//System.out.println(word);
+			//System.out.println("wordStart = " + wordStart + " | lineStart = " + lineStart); // debugging
+			//System.out.println(word); // debugging
 			graphics.drawString(word,wordStart, lineStart);
 			wordStart += word.length() * (fontSize - 3);
 			
@@ -157,18 +163,14 @@ public class TextToImg {
 		bImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		fos = new FileOutputStream(new File(fileName));
 		graphics = bImg.createGraphics();
-		graphics = bImg.createGraphics();
 		
-		// draw canvas
 		graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		graphics.setColor(Color.WHITE);
 		graphics.fillRect(0,0, width, height);
-		
-		// draw text
 		graphics.setFont(font);
 		graphics.setColor(Color.BLACK);
 		
-		// 위쪽 여백 PDf 인덱스
+		// print lecture note's index and whole pdf's index at head area 
 		graphics.drawString(Integer.toString(outputCount)+"th page",width-100, 20);
 		graphics.drawString("PDF "+Integer.toString(pdfPages)+"th page",width/2, 20);
 
@@ -176,7 +178,7 @@ public class TextToImg {
 	
 	private void imageWrite() throws IOException {
 		ImageIO.write(bImg, "PNG", fos);
-		System.out.println(outputCount++ + "th note converted");
+		//System.out.println(outputCount++ + "th note converted"); //debugging
 		fileName = Integer.toString(outputCount)+".png";
 		
 	}

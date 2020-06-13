@@ -14,9 +14,13 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 
+//Class PDFandIMG
+//1. no constructor
+//2. method IMGtoPDF return boolean : save imgs from args at filePath
+// 3. method PDFtoIMG return ArrayList<BufferedImage> : Convert PDF at filePath from args into ArrayList<imgs>
 public class PDFandIMG{
 	
-	public boolean IMGtoPDF(ArrayList<BufferedImage> imgs, String filePath) {	// 매개변수로 받은 imgs들을 filePath에 저장
+	public boolean IMGtoPDF(ArrayList<BufferedImage> imgs, String filePath) {	// save imgs from args at filePath
 		PDDocument document = new PDDocument();
 		try {
 			for(BufferedImage img : imgs) {
@@ -35,7 +39,7 @@ public class PDFandIMG{
 		return false;
 	}
 	
-	public ArrayList<BufferedImage> PDFtoIMG(String filePath) throws IOException { //매개변수로 받은 filePath의 PDF를 IMG로 변환후 ArrayList로 반환
+	public ArrayList<BufferedImage> PDFtoIMG(String filePath) throws IOException { // Convert PDF at filePath from args into ArrayList<imgs>
 		ArrayList<BufferedImage> imgs = new ArrayList<>();
 		File readFile = new File(filePath);
 			PDDocument document = PDDocument.load(readFile);
