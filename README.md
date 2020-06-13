@@ -105,7 +105,7 @@ Press **EIXT** button. Now you get a completed lecture pdf note!
 ![83271875-674f2e00-a205-11ea-8b12-2f3a5df74119](https://user-images.githubusercontent.com/47098720/83944863-a6066900-a841-11ea-901b-6e0d024e7984.png)
 
 # Contribution Guidelines
-**This project adheres to Lecture-Assistant's [code of conduct.](https://github.com/Gitko97/Lecture-Assistant/blob/master/Coding convention rules.md)
+**This project adheres to Lecture-Assistant's [code of conduct.](https://github.com/Gitko97/Lecture-Assistant/blob/master/CODING_CONVENTION_RULES.md)
 We use [GitHub issues](https://github.com/Gitko97/Lecture-Assistant/issues) for tracking requests and bugs.**
 You can see the specific README.md in each brach which helps you understand the details.
 
