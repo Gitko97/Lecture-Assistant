@@ -6,7 +6,7 @@ Here in the SpeechToText branch, we offer Speech-To-Text streaming.
 We use GoogleCloudPlatform's sample code. 
 This is [a link to GoogleCloudPlatform.](https://github.com/GoogleCloudPlatform/java-docs-samples)
 
-##Speech-To-Text
+## Speech-To-Text
 1. We use Google speech API to get the translation results of the voice.
 2. These files provide voice translation results by cutting them off every second.
 
