@@ -213,7 +213,6 @@ public class Compare implements Runnable {
 	
 	public boolean exit() {
 		exit=true;
-		//거기서 captureImg의 마지막 index가아니면 false값 반환해주세요
-		return true;
+		return capturing.endPos(captureCount);
 	}
 }
