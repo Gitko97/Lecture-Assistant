@@ -13,7 +13,7 @@ This is [a link to Google speech-to-text api.](https://cloud.google.com/speech-t
 
 ## Libraries
 * **Apache PDFBox**
-This is [a link to Apache PDFBox.](https://pdfbox.apache.org/)
+This is [a link to Apache PDFBox.](https://pdfbox.apache.org/) PDFBox is used for PDFandImage Class.
 
 * **Recommand to use JDK 13.0.2**
 This is [a link to download jdk13.0.2](https://www.oracle.com/java/technologies/javase/jdk13-archive-downloads.html)
@@ -26,6 +26,7 @@ Please enable **stereo mix** on your computer.
 [This link let you know how to enble stereo mix.](https://www.howtogeek.com/howto/39532/how-to-enable-stereo-mix-in-windows-7-to-record-audio/)
 If you still have a problem, [this link will help you out.](https://answers.microsoft.com/en-us/windows/forum/all/how-to-enable-stereo-mix-in-windows-10/4c51b5da-d56c-42c1-bb9d-bc9fccf8fa48)
 
+# How to Execute
 ## Step1
 Select the range of screen size of your video lecture. This range will make screenshot files which will be used to compare with the original pdf file. You can easily adjust the size of the green square using dragging your mouse.
 
@@ -104,7 +105,7 @@ Press **EIXT** button. Now you get a completed lecture pdf note!
 ![83271875-674f2e00-a205-11ea-8b12-2f3a5df74119](https://user-images.githubusercontent.com/47098720/83944863-a6066900-a841-11ea-901b-6e0d024e7984.png)
 
 # Contribution Guidelines
-**This project adheres to Lecture-Assistant's [code of conduct.](https://github.com/Gitko97/Lecture-Assistant/blob/master/CODE_OF_CONDUCT.md)
+**This project adheres to Lecture-Assistant's [code of conduct.](https://github.com/Gitko97/Lecture-Assistant/blob/master/CODING_CONVENTION_RULES.md)
 We use [GitHub issues](https://github.com/Gitko97/Lecture-Assistant/issues) for tracking requests and bugs.**
 You can see the specific README.md in each brach which helps you understand the details.
 
