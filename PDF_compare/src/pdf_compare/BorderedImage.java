@@ -44,7 +44,7 @@ public class BorderedImage extends PDFCompare {
 		getSearchEnd();
 
 	}
-	private static void getSearchStart() { // Found upper left corner coordinates of image to extract		
+	private static void getSearchStart() { // Found upper left corner coordinates of image to extract
 		int row, col;
 		int tmp[] = new int[2];
 		tmp[0] = imageB.getWidth()-1;
