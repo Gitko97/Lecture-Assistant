@@ -21,7 +21,7 @@ public class TextToImg {
 	private ArrayList<Note> notes;
 	private ArrayList<String> string;
 	private ArrayList<Integer> changedP;
-	private ArrayList<BufferedImage> result = new ArrayList<BufferedImage>();
+	private ArrayList<BufferedImage> result = new ArrayList<>();
 	private int width;
 	private int height;
 	private int pdfPages = 1;
@@ -57,10 +57,10 @@ public class TextToImg {
 		int cPosIndex = 0;
 		int widthMargin = width;
 		int heightMargin = 0;
-
+		Note note = null;
 		boolean notePrinted = false;
 		
-		Note note = notes.get(noteIndex++);
+		if (notes != null) note = notes.get(noteIndex++);
 		BufferedImage noteImg = null; 
 		System.out.println("width : " + width + " | height : " + height);
 		
