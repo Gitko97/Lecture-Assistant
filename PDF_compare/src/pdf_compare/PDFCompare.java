@@ -2,7 +2,7 @@ package src;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.image.*;
+import java.awt.image.BufferedImage;
 
 public class PDFCompare extends ImgCompare{
 
@@ -22,7 +22,7 @@ public class PDFCompare extends ImgCompare{
 		int difPixelNum;
 		difPixelNum=getPDFDifValue(origin, video);
 
-		System.out.println("difvalue: "+difPixelNum);
+		System.out.println(((double)difPixelNum/(double)pixelAmount));
 		
 		return ((double)difPixelNum/(double)pixelAmount);
 	}
@@ -60,9 +60,26 @@ public class PDFCompare extends ImgCompare{
 		return getPixelDif(originTransform, videoTransform);
 	}
 	
+	//cut img's margin in any img
+	public static BufferedImage getMarginCut(BufferedImage img)
+	{
+		BufferedImage result;
+		
+		boolean[] tempBool=isCutMargin;
+		
+		isCutMargin[0]=true;
+		isCutMargin[1]=true;
+		
+		setNoMarginArea(img);
+		result=marginCut(img);
+		
+		isCutMargin=tempBool;
+		
+		return result;
+	}
 	
 	//cut video's margin
-	public static BufferedImage marginCut(BufferedImage video) {
+	private static BufferedImage marginCut(BufferedImage video) {
 		BufferedImage result=video.getSubimage(left, top, right-left+1, down-top+1);
 		return result;
 	}

@@ -7,29 +7,31 @@ public class Compare implements Runnable {
 	
 	private ArrayList<BufferedImage> originImgArray;
 	private Capturing capturing;
-	private LA_controller controller;
+	private LaController controller;
 	
-	private BufferedImage pdfTemp, capTemp1, capTemp2;
+	private BufferedImage capTemp1, capTemp2;
 	private BufferedImage startBufImg, endBufImg;
 	
 	private static boolean exit;
 	private boolean getNextPage;
 	private boolean capNoteStart, capNoteFinish;
 	
-	private final double SAME_CAP=0.0005;
-	private final double SAME_PAGE=0.02;
-	private final double DIF_PAGE=0.05;
+	private final double SAME_CAP=0.00001;
+//	private final double SAME_PAGE=0.05;
+	private final double DIF_PAGE=0.03;
 	
-	private int startPage=0;
+	
+	private int maxTime=3600;
+//	private int startPage=0;
 	private int sameImg;
 	private int captureCount;
 	private int capNoteStartIndex;
-	private int pdfPage;
+//	private int pdfPage;
 	private final int NO_WRITE_SECONDS=3;
 	
 	public Compare(
 			ArrayList<BufferedImage> originPDFArray
-			, Capturing cap, LA_controller LAC
+			, Capturing cap, LaController LAC
 			) {
 		originImgArray=originPDFArray;
 		capturing=cap;
@@ -42,7 +44,7 @@ public class Compare implements Runnable {
 		//initialize
 		captureCount=1;
 		sameImg=0;
-		pdfPage=startPage;
+//		pdfPage=startPage;
 		getNextPage=false;
 		capNoteStart=false;
 		capNoteFinish=false;
@@ -52,13 +54,15 @@ public class Compare implements Runnable {
 		checkException();
 		
 		
-		while(!exit&&captureCount<1000) { //main part
+		while(!exit&&captureCount<maxTime) { //main part
+			
 			
 			//real case
 			if(!capturing.endPos(captureCount+1)) { //ready to captured img
 				Thread.yield();
 				continue;
 			}
+			
 			
 			System.out.println("index "+captureCount+" compare, getNextPage: "+getNextPage+", capNoteStart, capNoteFinish: "+capNoteStart+", "+capNoteFinish);
 			try {
@@ -71,6 +75,7 @@ public class Compare implements Runnable {
 				}
 			}
 			catch(Exception e) {
+				System.out.println(e);
 				Thread.yield();
 			}
 			captureCount++;
@@ -95,24 +100,30 @@ public class Compare implements Runnable {
 	
 	//return value: recent pdfPage
 	private void pageChange() throws Exception {
+		
+		controller.ADD_CompletePDF(capTemp1, captureCount+1);
+		getNextPage=false;
+		return;
+		/* not yet complete
 		int count=0;
 		double difLevel;
-		BufferedImage temp;
+		BufferedImage pdfTemp;
 		
 		while(originImgArray.size()>pdfPage+count) {
 			pdfTemp=originImgArray.get(pdfPage+count);
-			temp=PDFCompare.marginCut(capturing.getCaptureImg(captureCount));
-			
-			difLevel=PDFCompare.getDifRatio(pdfTemp, temp);
+			System.out.println("pdf page: "+(pdfPage+count));
+			difLevel=PDFCompare.getDifRatio(pdfTemp, capTemp2);
 			if(difLevel<SAME_PAGE) { //last same page save
-				controller.ADD_CompletePDF(temp, captureCount+1);
+				controller.ADD_CompletePDF(capTemp1, captureCount+1);
 				pdfPage=pdfPage+count;
+				System.out.println("pdf page save!");
 				getNextPage=false;
 				return;
 			}
 			count++;
 		}
 		throw new Exception("Not same page!");
+		*/
 	}
 	
 	private void compareCapturedImage() {
@@ -164,7 +175,6 @@ public class Compare implements Runnable {
 	}
 	
 	private void saveWriting() {
-		BufferedImage temp;
 		
 		if(!capNoteStart) {
 			return;
@@ -175,7 +185,6 @@ public class Compare implements Runnable {
 			BorderedImage.getDifRatio(startBufImg, endBufImg);
 			BorderedImage.setBufferedImage();
 			int subPos[]=BorderedImage.extractBufferedImage();//already compare each other, so it use least compare data
-			//temp=BorderedImage.extractBufferedImage();
 			
 			//saving
 		    if(capNoteStart) {//when write is exist
@@ -191,23 +200,30 @@ public class Compare implements Runnable {
 			System.out.println(e);
 			return;
 		}
-		System.out.println("save get ready");
 		
 		
-//		controller.ADD_Note(temp, capNoteStartIndex, captureCount);
 		System.out.println("save!");
 
 		capNoteStart=false;
 		capNoteFinish=false;
 		return;
 	}
-	
+/*	
 	public void setStartPage(int num) {
 		if(num<0){
 			throw new IllegalArgumentException(
 					"input value must be pasitive number, not "+num+" that nagative number or zero");
 		}
 		startPage=num;
+		return;
+	}
+*/
+	public void setMaxTime(int time) {
+		if(time<0){
+			throw new IllegalArgumentException(
+					"input value must be pasitive number, not "+time+" that nagative number or zero");
+		}
+		maxTime=time;
 		return;
 	}
 	

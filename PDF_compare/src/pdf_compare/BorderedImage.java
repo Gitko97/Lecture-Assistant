@@ -1,17 +1,15 @@
 package src;
 
-import java.awt.image.*;
+import java.awt.image.BufferedImage;
 
 public class BorderedImage extends PDFCompare {
 	private static BufferedImage imageA, imageB;
 
-	public static int startPos[] = new int[2];
-	public static int endPos[] = new int[2];
+	private static int startPos[] = new int[2];
+	private static int endPos[] = new int[2];
 
-	protected static int tmpX[] = new int[10];
-	protected static int tmpY[] = new int[10];
-	protected static int countX = 0;
-	protected static int countY = 0;
+	private static int countX = 0;
+	private static int countY = 0;
 
 	public static void setBufferedImage(BufferedImage a, BufferedImage b) {	//import difPartA and difPartB
 		BorderedImage.imageA = a;
@@ -110,8 +108,6 @@ public class BorderedImage extends PDFCompare {
 	private static void getSearchEnd() {		// Found lower right corner coordinates of image to extract
 		int row, col;
 		int tmp[] = new int[2];
-		tmp[0] = imageB.getWidth()-1;
-		tmp[1] = imageB.getHeight()-1;
 		countX =0;
 		countY =0;
 		tmp[0] = 0;
