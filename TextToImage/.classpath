@@ -6,6 +6,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="src/test/lib/pdfbox-app-2.0.19.jar"/>
+	<classpathentry kind="lib" path="src/test/lib"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

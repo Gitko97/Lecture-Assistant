@@ -2,16 +2,12 @@ package test;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
-import javax.imageio.ImageIO;
+import java.io.File; //debug for fileIO
+import java.io.FileOutputStream; //debug for fileIO
+import javax.imageio.ImageIO; // debug for fileIO
 
 // Class TextToImg
 // 1. args are ArrayList<String> STTString, ArrayList<Note> notes, ArrayLise<Integer> changedPosition, int width, int height
@@ -25,6 +21,7 @@ public class TextToImg {
 	private ArrayList<Note> notes;
 	private ArrayList<String> string;
 	private ArrayList<Integer> changedP;
+	private ArrayList<BufferedImage> result = new ArrayList<BufferedImage>();
 	private int width;
 	private int height;
 	private int pdfPages = 1;
@@ -32,8 +29,8 @@ public class TextToImg {
 	private int fontSize = 20;
 	private Font font;
 	private String fontFamily = "바탕";
-	private String fileName;
-	private FileOutputStream fos;
+	private String fileName; // debug for fileIO
+	private FileOutputStream fos; // debug for fileIO
 	private Graphics2D graphics;
 	private BufferedImage bImg;
 
@@ -50,8 +47,8 @@ public class TextToImg {
 	}
 	
 	// method convert
-	public void convert() throws Exception{
-		fileName = Integer.toString(outputCount)+".png";
+	public ArrayList<BufferedImage> convert() throws Exception{
+		fileName = Integer.toString(outputCount)+".png"; // debug for fileIO
 		initGraphic();
 		
 		int wordStart = 10;
@@ -70,7 +67,8 @@ public class TextToImg {
 
 		for(int i = 0; i < string.size(); i++) {
 			
-			if (changedP.get(cPosIndex) == i) {
+
+			if (changedP != null && changedP.get(cPosIndex) == i) {
 				if (cPosIndex < changedP.size() - 1 ) cPosIndex += 1;
 				pdfPages += 1;
 				imageWrite();
@@ -81,12 +79,12 @@ public class TextToImg {
 				heightMargin = 0;
 				
 				
-				//System.out.println("페이지 넘김");
+				//System.out.println("페이지 넘김"); // debugging
 			}
 			
 			// ---------------------- print notations from Note class --------------------------------
 			// When note's startIndex and STTString's index i is same, ready to draw an notation from Note
-			if (note.startIndex == i ) {
+			if (note != null && note.startIndex == i ) {
 				wordStart = 10;
 				if (lineStart + fontSize * 6 > height ) {	// In the case of lack of bottom margins
 					imageWrite();
@@ -156,12 +154,14 @@ public class TextToImg {
 			
 		}
 		imageWrite();
+		return result;
+		
 	}
 	
 	private void initGraphic() throws IOException{
 		
 		bImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-		fos = new FileOutputStream(new File(fileName));
+		fos = new FileOutputStream(new File(fileName)); // debug for fileIO
 		graphics = bImg.createGraphics();
 		
 		graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -177,10 +177,12 @@ public class TextToImg {
 	}
 	
 	private void imageWrite() throws IOException {
+		result.add(bImg);
+		//----- debug for file IO--------
 		ImageIO.write(bImg, "PNG", fos);
-		//System.out.println(outputCount++ + "th note converted"); //debugging
+		System.out.println(outputCount++ + "th note converted"); //debugging
 		fileName = Integer.toString(outputCount)+".png";
-		
+		//-------------------------------
 	}
 	private String spaceRemover(String s) {
 		if (s.charAt(0) != ' ') return s;

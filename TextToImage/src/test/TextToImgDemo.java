@@ -1,10 +1,8 @@
 package test;
 
 import java.awt.*;
-import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.lang.*;
 import java.util.*;
 
 public class TextToImgDemo
@@ -36,7 +34,6 @@ public class TextToImgDemo
 				i++;
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		TextToImg textToimg = new TextToImg(sttarray,notes,change, imgs.get(0).getWidth(), imgs.get(0).getHeight());
