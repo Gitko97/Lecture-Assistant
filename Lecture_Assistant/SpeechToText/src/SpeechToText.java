@@ -79,11 +79,11 @@ public class SpeechToText implements Runnable{
   private static ArrayList<StreamingRecognizeResponse> responses = new ArrayList<>();
   private ResponseObserver<StreamingRecognizeResponse> responseObserver = null;
   private ClientStream<StreamingRecognizeRequest> clientStream;
+  private ArrayList<String> saveTime = new ArrayList<>();
   RecognitionConfig recognitionConfig;
   StreamingRecognitionConfig streamingRecognitionConfig;
   StreamingRecognizeRequest request;
   private String langCode;
-  
   public void init(String... args) {
     exit = false;
 	InfiniteStreamRecognizeOptions.langCode = langCode;
@@ -103,7 +103,7 @@ public class SpeechToText implements Runnable{
     DecimalFormat format = new DecimalFormat();
     format.setMinimumIntegerDigits(2);
     return String.format(
-        "%s:%s /",
+        "%s:%s",
         format.format(TimeUnit.MILLISECONDS.toMinutes(millis)),
         format.format(
             TimeUnit.MILLISECONDS.toSeconds(millis)
@@ -124,11 +124,13 @@ public class SpeechToText implements Runnable{
 	
   //Split result string into 1 second increments
   public ArrayList<String> getString(){
+	int changedN;
+	if(InfiniteStreamRecognizeOptions.langCode.equals("ko-kr")) changedN= 10;
+	else changedN = 20;
     ArrayList<String> origin = new ArrayList<>();
 	ArrayList<String> changedString = new ArrayList<>(); 
 	StreamingRecognitionResult result;
     SpeechRecognitionAlternative alternative ;
-    int k = 0;
     int i;
     for(i = 0; i<responses.size(); i++) {
       result = responses.get(i).getResultsList().get(0);
@@ -136,30 +138,38 @@ public class SpeechToText implements Runnable{
       origin.add(alternative.getTranscript());
     }
     if(origin.size() == 0) {
-      return null;
-    }
-    System.out.println(origin);
-    int j=0;
-    for(i=0; i<origin.size()-1; i++) {
-      int subindex = 0;
-      if(origin.get(i).length()-10 > origin.get(i+1).length()) {
-        String final_string = origin.get(i);
-        for(; j<i+1; j++) {
-          if(subindex < origin.get(j).length()) {
-            changedString.add(final_string.substring(subindex, origin.get(j).length()));
-        	subindex =  origin.get(j).length();
-          }
-        }
-      } else if(i+1 == origin.size()-1) {
-          String final_string = origin.get(i+1);
-          for(; j<=i+1; j++) {
-            if(subindex < origin.get(j).length()) {
-              changedString.add(final_string.substring(subindex, origin.get(j).length()));
-        	  subindex =  origin.get(j).length();
-            }
-          }
+        return null;
       }
+    int LastSaveTime = Integer.parseInt(saveTime.get(saveTime.size()-1).substring(3, 5))+Integer.parseInt(saveTime.get(saveTime.size()-1).substring(0, 2))*60+1;
+    System.out.println("LastSave : "+LastSaveTime);
+    for(i=0;i<LastSaveTime;i++) {
+    	changedString.add(" ");
     }
+    int start_index=0;
+    int final_index = 0;
+    for(; final_index < origin.size()-1; final_index++) {
+    	if(origin.get(final_index).length()-changedN > origin.get(final_index+1).length()) {
+			int subString = 0;
+    		for(;start_index<final_index+1;start_index++) {
+    			if(origin.get(start_index).length()<origin.get(final_index).length() || start_index == final_index) {
+    				//System.out.println(origin.get(start_index).length()+" 시작 "+origin.get(start_index));
+    				//System.out.println(origin.get(final_index).length()+" 오 "+origin.get(final_index));
+    				//System.out.println(subString);
+    				int talkTime = Integer.parseInt(saveTime.get(start_index).substring(3, 5))+Integer.parseInt(saveTime.get(start_index).substring(0, 2))*60;
+    				if(subString < origin.get(start_index).length()) changedString.set(talkTime, origin.get(final_index).substring(subString, origin.get(start_index).length()));
+    				subString = origin.get(start_index).length();
+    			}
+    		}
+    	}
+    }
+    int subString = 0;
+	for(;start_index<final_index+1;start_index++) {
+		if(origin.get(start_index).length()<origin.get(final_index).length() || start_index == final_index) {
+			int talkTime = Integer.parseInt(saveTime.get(start_index).substring(3, 5))+Integer.parseInt(saveTime.get(start_index).substring(0, 2))*60;
+			if(subString < origin.get(start_index).length()) changedString.set(talkTime, origin.get(final_index).substring(subString, origin.get(start_index).length()));
+			subString = origin.get(start_index).length();
+		}
+	}
     return changedString;
   }
 	
@@ -185,8 +195,13 @@ public class SpeechToText implements Runnable{
 	        if (!result.getIsFinal()) {
 	          if(!curTime.equals(resulttime)) {
 	            curTime = resulttime;
+	            saveTime.add(curTime);
 	            SpeechToText.responses.add(response);
 	            lastTranscriptWasFinal = false;
+		        
+		        SpeechRecognitionAlternative alternative ;
+		        alternative = result.getAlternativesList().get(0);
+		        System.out.println(curTime +" : "+ alternative.getTranscript());
 	          }
 	        } else {
 	          isFinalEndTime = resultEndTimeInMS;
@@ -266,9 +281,9 @@ public class SpeechToText implements Runnable{
 
     long startTime = System.currentTimeMillis();
 
-    while (true) {
+    while (!exit) {
       long estimatedTime = System.currentTimeMillis() - startTime;
-
+      System.out.println("번역");
       if (estimatedTime >= STREAMING_LIMIT || exit) {
         clientStream.closeSend();
         referenceToStreamController.cancel(); // remove Observer
