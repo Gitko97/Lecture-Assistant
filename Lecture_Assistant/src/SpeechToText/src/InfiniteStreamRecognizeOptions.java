@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package src;
+package SpeechToText.src;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;

@@ -1,4 +1,4 @@
-package src;
+package SpeechToText.src;
 /*
  * Copyright 2018 Google LLC
  *
@@ -140,10 +140,11 @@ public class SpeechToText implements Runnable{
     if(origin.size() == 0) {
         return null;
       }
+    System.out.println(origin.toString());
     int LastSaveTime = Integer.parseInt(saveTime.get(saveTime.size()-1).substring(3, 5))+Integer.parseInt(saveTime.get(saveTime.size()-1).substring(0, 2))*60+1;
     System.out.println("LastSave : "+LastSaveTime);
     for(i=0;i<LastSaveTime;i++) {
-    	changedString.add(" ");
+    	changedString.add("");
     }
     int start_index=0;
     int final_index = 0;
@@ -152,9 +153,6 @@ public class SpeechToText implements Runnable{
 			int subString = 0;
     		for(;start_index<final_index+1;start_index++) {
     			if(origin.get(start_index).length()<origin.get(final_index).length() || start_index == final_index) {
-    				//System.out.println(origin.get(start_index).length()+" 시작 "+origin.get(start_index));
-    				//System.out.println(origin.get(final_index).length()+" 오 "+origin.get(final_index));
-    				//System.out.println(subString);
     				int talkTime = Integer.parseInt(saveTime.get(start_index).substring(3, 5))+Integer.parseInt(saveTime.get(start_index).substring(0, 2))*60;
     				if(subString < origin.get(start_index).length()) changedString.set(talkTime, origin.get(final_index).substring(subString, origin.get(start_index).length()));
     				subString = origin.get(start_index).length();
