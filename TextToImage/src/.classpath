@@ -7,9 +7,5 @@
 	</classpathentry>
 	<classpathentry kind="src" path=""/>
 	<classpathentry kind="lib" path="test/lib/pdfbox-app-2.0.19.jar"/>
-<<<<<<< HEAD
 	<classpathentry kind="output" path="bin"/>
-=======
-	<classpathentry kind="output" path=""/>
->>>>>>> 06e5fc771f69fe6549c488f963990bbaac403efe
 </classpath>

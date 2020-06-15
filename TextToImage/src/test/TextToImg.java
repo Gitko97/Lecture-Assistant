@@ -185,7 +185,8 @@ public class TextToImg {
 		//-------------------------------
 	}
 	private String spaceRemover(String s) {
-		if (s.charAt(0) != ' ') return s;
+		
+		if (s.length() == 0 || s.charAt(0) != ' ') return s;
 		else  s = spaceRemover(s.substring(1));
 		return s;
 	}
