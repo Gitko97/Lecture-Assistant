@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
-
 import java.io.File; //debug for fileIO
 import java.io.FileOutputStream; //debug for fileIO
 import javax.imageio.ImageIO; // debug for fileIO
@@ -137,6 +136,8 @@ public class TextToImg {
 
 			String word = string.get(i);
 			// i초의 word이다. 
+
+			word = " " + spaceRemover(word);
 			if (wordStart + word.length() * (fontSize - 4) + fontSize> widthMargin) {	// line spacing due to lack of right margins
 				wordStart = 10;
 				if (lineStart > height - fontSize * 2){	// init new page when there is no margins to space a line
@@ -146,11 +147,10 @@ public class TextToImg {
 				}
 				lineStart += fontSize * 2;
 			}
-			word = " " + spaceRemover(word);
 			//System.out.println("wordStart = " + wordStart + " | lineStart = " + lineStart); // debugging
 			//System.out.println(word); // debugging
 			graphics.drawString(word,wordStart, lineStart);
-			wordStart += word.length() * (fontSize - 3);
+			wordStart += wordSpace(word);
 			
 		}
 		imageWrite();
@@ -195,5 +195,15 @@ public class TextToImg {
 		String m = Integer.toString(s / 60);
 		String sc = Integer.toString(s % 60);
 		return m+"min "+sc+"sec";
+	}
+	private int wordSpace(String word){
+		if (word.length() == 1) return 0; 
+		int tempLength = 0;
+		for (char c : word.toCharArray()){
+			if (c == ' ') tempLength += fontSize - 15;
+			else if (c > 122) tempLength += (fontSize);
+			else tempLength += (fontSize - 10);
+		}
+		return tempLength;
 	}
 }
