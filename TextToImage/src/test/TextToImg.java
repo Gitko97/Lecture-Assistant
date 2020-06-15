@@ -101,6 +101,7 @@ public class TextToImg {
 				//System.out.println(noteIndex + "th image and " + i + "'s text"); // debugging
 			
 			if (noteImg != null) {
+				noteImg = sizeCheck(noteImg);
 				//System.out.println("그림");
 				if (wordStart + noteImg.getWidth() + 5 > width) {	// line spacing due to lack of right margins
 					lineStart += fontSize * 2;
@@ -200,10 +201,23 @@ public class TextToImg {
 		if (word.length() == 1) return 0; 
 		int tempLength = 0;
 		for (char c : word.toCharArray()){
-			if (c == ' ') tempLength += fontSize - 15;
-			else if (c > 122) tempLength += (fontSize);
-			else tempLength += (fontSize - 10);
+			if (c == ' ') tempLength += (fontSize - 13); // case of space
+			else if (c > 122) tempLength += (fontSize);	// case of korean
+			else tempLength += (fontSize - 8); // case of english
 		}
 		return tempLength;
 	}
+	private BufferedImage sizeCheck(BufferedImage img){
+		int imgWidth = img.getWidth();
+		int imgHeight = img.getHeight();
+		while(imgWidth > width/2 || imgHeight > height/2){
+			System.out.println("호출됨");
+			imgWidth = imgWidth * 3 / 4;
+			imgHeight = imgHeight * 3 / 4;
+		}
+		IMG_Resize resizer = new IMG_Resize(imgWidth, imgHeight);
+		img = resizer.ResizeIMG(img);
+		return img;
+	}
+	
 }

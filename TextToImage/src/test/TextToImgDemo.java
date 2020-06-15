@@ -27,10 +27,9 @@ public class TextToImgDemo
 		
 		try {
 			imgs = pdfandimg.PDFtoIMG("0.pdf");
-			IMG_Resize resize = new IMG_Resize(imgs.get(0).getWidth()/2,imgs.get(0).getHeight()/2);
 			int i = 0;
 			for(BufferedImage note : imgs) {
-				notes.add(new Note(resize.ResizeIMG(note),index.get(i).x,index.get(i).y));
+				notes.add(new Note(note,index.get(i).x,index.get(i).y));
 				i++;
 			}
 		} catch (IOException e) {
