@@ -5,6 +5,10 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.*;
 
+import textToImage.Note;
+import textToImage.PDFandIMG;
+import textToImage.TextToImg;
+
 public class TextToImgDemo
 {
 	public static void main(String[] args) throws Exception {
@@ -37,8 +41,8 @@ public class TextToImgDemo
 		}
 		TextToImg textToimg = new TextToImg(sttarray,notes,change, imgs.get(0).getWidth(), imgs.get(0).getHeight());
 		//textToImg 실행
-		textToimg.convert();
-		
+		imgs = textToimg.convert();
+		pdfandimg.IMGtoPDF(imgs, "h.pdf");
 	}
  
 }

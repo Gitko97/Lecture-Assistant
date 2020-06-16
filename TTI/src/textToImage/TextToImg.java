@@ -1,4 +1,4 @@
-package test;
+package textToImage;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -110,10 +110,11 @@ public class TextToImg {
 				}
 				headLine = "<"+secondToMinute(i)+"'s note>";	// print a note's index to identify
 				graphics.drawString(headLine, wordStart, lineStart);
-				wordStart += headLine.length() * (fontSize - 3);
+				wordStart = 10;
+				lineStart += fontSize * lineSpacing;
 			}
 				
-				//System.out.println(noteIndex + "th image and " + i + "'s text"); // debugging
+			//System.out.println(noteIndex + "th image and " + i + "'s text"); // debugging
 			// --------------------------print end ---------------------------------
 
 			// word of a second
@@ -148,6 +149,8 @@ public class TextToImg {
 					graphics.drawString("<Note end>", wordStart, lineStart);
 					notePrinted = false;
 					lineStart = heightMargin + fontSize * 3;
+					if (lineStart < heightMargin) lineStart = heightMargin + fontSize * lineSpacing;
+					else lineStart += fontSize * lineSpacing;
 					wordStart = 10;	
 					widthMargin = width;
 					if (noteIndex < notes.size()) {

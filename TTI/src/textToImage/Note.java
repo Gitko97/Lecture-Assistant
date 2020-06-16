@@ -1,4 +1,4 @@
-package test;
+package textToImage;
 
 import java.awt.image.BufferedImage;
 
