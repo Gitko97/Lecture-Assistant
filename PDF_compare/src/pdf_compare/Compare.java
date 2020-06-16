@@ -56,7 +56,6 @@ public class Compare implements Runnable {
 		
 		while(!exit&&captureCount<maxTime) { //main part
 			
-			
 			//real case
 			if(!capturing.endPos(captureCount+1)) { //ready to captured img
 				Thread.yield();
@@ -140,6 +139,8 @@ public class Compare implements Runnable {
 		if(difLevel>DIF_PAGE) {//different case
 			System.out.println("compare Capture img: different case");
 			if(capNoteStart) {//if any write is there
+				capNoteFinish=true;
+				endBufImg=capTemp1;
 				saveWriting();
 			}
 			getNextPage=true;
@@ -210,7 +211,7 @@ public class Compare implements Runnable {
 	}
 /*	
 	public void setStartPage(int num) {
-		if(num<0){
+		if(num<=0){
 			throw new IllegalArgumentException(
 					"input value must be pasitive number, not "+num+" that nagative number or zero");
 		}
@@ -219,7 +220,7 @@ public class Compare implements Runnable {
 	}
 */
 	public void setMaxTime(int time) {
-		if(time<0){
+		if(time<=0){
 			throw new IllegalArgumentException(
 					"input value must be pasitive number, not "+time+" that nagative number or zero");
 		}
