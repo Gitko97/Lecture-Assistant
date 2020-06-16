@@ -4,9 +4,9 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.io.File; //debug for fileIO
-import java.io.FileOutputStream; //debug for fileIO
-import javax.imageio.ImageIO; // debug for fileIO
+//import java.io.File; //debug for fileIO
+//import java.io.FileOutputStream; //debug for fileIO
+//import javax.imageio.ImageIO; // debug for fileIO
 
 // Class TextToImg
 // 1. args are ArrayList<String> STTString, ArrayList<Note> notes, ArrayLise<Integer> changedPosition, int width, int height
@@ -28,8 +28,8 @@ public class TextToImg {
 	private int fontSize = 20;
 	private Font font;
 	private String fontFamily = "바탕";
-	private String fileName; // debug for fileIO
-	private FileOutputStream fos; // debug for fileIO
+	//private String fileName; // debug for fileIO
+	//private FileOutputStream fos; // debug for fileIO
 	private Graphics2D graphics;
 	private BufferedImage bImg;
 
@@ -47,7 +47,7 @@ public class TextToImg {
 	
 	// method convert
 	public ArrayList<BufferedImage> convert() throws Exception{
-		fileName = Integer.toString(outputCount)+".png"; // debug for fileIO
+		//fileName = Integer.toString(outputCount)+".png"; // debug for fileIO
 		initGraphic();
 		
 		int wordStart = 10;
@@ -167,7 +167,7 @@ public class TextToImg {
 	private void initGraphic() throws IOException{
 		
 		bImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-		fos = new FileOutputStream(new File(fileName)); // debug for fileIO
+		//fos = new FileOutputStream(new File(fileName)); // debug for fileIO
 		graphics = bImg.createGraphics();
 		
 		graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -185,9 +185,9 @@ public class TextToImg {
 	private void imageWrite() throws IOException {
 		result.add(bImg);
 		//----- debug for file IO--------
-		ImageIO.write(bImg, "PNG", fos);
-		System.out.println(outputCount++ + "th note converted"); //debugging
-		fileName = Integer.toString(outputCount)+".png";
+		//ImageIO.write(bImg, "PNG", fos); //debugging for file IO
+		//System.out.println(outputCount++ + "th note converted"); //debugging for fileIO
+		//fileName = Integer.toString(outputCount)+".png"; //debugging for fileIO
 		//-------------------------------
 	}
 	private String spaceRemover(String s) {

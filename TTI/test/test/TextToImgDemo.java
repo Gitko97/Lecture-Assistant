@@ -30,7 +30,7 @@ public class TextToImgDemo
 		PDFandIMG pdfandimg = new PDFandIMG();
 		
 		try {
-			imgs = pdfandimg.PDFtoIMG("0.pdf");
+			imgs = pdfandimg.PDFtoIMG("test/test/0.pdf");
 			int i = 0;
 			for(BufferedImage note : imgs) {
 				notes.add(new Note(note,index.get(i).x,index.get(i).y));
@@ -42,7 +42,7 @@ public class TextToImgDemo
 		TextToImg textToimg = new TextToImg(sttarray,notes,change, imgs.get(0).getWidth(), imgs.get(0).getHeight());
 		//textToImg 실행
 		imgs = textToimg.convert();
-		pdfandimg.IMGtoPDF(imgs, "h.pdf");
+		pdfandimg.IMGtoPDF(imgs, "test/test/test.pdf");
 	}
  
 }
