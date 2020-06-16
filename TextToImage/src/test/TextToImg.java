@@ -56,6 +56,7 @@ public class TextToImg {
 		int cPosIndex = 0;
 		int widthMargin = width;
 		int heightMargin = 0;
+		int lineSpacing = 2;
 		Note note = null;
 		boolean notePrinted = false;
 		
@@ -66,7 +67,6 @@ public class TextToImg {
 
 		for(int i = 0; i < string.size(); i++) {
 			
-
 			if (changedP != null && changedP.get(cPosIndex) == i) {
 				if (cPosIndex < changedP.size() - 1 ) cPosIndex += 1;
 				pdfPages += 1;
@@ -76,68 +76,48 @@ public class TextToImg {
 				wordStart = 10;
 				widthMargin = width;
 				heightMargin = 0;
-				
-				
-				//System.out.println("페이지 넘김"); // debugging
+
+				//System.out.println("new page"); // debugging
 			}
 			
 			// ---------------------- print notations from Note class --------------------------------
 			// When note's startIndex and STTString's index i is same, ready to draw an notation from Note
 			if (note != null && note.startIndex == i ) {
-				wordStart = 10;
-				if (lineStart + fontSize * 6 > height ) {	// In the case of lack of bottom margins
-					imageWrite();
-					initGraphic();
-					lineStart = fontSize * 3;
-				}
-				else lineStart += fontSize * 2;
 				notePrinted = true;
-				noteImg = note.note;
+				wordStart = 10;
+				if ((noteImg = note.note) != null) {
+					noteImg = sizeCheck(noteImg);
+					if (lineStart + noteImg.getHeight() + fontSize * lineSpacing > height ) {	// init new page when there is no margins to draw notation
+						imageWrite();
+						initGraphic();
+						lineStart = fontSize * 3;
+					}
+					lineStart += fontSize * lineSpacing;
+					graphics.drawImage(noteImg, width - noteImg.getWidth() - 5, lineStart, null);
+					widthMargin = width - noteImg.getWidth() - 5;
+					heightMargin = lineStart + noteImg.getHeight();
+					noteImg = null;
+				}
+				else {
+					if (lineStart + fontSize * lineSpacing > height) {
+						imageWrite();
+						initGraphic();
+						lineStart = fontSize * 3;
+					}
+					else {
+						lineStart += fontSize * lineSpacing ;
+					}
+				}
 				headLine = "<"+secondToMinute(i)+"'s note>";	// print a note's index to identify
 				graphics.drawString(headLine, wordStart, lineStart);
 				wordStart += headLine.length() * (fontSize - 3);
 			}
 				
 				//System.out.println(noteIndex + "th image and " + i + "'s text"); // debugging
-			
-			if (noteImg != null) {
-				noteImg = sizeCheck(noteImg);
-				//System.out.println("그림");
-				if (wordStart + noteImg.getWidth() + 5 > width) {	// line spacing due to lack of right margins
-					lineStart += fontSize * 2;
-					wordStart = 10;
-				}
-				if (lineStart + noteImg.getHeight() > height ) {	// init new page when there is no margins to draw notation
-					imageWrite();
-					initGraphic();
-					wordStart = 10;
-					lineStart = fontSize * 3;
-				}
-				
-				graphics.drawImage(noteImg, width - noteImg.getWidth() - 5, lineStart, null);
-				widthMargin = width - noteImg.getWidth() - 5;
-				heightMargin = lineStart + noteImg.getHeight();
-				
-				noteImg = null;
-			}
-			
-			if (notePrinted) {
-				if (note.endIndex == i) {
-					
-					notePrinted = false;
-					lineStart = heightMargin + fontSize * 3;
-					wordStart = 10;
-					widthMargin = width;
-					if (noteIndex < notes.size()) {
-						note = notes.get(noteIndex++);
-					}
-				}
-			}
 			// --------------------------print end ---------------------------------
 
+			// word of a second
 			String word = string.get(i);
-			// i초의 word이다. 
-
 			word = " " + spaceRemover(word);
 			if (wordStart + word.length() * (fontSize - 4) + fontSize> widthMargin) {	// line spacing due to lack of right margins
 				wordStart = 10;
@@ -153,6 +133,28 @@ public class TextToImg {
 			graphics.drawString(word,wordStart, lineStart);
 			wordStart += wordSpace(word);
 			
+			if (notePrinted) {
+				if (note.endIndex == i + 1) {
+					if (lineStart + fontSize * lineSpacing > height) {
+						imageWrite();
+						initGraphic();
+						wordStart = 10;
+						lineStart = fontSize * 3;
+					}
+					else {
+						wordStart = 10;
+						lineStart += fontSize * lineSpacing ;
+					}
+					graphics.drawString("<Note end>", wordStart, lineStart);
+					notePrinted = false;
+					lineStart = heightMargin + fontSize * 3;
+					wordStart = 10;	
+					widthMargin = width;
+					if (noteIndex < notes.size()) {
+						note = notes.get(noteIndex++);
+					}
+				}
+			}
 		}
 		imageWrite();
 		return result;
@@ -211,7 +213,7 @@ public class TextToImg {
 		int imgWidth = img.getWidth();
 		int imgHeight = img.getHeight();
 		while(imgWidth > width/2 || imgHeight > height/2){
-			System.out.println("호출됨");
+			//System.out.println("resizer called"); // debugger
 			imgWidth = imgWidth * 3 / 4;
 			imgHeight = imgHeight * 3 / 4;
 		}
