@@ -2,7 +2,7 @@ package src;
 
 import java.awt.image.BufferedImage;
 
-public class BorderedImage extends PDFCompare {
+public class BorderedImage extends PdfCompare {
   private static BufferedImage imageA;
   private static BufferedImage imageB;
   private static int startPos[] = new int[2];
