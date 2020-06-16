@@ -42,7 +42,7 @@ it has lagacy remark that compare to RGB value.(it don't use ANYMORE)
  protected static boolean isHSLdifferent(double[] aHSL, double[] bHSL)
 ```
 
-//same: return false, different: return false. 
+//same: return false, different: return false.
 
 this is method that check each HSL array value is different.
 
@@ -91,7 +91,7 @@ this method use to compare each pixel value to rgb different.
 
 this is method that setting noise variables.
 
-each parameters are matching hueNoise, satNoise, and lumNoise. 
+each parameters are matching hueNoise, satNoise, and lumNoise.
 
 
 
@@ -452,7 +452,7 @@ method
 		originImgArray=originPDFArray;
 		capturing=cap;
 		controller=LAC;
-		
+
 		exit=false;
 	}
 ```
@@ -553,9 +553,9 @@ all processe is like this:
 				endBufImg=capTemp1;
 			}
 			sameImg++;
-			
+
 			System.out.println("compare Capture img: same case, sameImg: "+sameImg);
-			
+
 			if(sameImg>=NO_WRITE_SECONDS) {//save write
 				System.out.println("save writing enter");
 				saveWriting();
@@ -597,13 +597,13 @@ else, do this processe.
  		BorderedImage.getDifRatio(startBufImg, endBufImg);
 		BorderedImage.setBufferedImage();
 		int subPos[]=BorderedImage.extractBufferedImage();//already compare each other, so it use least compare data
-		
+
 		//saving
 	    if(capNoteStart) {//when write is exist
-	    	  
+
 	          System.out.println("ADD!");
 	          controller.ADD_Note(endBufImg.getSubimage(subPos[0], subPos[1], subPos[2], subPos[3]), capNoteStartIndex, captureCount);
-	       
+
 	    }
 ```
 

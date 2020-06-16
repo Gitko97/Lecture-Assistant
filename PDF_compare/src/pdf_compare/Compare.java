@@ -4,23 +4,23 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 public class Compare implements Runnable {
-	
+
 	private ArrayList<BufferedImage> originImgArray;
 	private Capturing capturing;
 	private LaController controller;
-	
+
 	private BufferedImage capTemp1, capTemp2;
 	private BufferedImage startBufImg, endBufImg;
-	
+
 	private static boolean exit;
 	private boolean getNextPage;
 	private boolean capNoteStart, capNoteFinish;
-	
+
 	private final double SAME_CAP=0.00001;
 //	private final double SAME_PAGE=0.05;
 	private final double DIF_PAGE=0.03;
-	
-	
+
+
 	private int maxTime=3600;
 //	private int startPage=0;
 	private int sameImg;
@@ -28,7 +28,7 @@ public class Compare implements Runnable {
 	private int capNoteStartIndex;
 //	private int pdfPage;
 	private final int NO_WRITE_SECONDS=3;
-	
+
 	public Compare(
 			ArrayList<BufferedImage> originPDFArray
 			, Capturing cap, LaController LAC
@@ -36,10 +36,10 @@ public class Compare implements Runnable {
 		originImgArray=originPDFArray;
 		capturing=cap;
 		controller=LAC;
-		
+
 		exit=false;
 	}
-	
+
 	public void run(){
 		//initialize
 		captureCount=1;
@@ -48,21 +48,21 @@ public class Compare implements Runnable {
 		getNextPage=false;
 		capNoteStart=false;
 		capNoteFinish=false;
-		
+
 		//debugging log
 		System.out.println("compare start");
 		checkException();
-		
-		
+
+
 		while(!exit&&captureCount<maxTime) { //main part
-			
+
 			//real case
 			if(!capturing.endPos(captureCount+1)) { //ready to captured img
 				Thread.yield();
 				continue;
 			}
-			
-			
+
+
 			System.out.println("index "+captureCount+" compare, getNextPage: "+getNextPage+", capNoteStart, capNoteFinish: "+capNoteStart+", "+capNoteFinish);
 			try {
 				if(getNextPage) {//get next page
@@ -79,12 +79,12 @@ public class Compare implements Runnable {
 			}
 			captureCount++;
 		}
-		
-		
+
+
 		System.out.println("compare finish");
 		return;
 	}
-	
+
 	private void checkException() { //check exception
 		if(
 				originImgArray==null
@@ -95,11 +95,11 @@ public class Compare implements Runnable {
 				throw new NullPointerException();
 			}
 	}
-	
-	
+
+
 	//return value: recent pdfPage
 	private void pageChange() throws Exception {
-		
+
 		controller.ADD_CompletePDF(capTemp1, captureCount+1);
 		getNextPage=false;
 		return;
@@ -107,7 +107,7 @@ public class Compare implements Runnable {
 		int count=0;
 		double difLevel;
 		BufferedImage pdfTemp;
-		
+
 		while(originImgArray.size()>pdfPage+count) {
 			pdfTemp=originImgArray.get(pdfPage+count);
 			System.out.println("pdf page: "+(pdfPage+count));
@@ -124,18 +124,18 @@ public class Compare implements Runnable {
 		throw new Exception("Not same page!");
 		*/
 	}
-	
+
 	private void compareCapturedImage() {
 		double difLevel;
-		
-		
+
+
 		//compare and check how amount different
 		capTemp1=capturing.getCaptureImg(captureCount);
 		capTemp2=capturing.getCaptureImg(captureCount+1);
-		
-		
+
+
 		difLevel=BorderedImage.getDifRatio(capTemp1, capTemp2);
-		
+
 		if(difLevel>DIF_PAGE) {//different case
 			System.out.println("compare Capture img: different case");
 			if(capNoteStart) {//if any write is there
@@ -163,9 +163,9 @@ public class Compare implements Runnable {
 				endBufImg=capTemp1;
 			}
 			sameImg++;
-			
+
 			System.out.println("compare Capture img: same case, sameImg: "+sameImg);
-			
+
 			if(sameImg>=NO_WRITE_SECONDS) {//save write
 				System.out.println("save writing enter");
 				saveWriting();
@@ -174,42 +174,42 @@ public class Compare implements Runnable {
 		}
 		return;
 	}
-	
+
 	private void saveWriting() {
-		
+
 		if(!capNoteStart) {
 			return;
 		}
-		
-		
+
+
 		try { //import note part
 			BorderedImage.getDifRatio(startBufImg, endBufImg);
 			BorderedImage.setBufferedImage();
 			int subPos[]=BorderedImage.extractBufferedImage();//already compare each other, so it use least compare data
-			
+
 			//saving
 		    if(capNoteStart) {//when write is exist
-		    	  
+
 		          System.out.println("ADD!");
 		          controller.ADD_Note(endBufImg.getSubimage(subPos[0], subPos[1], subPos[2], subPos[3]), capNoteStartIndex, captureCount);
-		       
+
 		    }
-			
+
 		}
 		catch(Exception e) { //excetion find
 			System.out.println("ERROR OCCURED IN saveWriting");
 			System.out.println(e);
 			return;
 		}
-		
-		
+
+
 		System.out.println("save!");
 
 		capNoteStart=false;
 		capNoteFinish=false;
 		return;
 	}
-/*	
+/*
 	public void setStartPage(int num) {
 		if(num<=0){
 			throw new IllegalArgumentException(
@@ -227,7 +227,7 @@ public class Compare implements Runnable {
 		maxTime=time;
 		return;
 	}
-	
+
 	public boolean exit() {
 		exit=true;
 		return capturing.endPos(captureCount);
