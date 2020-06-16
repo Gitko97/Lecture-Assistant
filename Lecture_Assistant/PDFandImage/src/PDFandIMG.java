@@ -1,7 +1,6 @@
 package src;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -14,28 +13,32 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 
+//This Class Need Apache's PDFBox library
 public class PdfAndImg{
-	
-  public boolean IMGtoPDF(ArrayList<BufferedImage> imgs, String filePath) {	// 留ㅺ컻蹂��닔濡� 諛쏆� imgs�뱾�쓣 filePath�뿉 ���옣
-    PDDocument document = new PDDocument();
+
+  //Save the image received as parameter to filepath as pdf file
+  public boolean IMGtoPDF(ArrayList<BufferedImage> imgs, String filePath) {	
+    PDDocument document = new PDDocument(); //Make New PDF document
 	try {
 	  for(BufferedImage img : imgs) {
-	    PDPage page = new PDPage(new PDRectangle(img.getWidth(), img.getHeight()));
-		document.addPage(page);
+	    PDPage page = new PDPage(new PDRectangle(img.getWidth(), img.getHeight())); //Make Page with image
+	    //Add page to document
+		document.addPage(page); 
 		PDImageXObject pdImage = JPEGFactory.createFromImage(document, img);
 		PDPageContentStream contentStream = new PDPageContentStream(document, page);
 		contentStream.drawImage(pdImage, 0, 0, img.getWidth(), img.getHeight());
 		contentStream.close();
 	  }
-	  document.save(filePath);
+	  document.save(filePath); //document save
 	  return true;
 	} catch (IOException e) {
 	  e.printStackTrace();
 	}
 	return false;
   }
-	
-  public ArrayList<BufferedImage> PdfToImg(String filePath) throws IOException { //留ㅺ컻蹂��닔濡� 諛쏆� filePath�쓽 PDF瑜� IMG濡� 蹂��솚�썑 ArrayList濡� 諛섑솚
+
+  //Read PDF and return PDF's pages to images
+  public ArrayList<BufferedImage> PdfToImg(String filePath) throws IOException {
     ArrayList<BufferedImage> imgs = new ArrayList<>();
 	File readFile = new File(filePath);
 	PDDocument document = PDDocument.load(readFile);

@@ -22,26 +22,32 @@ public class CaptureEvent implements MouseListener, MouseMotionListener {
   boolean start;
   CaptureView captureView;
   LaController controller;
+  
+  
+  
+  // This Sub-Class is for events in PDF Select button.
   public class PDFButtonEvent implements ActionListener {
 
     @Override
 	public void actionPerformed(ActionEvent arg0) {
 	  JFileChooser fc = new JFileChooser("/Users/");
 	  fc.setDialogTitle("Select pdf file");
-		   
-	  fc.setFileFilter(new FileNameExtensionFilter("pdf", "pdf")); //.pdf �뙆�씪留� �꽑�깮�븯�룄濡�
-	  fc.setMultiSelectionEnabled(false);                          //�떎以� �꽑�깮 遺덇�
+	  
+	  // File filter that allows users to choose only .pdf
+	  fc.setFileFilter(new FileNameExtensionFilter("pdf", "pdf")); 
+	  fc.setMultiSelectionEnabled(false);                          
 
-	  fc.showOpenDialog(null); // showOpenDialog�뒗 李쎌쓣 �쓣�슦�뒗�뜲 �뼱�뒓 �쐞移섏뿉 �쓣�슱嫄댁� �씤�옄瑜� 諛쏄퀬
-	                                                      // 洹몃━怨� �꽑�깮�븳 �뙆�씪�쓽 寃쎈줈媛믪쓣 諛섑솚�븳�떎.
+	  fc.showOpenDialog(null); 
 	        
 	        
 	  if(fc.getSelectedFile() != null) {
+		//file path that user choose 
 	    pdfPath = fc.getSelectedFile().toString(); 
 	    try {
 	      controller.GetLecturePDF(pdfPath);
-	      captureView.setLabel1(pdfPath);
+	      captureView.setLabel1(pdfPath);	//set Label to pdf's Path
 	      } catch (IOException e) {
+	    	//If pdf file cannot be read to BufferedImages
 	        pdfPath = null;
 	        JOptionPane.showMessageDialog(null, "This pdf file cannot be read");
 	      }
@@ -49,22 +55,24 @@ public class CaptureEvent implements MouseListener, MouseMotionListener {
 	  }
 		
   }
-	
+  
+  //This Sub-Class is for events Close button.
   public class CloseButtonEvent implements ActionListener {
 
     @Override
 	public void actionPerformed(ActionEvent arg0) {
-	  // TODO Auto-generated method stub
-	  captureView.exit();
+	  captureView.exit(); // this method will exit the program
 	}
 		
   }
-	
+  
+  //This Sub-Class is for events Start button.
   public class StartButtonEvent implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent arg0) {
-	  // TODO Auto-generated method stub
+      
+      //Program cannot be start without select pdf and key file
 	  if(pdfPath == null || keyPath == null) {
 	    JOptionPane.showMessageDialog(null, "You have to input PDF File and Key File");
 	  } else { 
@@ -72,59 +80,65 @@ public class CaptureEvent implements MouseListener, MouseMotionListener {
 		try {
 		  controller.start();
 		  } catch (InterruptedException e) {
-		    // TODO Auto-generated catch block
 			JOptionPane.showMessageDialog(null, "Microphone not support");
 		  }
 	  }
 	}
 		
   }
-	
+  
+  //This Sub-Class is for events Exit button.
   public class ExitButtonEvent implements ActionListener {
 
     @Override
 	public void actionPerformed(ActionEvent arg0) {
-	  // TODO Auto-generated method stub
+    	
 	  if(start) {
 	    if(controller.exit()) {
 		  JOptionPane.showMessageDialog(null, "Save Complete!");
 		  start = false;
-		  controller = new LaController(captureView);
 		}
 	  }
     }
 		
   }
-	
+
+  //This Sub-Class is for events Exit button.
   public class KeyButtonEvent implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent arg0) {
-	  // TODO Auto-generated method stub
       JFileChooser fc = new JFileChooser("/Users/");
 	  fc.setDialogTitle("Select Key file");
-	  fc.setFileFilter(new FileNameExtensionFilter("json", "json")); //.pdf �뙆�씪留� �꽑�깮�븯�룄濡�
-	  fc.setMultiSelectionEnabled(false);                          //�떎以� �꽑�깮 遺덇�
-	  fc.showOpenDialog(null); // showOpenDialog�뒗 李쎌쓣 �쓣�슦�뒗�뜲 �뼱�뒓 �쐞移섏뿉 �쓣�슱嫄댁� �씤�옄瑜� 諛쏄퀬
-	                                                      // 洹몃━怨� �꽑�깮�븳 �뙆�씪�쓽 寃쎈줈媛믪쓣 諛섑솚�븳�떎.
+	  
+	  // File filter that allows users to choose only .json
+	  fc.setFileFilter(new FileNameExtensionFilter("json", "json"));
+	  fc.setMultiSelectionEnabled(false);                          
+	  fc.showOpenDialog(null); 
 
 	  if(fc.getSelectedFile() != null) {
-	    String []language = {"�븳援��뼱", "English"};
+	    String []language = {"한국어", "English"}; //languages that user can choose
+	    
+	    //Language Selection View and save it in int variable
 	    int selected = JOptionPane.showOptionDialog(null, "Language", "The language is the lecture in",
 	     JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,language, language[0]);
-	    if(selected != JOptionPane.CLOSED_OPTION) {
+	    
+	    
+	    if(selected != JOptionPane.CLOSED_OPTION) { //IF User Choose option
 	      keyPath = fc.getSelectedFile().toString();
 	      try {
-	        controller.Authentication(keyPath,langCode(language[selected]));
+	        controller.Authentication(keyPath,langCode(language[selected])); //langCode() returns the code for language of user-selected options.
 	        captureView.setLabel2(keyPath);
 	      } catch (IOException e) {
+	    	//When key file cannot be certified by google speech api
 	        keyPath = null;
 	        JOptionPane.showMessageDialog(null, "This key file does not work.");
 	      }
 	    }
 	  }
     }
-		
+	
+    //Give Language Code based on Language Code Table
 	public String langCode(String lang) {
 	  switch(lang) {
 	    case "한국어": return "ko-KR";
@@ -141,31 +155,36 @@ public class CaptureEvent implements MouseListener, MouseMotionListener {
   }
 
   @Override
-  public void mouseDragged(MouseEvent e) {	// 留덉슦�뒪 �뱶�젅洹� �씠踰ㅽ듃
+  //Mouse Dragged Event
+  //This method is responsible for Resize, Move of GUI element.
+  public void mouseDragged(MouseEvent e) {	
     curX = e.getX();
     curY = e.getY();
 		
-	if(clickedShape == 0) {
-	  captureView.MovePos(curX-beforeX, curY-beforeY);	//寃����깋 �꽕紐� �닃���쑝硫� �뱶�옒洹몄떆 �씠�룞
-	} else if(clickedShape == -1) {
+	if(clickedShape == 0) {  //When user try to move Capture Area
+	  captureView.MovePos(curX-beforeX, curY-beforeY);	
+	} else if(clickedShape == -1) {  //When user try to move Button Panel
 	  captureView.MovePanel(curX-beforeX, curY-beforeY);
-	} else {
-	  captureView.Resize(curX-beforeX, curY-beforeY, clickedShape);		// 珥덈줉�깋 �꽕紐� �닃���쑝硫� �뱶�옒洹몄떆 resize
+	} else {  //When user try to resize Capture Area
+	  captureView.Resize(curX-beforeX, curY-beforeY, clickedShape);		
 	}
 	beforeX = curX;
 	beforeY = curY;
   }
 
   @Override
-  public void mousePressed(MouseEvent e) {	// 留덉슦�뒪 �늻瑜쇰븣 �씠踰ㅽ듃
+  //Mouse Pressed Event
+  //This method determines which GUI elements the user pressed.
+  public void mousePressed(MouseEvent e) {	
     beforeX = e.getX();
 	beforeY = e.getY();	
-	this.clickedShape = captureView.Clicked(beforeX,beforeY);	// 臾댁뾿�쓣 �닃���뒗吏� int濡� ���옣
-	if(clickedShape == 0) {
+	this.clickedShape = captureView.Clicked(beforeX,beforeY);  //Determine which element user pressed
+	
+	if(clickedShape == 0) {  //When Press Capture Area
 	  captureView.setCursor(new Cursor(Cursor.MOVE_CURSOR));
-	} else if(clickedShape == -1) {
+	} else if(clickedShape == -1) {  //When Press Button Panel
 	  captureView.setCursor(new Cursor(Cursor.MOVE_CURSOR));
-	} else {
+	} else {  //When Press Resize Rectangle
 	  captureView.setCursor(new Cursor(Cursor.HAND_CURSOR));
 	}
   }
@@ -179,7 +198,4 @@ public class CaptureEvent implements MouseListener, MouseMotionListener {
     captureView.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
   }
 
-  public Thread getThread() {
-    return Thread.currentThread();
-  }
 }

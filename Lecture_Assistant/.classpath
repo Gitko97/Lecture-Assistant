@@ -11,6 +11,8 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="src" path="TextToImage"/>
+	<classpathentry kind="src" path="Compare"/>
 	<classpathentry kind="src" path="Connection"/>
 	<classpathentry kind="src" path="PDFandImage"/>
 	<classpathentry kind="src" path="SpeechToText"/>

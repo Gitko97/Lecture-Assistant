@@ -44,7 +44,7 @@ public class InfiniteStreamRecognizeOptions {
       InfiniteStreamRecognizeOptions res = new InfiniteStreamRecognizeOptions();
 
       if (commandLine.hasOption("lang_code")) {
-        res.langCode = commandLine.getOptionValue("lang_code");
+    	  InfiniteStreamRecognizeOptions.langCode = commandLine.getOptionValue("lang_code");
       }
       return res;
     } catch (ParseException e) {
