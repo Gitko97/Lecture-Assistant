@@ -16,10 +16,10 @@ public class TextToImgDemo {
 	change.add(50); // �꽕怨� 愿��젴�맂~
 	change.add(70);
 	ArrayList<Point> index = new ArrayList<>();
-	index.add(new Point(6, 10)); //�븵�꽌 �궗�엺�뱾�씠 洹몃옱�쓣 嫄곕씪怨�~
-	index.add(new Point(30, 36)); //�뿬�윭遺꾨뱾","  �굹瑜명븳 援먭낵�꽌�뿉�꽌�뒗","  �씠�젣","  �뵒�옄�씤�뙣�꽩~
+	index.add(new Point(6, 10));  //�븵�꽌 �궗�엺�뱾�씠 洹몃옱�쓣 嫄곕씪怨�~
+	index.add(new Point(30, 36));  //�뿬�윭遺꾨뱾","  �굹瑜명븳 援먭낵�꽌�뿉�꽌�뒗","  �씠�젣","  �뵒�옄�씤�뙣�꽩~
 	index.add(new Point(50, 55));
-	index.add(new Point(60, 70)); // �뱶�뒗~
+	index.add(new Point(60, 70));  // �뱶�뒗~
 	System.out.println(sttstring[50]);
 	System.out.println(sttstring[70]);
 		
@@ -37,7 +37,7 @@ public class TextToImgDemo {
 	  e.printStackTrace();
 	}
 	TextToImg textToimg = new TextToImg(sttarray, notes, change, imgs.get(0).getWidth(), imgs.get(0).getHeight());
-	//textToImg �떎�뻾
+	// textToImg �떎�뻾
 	imgs = textToimg.convert();
 	pdfandimg.ImgToPdf(imgs, "test/test/test.pdf");
   }

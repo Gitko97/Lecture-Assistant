@@ -3,9 +3,9 @@ package textToImage;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
-//Class IMG_Resize
-//1. args are int newWidth, int newHeight
-//2. method ResizeImg return BufferedImage : convert an image from args into new size that constructed_
+// Class IMG_Resize
+// 1. args are int newWidth, int newHeight
+// 2. method ResizeImg return BufferedImage : convert an image from args into new size that constructed_
 public class ImgResize {
   int newHeight;
   int newWidth;

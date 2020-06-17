@@ -2,8 +2,8 @@ package textToImage;
 
 import java.awt.image.BufferedImage;
 
-//Class Note
-//1. args are BufferredImage note, int startIndex, int endIndex
+// Class Note
+// 1. args are BufferredImage note, int startIndex, int endIndex
 public class Note {
   BufferedImage note;
   int startIndex;

@@ -74,7 +74,7 @@ public class TextToImg {
 		widthMargin = width;
 		heightMargin = 0;
 
-		//System.out.println("new page"); // debugging
+		// System.out.println("new page"); // debugging
 	  }
 			
 	  // ---------------------- print notations from Note class --------------------------------
@@ -122,8 +122,8 @@ public class TextToImg {
 		}
 	    lineStart += fontSize * 2;
 	  }
-	  //System.out.println("wordStart = " + wordStart + " | lineStart = " + lineStart); // debugging
-	  //System.out.println(word); // debugging
+	  // System.out.println("wordStart = " + wordStart + " | lineStart = " + lineStart); // debugging
+	  // System.out.println(word); // debugging
 	  graphics.drawString(word, wordStart, lineStart);
 	  wordStart += wordSpace(word);
 	  if (notePrinted) {
@@ -167,10 +167,10 @@ public class TextToImg {
 	
   private void imageWrite() throws IOException {
     result.add(bImg);
-	//----- debug for file IO--------
-	System.out.println(outputCount++ + "th note converted"); //debugging
+	// ----- debug for file IO--------
+	System.out.println(outputCount++ + "th note converted"); // debugging
 	fileName = Integer.toString(outputCount) + ".png";
-	//-------------------------------
+	// -------------------------------
   }
 	
   private String spaceRemover(String s) {
