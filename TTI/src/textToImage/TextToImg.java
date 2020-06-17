@@ -16,206 +16,205 @@ import javax.imageio.ImageIO; // debug for fileIO
 // 5. method spaceRemover return String : Remove space
 // 6. method secondToMinute return String: Convert seconds into minutes.
 public class TextToImg {
+  private ArrayList<Note> notes;
+  private ArrayList<String> string;
+  private ArrayList<Integer> changedP;
+  private ArrayList<BufferedImage> result = new ArrayList<>();
+  private int width;
+  private int height;
+  private int pdfPages = 1;
+  private int outputCount = 1;
+  private int fontSize = 20;
+  private Font font;
+  private String fontFamily = "바탕";
+  private String fileName; // debug for fileIO
+  private Graphics2D graphics;
+  private BufferedImage bImg;
+  private String headLine = "";
+  
+  // TextToImg Constructor. 
+  public TextToImg(ArrayList<String> sttString, ArrayList<Note> notes, ArrayList<Integer> changedPosition, int width, int height) throws Exception {
+    this.string = sttString;
+	this.notes = notes;
+	this.changedP = changedPosition;
+	this.width = width;
+	this.height = height;
+	this.font = new Font(fontFamily, Font.PLAIN, fontSize);	
+  }
 	
-	private ArrayList<Note> notes;
-	private ArrayList<String> string;
-	private ArrayList<Integer> changedP;
-	private ArrayList<BufferedImage> result = new ArrayList<>();
-	private int width;
-	private int height;
-	private int pdfPages = 1;
-	private int outputCount = 1;
-	private int fontSize = 20;
-	private Font font;
-	private String fontFamily = "바탕";
-	private String fileName; // debug for fileIO
-	private Graphics2D graphics;
-	private BufferedImage bImg;
-
-	private String headLine = "";
-	
-	// TextToImg Constructor. 
-	public TextToImg(ArrayList<String> sttString, ArrayList<Note> notes, ArrayList<Integer> changedPosition, int width, int height) throws Exception {
-		this.string = sttString;
-		this.notes = notes;
-		this.changedP = changedPosition;
-		this.width = width;
-		this.height = height;
-		this.font = new Font(fontFamily,Font.PLAIN,fontSize);	
+  // method convert
+  public ArrayList<BufferedImage> convert() throws Exception {
+    initGraphic();
+	int wordStart = 10;
+	int lineStart = fontSize * 3;
+	int noteIndex = 0;
+	int cPosIndex = 0;
+	int widthMargin = width;
+	int heightMargin = 0;
+	int lineSpacing = 2;
+	Note note = null;
+	boolean notePrinted = false;
+		
+	if (notes != null) {
+	  note = notes.get(noteIndex++);
 	}
-	
-	// method convert
-	public ArrayList<BufferedImage> convert() throws Exception{
-		initGraphic();
+	BufferedImage noteImg = null; 
+	System.out.println("width : " + width + " | height : " + height);
 		
-		int wordStart = 10;
-		int lineStart = fontSize * 3;
-		int noteIndex = 0;
-		int cPosIndex = 0;
-		int widthMargin = width;
-		int heightMargin = 0;
-		int lineSpacing = 2;
-		Note note = null;
-		boolean notePrinted = false;
-		
-		if (notes != null) note = notes.get(noteIndex++);
-		BufferedImage noteImg = null; 
-		System.out.println("width : " + width + " | height : " + height);
-		
-
-		for(int i = 0; i < string.size(); i++) {
-			
-			if (changedP != null && changedP.get(cPosIndex) == i) {
-				if (cPosIndex < changedP.size() - 1 ) cPosIndex += 1;
-				pdfPages += 1;
-				imageWrite();
-				initGraphic();
-				lineStart = fontSize * 3;
-				wordStart = 10;
-				widthMargin = width;
-				heightMargin = 0;
-
-				//System.out.println("new page"); // debugging
-			}
-			
-			// ---------------------- print notations from Note class --------------------------------
-			// When note's startIndex and STTString's index i is same, ready to draw an notation from Note
-			if (note != null && note.startIndex == i ) {
-				notePrinted = true;
-				wordStart = 10;
-				if ((noteImg = note.note) != null) {
-					noteImg = sizeCheck(noteImg);
-					if (lineStart + noteImg.getHeight() + fontSize * lineSpacing > height ) {	// init new page when there is no margins to draw notation
-						imageWrite();
-						initGraphic();
-						lineStart = fontSize * 3;
-					}
-					lineStart += fontSize * lineSpacing;
-					graphics.drawImage(noteImg, width - noteImg.getWidth() - 5, lineStart, null);
-					widthMargin = width - noteImg.getWidth() - 5;
-					heightMargin = lineStart + noteImg.getHeight();
-					noteImg = null;
-				}
-				else {
-					if (lineStart + fontSize * lineSpacing > height) {
-						imageWrite();
-						initGraphic();
-						lineStart = fontSize * 3;
-					}
-					else {
-						lineStart += fontSize * lineSpacing ;
-					}
-				}
-				headLine = "<"+secondToMinute(i)+"'s note>";	// print a note's index to identify
-				graphics.drawString(headLine, wordStart, lineStart);
-				wordStart += headLine.length() * (fontSize - 3);
-			}
-				
-				//System.out.println(noteIndex + "th image and " + i + "'s text"); // debugging
-			// --------------------------print end ---------------------------------
-
-			// word of a second
-			String word = string.get(i);
-			word = " " + spaceRemover(word);
-			if (wordStart + word.length() * (fontSize - 4) + fontSize> widthMargin) {	// line spacing due to lack of right margins
-				wordStart = 10;
-				if (lineStart > height - fontSize * 2){	// init new page when there is no margins to space a line
-					imageWrite();
-					initGraphic();
-					lineStart = fontSize;
-				}
-				lineStart += fontSize * 2;
-			}
-			//System.out.println("wordStart = " + wordStart + " | lineStart = " + lineStart); // debugging
-			//System.out.println(word); // debugging
-			graphics.drawString(word,wordStart, lineStart);
-			wordStart += wordSpace(word);
-			
-			if (notePrinted) {
-				if (note.endIndex == i + 1) {
-					if (lineStart + fontSize * lineSpacing > height) {
-						imageWrite();
-						initGraphic();
-						wordStart = 10;
-						lineStart = fontSize * 3;
-					}
-					else {
-						wordStart = 10;
-						lineStart += fontSize * lineSpacing ;
-					}
-					graphics.drawString("<Note end>", wordStart, lineStart);
-					notePrinted = false;
-					lineStart = heightMargin + fontSize * 3;
-					wordStart = 10;	
-					widthMargin = width;
-					if (noteIndex < notes.size()) {
-						note = notes.get(noteIndex++);
-					}
-				}
-			}
-		}
+    for(int i = 0; i < string.size(); i++) {
+	  if (changedP != null && changedP.get(cPosIndex) == i) {
+	    if (cPosIndex < changedP.size() - 1 ) {
+	      cPosIndex += 1;
+	    }
+		pdfPages += 1;
 		imageWrite();
-		return result;
-		
-	}
-	
-	private void initGraphic() throws IOException{
-		
-		bImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-		graphics = bImg.createGraphics();
-		
-		graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		graphics.setColor(Color.WHITE);
-		graphics.fillRect(0,0, width, height);
-		graphics.setFont(font);
-		graphics.setColor(Color.BLACK);
-		
-		// print lecture note's index and whole pdf's index at head area 
-		graphics.drawString(Integer.toString(outputCount)+"th page",width-100, 20);
-		graphics.drawString("PDF "+Integer.toString(pdfPages)+"th page",width/2, 20);
+		initGraphic();
+		lineStart = fontSize * 3;
+		wordStart = 10;
+		widthMargin = width;
+		heightMargin = 0;
 
-	}
-	
-	private void imageWrite() throws IOException {
-		result.add(bImg);
-		//----- debug for file IO--------
-		System.out.println(outputCount++ + "th note converted"); //debugging
-		fileName = Integer.toString(outputCount)+".png";
-		//-------------------------------
-	}
-	private String spaceRemover(String s) {
-		
-		if (s.length() == 0 || s.charAt(0) != ' ') return s;
-		else  s = spaceRemover(s.substring(1));
-		return s;
-	}
-	
-	private String secondToMinute(int s) {
-		String m = Integer.toString(s / 60);
-		String sc = Integer.toString(s % 60);
-		return m+"min "+sc+"sec";
-	}
-	private int wordSpace(String word){
-		if (word.length() == 1) return 0; 
-		int tempLength = 0;
-		for (char c : word.toCharArray()){
-			if (c == ' ') tempLength += (fontSize - 13); // case of space
-			else if (c > 122) tempLength += (fontSize);	// case of korean
-			else tempLength += (fontSize - 8); // case of english
+		//System.out.println("new page"); // debugging
+	  }
+			
+	  // ---------------------- print notations from Note class --------------------------------
+	  // When note's startIndex and STTString's index i is same, ready to draw an notation from Note
+	  if (note != null && note.startIndex == i ) {
+	    notePrinted = true;
+		wordStart = 10;
+		if ((noteImg = note.note) != null) {
+		  noteImg = sizeCheck(noteImg);
+		  if (lineStart + noteImg.getHeight() + fontSize * lineSpacing > height ) {	// init new page when there is no margins to draw notation
+		    imageWrite();
+			initGraphic();
+			lineStart = fontSize * 3;
+		  }
+		  lineStart += fontSize * lineSpacing;
+		  graphics.drawImage(noteImg, width - noteImg.getWidth() - 5, lineStart, null);
+		  widthMargin = width - noteImg.getWidth() - 5;
+		  heightMargin = lineStart + noteImg.getHeight();
+		  noteImg = null;
+		} else {
+		  if (lineStart + fontSize * lineSpacing > height) {
+		    imageWrite();
+			initGraphic();
+			lineStart = fontSize * 3;
+		  } else {
+		    lineStart += fontSize * lineSpacing ;
+		  }
 		}
-		return tempLength;
-	}
-	private BufferedImage sizeCheck(BufferedImage img){
-		int imgWidth = img.getWidth();
-		int imgHeight = img.getHeight();
-		while(imgWidth > width/2 || imgHeight > height/2){
-			//System.out.println("resizer called"); // debugger
-			imgWidth = imgWidth * 3 / 4;
-			imgHeight = imgHeight * 3 / 4;
+		headLine = "<" + secondToMinute(i) + "'s note>";	// print a note's index to identify
+		graphics.drawString(headLine, wordStart, lineStart);
+		wordStart += headLine.length() * (fontSize - 3);
+	  }
+				
+	  //System.out.println(noteIndex + "th image and " + i + "'s text"); // debugging
+	  // --------------------------print end ---------------------------------
+      // word of a second
+	  String word = string.get(i);
+	  word = " " + spaceRemover(word);
+	  if (wordStart + word.length() * (fontSize - 4) + fontSize> widthMargin) {	// line spacing due to lack of right margins
+	    wordStart = 10;
+		if (lineStart > height - fontSize * 2) {	// init new page when there is no margins to space a line
+		  imageWrite();
+		  initGraphic();
+		  lineStart = fontSize;
 		}
-		ImgResize resizer = new ImgResize(imgWidth, imgHeight);
-		img = resizer.ResizeIMG(img);
-		return img;
+	    lineStart += fontSize * 2;
+	  }
+	  //System.out.println("wordStart = " + wordStart + " | lineStart = " + lineStart); // debugging
+	  //System.out.println(word); // debugging
+	  graphics.drawString(word,wordStart, lineStart);
+	  wordStart += wordSpace(word);
+	  if (notePrinted) {
+		if (note.endIndex == i + 1) {
+		  if (lineStart + fontSize * lineSpacing > height) {
+		    imageWrite();
+			initGraphic();
+			wordStart = 10;
+			lineStart = fontSize * 3;
+		  } else {
+			wordStart = 10;
+			lineStart += fontSize * lineSpacing ;
+		  }
+		  graphics.drawString("<Note end>", wordStart, lineStart);
+		  notePrinted = false;
+		  lineStart = heightMargin + fontSize * 3;
+		  wordStart = 10;	
+		  widthMargin = width;
+		  if (noteIndex < notes.size()) {
+		    note = notes.get(noteIndex++);
+		  }
+		}
+	  }
 	}
+	imageWrite();
+	return result;
+  }
 	
+  private void initGraphic() throws IOException {
+    bImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+	graphics = bImg.createGraphics();
+	graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+	graphics.setColor(Color.WHITE);
+	graphics.fillRect(0, 0, width, height);
+	graphics.setFont(font);
+	graphics.setColor(Color.BLACK);
+	// print lecture note's index and whole pdf's index at head area 
+	graphics.drawString(Integer.toString(outputCount) + "th page", width - 100, 20);
+	graphics.drawString("PDF "+Integer.toString(pdfPages)+"th page",width/2, 20);
+  }
+	
+  private void imageWrite() throws IOException {
+    result.add(bImg);
+	//----- debug for file IO--------
+	System.out.println(outputCount++ + "th note converted"); //debugging
+	fileName = Integer.toString(outputCount) + ".png";
+	//-------------------------------
+  }
+	
+  private String spaceRemover(String s) {
+	if (s.length() == 0 || s.charAt(0) != ' ') {
+	  return s;
+	} else {
+	  s = spaceRemover(s.substring(1));
+	}
+	return s;
+  }
+	
+  private String secondToMinute(int s) {
+    String m = Integer.toString(s / 60);
+	String sc = Integer.toString(s % 60);
+	return m + "min " + sc + "sec";
+  }
+	
+  private int wordSpace(String word) {
+	if (word.length() == 1) {
+	  return 0; 
+	}
+    int tempLength = 0;
+	for (char c : word.toCharArray()) {
+	  if (c == ' ') {
+		tempLength += (fontSize - 13); // case of space
+	  } else if (c > 122) {
+	    tempLength += (fontSize);	// case of korean
+	  } else {
+	    tempLength += (fontSize - 8); // case of english
+	  }
+	}
+	return tempLength;
+  }
+
+  private BufferedImage sizeCheck(BufferedImage img) {
+    int imgWidth = img.getWidth();
+	int imgHeight = img.getHeight();
+	while(imgWidth > width / 2 || imgHeight > height / 2) {
+	  //System.out.println("resizer called"); // debugger
+	  imgWidth = imgWidth * 3 / 4;
+	  imgHeight = imgHeight * 3 / 4;
+	}
+	ImgResize resizer = new ImgResize(imgWidth, imgHeight);
+	img = resizer.ResizeIMG(img);
+	return img;
+  }
 }
