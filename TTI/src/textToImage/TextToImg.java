@@ -74,7 +74,8 @@ public class TextToImg {
 		widthMargin = width;
 		heightMargin = 0;
 
-		// System.out.println("new page"); // debugging
+		// System.out.println("new page"); 
+		// debugging
 	  }
 			
 	  // ---------------------- print notations from Note class --------------------------------
