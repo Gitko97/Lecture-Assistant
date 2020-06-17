@@ -124,7 +124,7 @@ public class TextToImg {
 	  }
 	  //System.out.println("wordStart = " + wordStart + " | lineStart = " + lineStart); // debugging
 	  //System.out.println(word); // debugging
-	  graphics.drawString(word,wordStart, lineStart);
+	  graphics.drawString(word, wordStart, lineStart);
 	  wordStart += wordSpace(word);
 	  if (notePrinted) {
 		if (note.endIndex == i + 1) {
@@ -214,7 +214,7 @@ public class TextToImg {
 	  imgHeight = imgHeight * 3 / 4;
 	}
 	ImgResize resizer = new ImgResize(imgWidth, imgHeight);
-	img = resizer.ResizeIMG(img);
+	img = resizer.ResizeImg(img);
 	return img;
   }
 }
