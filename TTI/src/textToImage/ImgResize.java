@@ -6,11 +6,11 @@ import java.awt.image.BufferedImage;
 //Class IMG_Resize
 //1. args are int newWidth, int newHeight
 //2. method ResizeIMG return BufferedImage : convert an image from args into new size that constructed_
-public class IMG_Resize {
+public class ImgResize {
   int newHeight;
   int newWidth;
 	
-  public IMG_Resize(int newWidth,int newHeight ) {	// construct with new widht and height
+  public ImgResize(int newWidth,int newHeight ) {	// construct with new widht and height
     this.newHeight = newHeight;
 	this.newWidth = newWidth;
   }
