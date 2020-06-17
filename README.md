@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 <img width="601" alt="LA logo2" src="https://user-images.githubusercontent.com/47098720/83949882-533ca980-a861-11ea-9f2a-7137893aaa6c.png">
 
 =======
@@ -130,3 +131,20 @@ You can see the specific README.md in each brach which helps you understand the 
 	textToImg 클래스를 생성하고 convert()메소드를 호출하면 된다.
 	생성자에 전달된 arraylist<string>, arraylist<노트>, arraylist<changedposition>, width, height에 따라 변환이 이뤄진다.
 >>>>>>> ff07ac2b347534e5abdecf0c9cee49b77ccd69ce
+=======
+
+# About TextToImage Branch
+Here in the TextToImage branch, we convert Text-into-Image and map all notations with the text .
+
+## Text-to-Image
+1. construct TextToImage class with (ArrayList<String> sttScript, ArrayList<[Note](https://github.com/Gitko97/Lecture-Assistant/blob/Combine-Class/Lecture_Assistant/Connection/src/Note.java>) note, ArrayList<int> changedPosition, int widht, int height)
+2. This class's method 'convert()' converts scripts and note into images and return ArrayList<BufferedImage>.
+3. The index of every list of constructor arguments is seconds.
+4. test/test/TextToImgDemo.java is a demo file that you can test converts.
+
+## Needs For SpeechToText
+1. SttScripts in ArrayList
+
+2. Note class in ArrayList
+
+>>>>>>> f82a43b3042a0bb8de7bf51ec60732abfc99f8a3
