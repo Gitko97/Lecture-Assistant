@@ -1,5 +1,12 @@
+<<<<<<< HEAD
 <img width="601" alt="LA logo2" src="https://user-images.githubusercontent.com/47098720/83949882-533ca980-a861-11ea-9f2a-7137893aaa6c.png">
 
+=======
+[PDF를 이미지로 만들고, note클래스에 이미지와 해당 이미지의 필기구간을 설정, 스크립트를 받아와 매핑하는 SW]
+
+1. SW 설명 :
+    STT로 받은 1초 단위로 나뉜 스크립트와 Note클래스의 이미지, 필기구간을 매핑하는 소프트웨어
+>>>>>>> ff07ac2b347534e5abdecf0c9cee49b77ccd69ce
 
 # About Lecture Assistant
 Lecture Assistant is a tool to support students who take online classes. It provides not only voice dictation and handwriting dictation but also mapping those two. Students can relive their burden on taking online classes and easily review what they've learned.
@@ -9,6 +16,7 @@ Lecture Assistant is a tool to support students who take online classes. It prov
 ## Google API(speech-to-text)
 We are using Google api so you need to download it for using our Lecture Assistant.
 
+<<<<<<< HEAD
 This is [a link to Google speech-to-text api.](https://cloud.google.com/speech-to-text)
 
 ## Libraries
@@ -112,3 +120,13 @@ You can see the specific README.md in each brach which helps you understand the 
 # LICENSE
 
 [Apache License 2.0](https://github.com/Gitko97/Lecture-Assistant/blob/master/LICENSE)
+=======
+ (3) 음성 스크립트와 따로 저장한 필기 부분의 맵핑. 즉, 해당 필기를 보며 교수님께서 어떻게 설명해주셨는지 한번에 볼 수 있게 서비스 제공
+
+4. Test :
+	test/test/TextToImgDemo.java 파일에 main 메소드.
+	sttarray에 1분 가량의 스크립트가 포함되어 있고
+	0.pdf의 페이지들을 불러와 임의의 시간에 매핑하였다.
+	textToImg 클래스를 생성하고 convert()메소드를 호출하면 된다.
+	생성자에 전달된 arraylist<string>, arraylist<노트>, arraylist<changedposition>, width, height에 따라 변환이 이뤄진다.
+>>>>>>> ff07ac2b347534e5abdecf0c9cee49b77ccd69ce
