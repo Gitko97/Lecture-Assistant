@@ -16,7 +16,7 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 //1. no constructor
 //2. method IMGtoPDF return boolean : save imgs from args at filePath
 // 3. method PDFtoIMG return ArrayList<BufferedImage> : Convert PDF at filePath from args into ArrayList<imgs>
-public class PDFandIMG{
+public class PdfAndImg{
   public boolean IMGtoPDF(ArrayList<BufferedImage> imgs, String filePath) {	// save imgs from args at filePath
     PDDocument document = new PDDocument();
 	try {

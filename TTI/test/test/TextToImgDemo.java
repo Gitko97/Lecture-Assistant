@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.*;
 import textToImage.Note;
-import textToImage.PDFandIMG;
+import textToImage.PdfAndImg;
 import textToImage.TextToImg;
 
 public class TextToImgDemo {
@@ -25,7 +25,7 @@ public class TextToImgDemo {
 		
 	ArrayList<Note> notes = new ArrayList<>();
 	ArrayList<BufferedImage> imgs = new ArrayList<>();
-	PDFandIMG pdfandimg = new PDFandIMG();
+	PdfAndImg pdfandimg = new PdfAndImg();
 	try {
 	  imgs = pdfandimg.PDFtoIMG("test/test/0.pdf");
 	  int i = 0;
