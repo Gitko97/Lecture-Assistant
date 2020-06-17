@@ -12,9 +12,9 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 
-//Class PDFandIMG
-//1. no constructor
-//2. method ImgToPdf return boolean : save imgs from args at filePath
+// Class PDFandIMG
+// 1. no constructor
+// 2. method ImgToPdf return boolean : save imgs from args at filePath
 // 3. method PdfToImg return ArrayList<BufferedImage> : Convert PDF at filePath from args into ArrayList<imgs>
 public class PdfAndImg{
   public boolean ImgToPdf(ArrayList<BufferedImage> imgs, String filePath) {	// save imgs from args at filePath
