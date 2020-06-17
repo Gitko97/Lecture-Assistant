@@ -27,7 +27,7 @@ public class TextToImgDemo {
 	ArrayList<BufferedImage> imgs = new ArrayList<>();
 	PdfAndImg pdfandimg = new PdfAndImg();
 	try {
-	  imgs = pdfandimg.PDFtoIMG("test/test/0.pdf");
+	  imgs = pdfandimg.PdfToImg("test/test/0.pdf");
 	  int i = 0;
 	  for(BufferedImage note : imgs) {
 	    notes.add(new Note(note, index.get(i).x, index.get(i).y));
@@ -39,6 +39,6 @@ public class TextToImgDemo {
 	TextToImg textToimg = new TextToImg(sttarray, notes, change, imgs.get(0).getWidth(), imgs.get(0).getHeight());
 	//textToImg �떎�뻾
 	imgs = textToimg.convert();
-	pdfandimg.IMGtoPDF(imgs, "test/test/test.pdf");
+	pdfandimg.ImgToPdf(imgs, "test/test/test.pdf");
   }
 }

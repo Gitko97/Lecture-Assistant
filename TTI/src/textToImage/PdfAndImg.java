@@ -14,10 +14,10 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 
 //Class PDFandIMG
 //1. no constructor
-//2. method IMGtoPDF return boolean : save imgs from args at filePath
-// 3. method PDFtoIMG return ArrayList<BufferedImage> : Convert PDF at filePath from args into ArrayList<imgs>
+//2. method ImgToPdf return boolean : save imgs from args at filePath
+// 3. method PdfToImg return ArrayList<BufferedImage> : Convert PDF at filePath from args into ArrayList<imgs>
 public class PdfAndImg{
-  public boolean IMGtoPDF(ArrayList<BufferedImage> imgs, String filePath) {	// save imgs from args at filePath
+  public boolean ImgToPdf(ArrayList<BufferedImage> imgs, String filePath) {	// save imgs from args at filePath
     PDDocument document = new PDDocument();
 	try {
 	  for(BufferedImage img : imgs) {
@@ -36,7 +36,7 @@ public class PdfAndImg{
 	return false;
   }
 	
-  public ArrayList<BufferedImage> PDFtoIMG(String filePath) throws IOException { // Convert PDF at filePath from args into ArrayList<imgs>
+  public ArrayList<BufferedImage> PdfToImg(String filePath) throws IOException { // Convert PDF at filePath from args into ArrayList<imgs>
     ArrayList<BufferedImage> imgs = new ArrayList<>();
 	File readFile = new File(filePath);
 	PDDocument document = PDDocument.load(readFile);
