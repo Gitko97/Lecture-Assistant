@@ -29,7 +29,6 @@ public class TextToImg {
 	private Font font;
 	private String fontFamily = "바탕";
 	private String fileName; // debug for fileIO
-	private FileOutputStream fos; // debug for fileIO
 	private Graphics2D graphics;
 	private BufferedImage bImg;
 
@@ -47,7 +46,6 @@ public class TextToImg {
 	
 	// method convert
 	public ArrayList<BufferedImage> convert() throws Exception{
-		fileName = Integer.toString(outputCount)+".png"; // debug for fileIO
 		initGraphic();
 		
 		int wordStart = 10;
@@ -67,7 +65,7 @@ public class TextToImg {
 
 		for(int i = 0; i < string.size(); i++) {
 			
-			if (changedP != null && changedP.get(cPosIndex) == i) {
+			if (changedP.size() != 0 && changedP.get(cPosIndex) == i) {
 				if (cPosIndex < changedP.size() - 1 ) cPosIndex += 1;
 				pdfPages += 1;
 				imageWrite();
@@ -164,7 +162,6 @@ public class TextToImg {
 	private void initGraphic() throws IOException{
 		
 		bImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-		fos = new FileOutputStream(new File(fileName)); // debug for fileIO
 		graphics = bImg.createGraphics();
 		
 		graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -182,7 +179,6 @@ public class TextToImg {
 	private void imageWrite() throws IOException {
 		result.add(bImg);
 		//----- debug for file IO--------
-		ImageIO.write(bImg, "PNG", fos);
 		System.out.println(outputCount++ + "th note converted"); //debugging
 		fileName = Integer.toString(outputCount)+".png";
 		//-------------------------------

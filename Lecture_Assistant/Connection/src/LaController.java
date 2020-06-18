@@ -21,7 +21,7 @@ public class LaController {
   Thread compareThread;
   Thread sttThread;
   Timer capturingTimer;
-	
+  static boolean sttStart = false;
   SaveIMG save = new SaveIMG();
 
   public static int u=0;
@@ -54,7 +54,7 @@ public class LaController {
 
   //When Press Start Button
   public void start() throws InterruptedException {
-	Thread.currentThread().setPriority(10);
+	Thread.currentThread().setPriority(8);
 	
 	captureView.captureStart();
 	capturingTimer = new Timer();
@@ -63,11 +63,15 @@ public class LaController {
 	sttThread = new Thread(speechToText);
 	sttThread.setPriority(10);
 	sttThread.start();
+	while(!sttStart) {
+		System.out.println("Wait");
+	}
 	compareThread = new Thread(compare);
-	compareThread.setPriority(3);
+	compareThread.setPriority(1);
 	
-	Thread.sleep(1000);
+	
 	capturingTimer.schedule(capturing, 0, 1000);
+	Thread.sleep(1000);
 	compareThread.start();
 	
 	Thread.currentThread().setPriority(1);
@@ -87,6 +91,7 @@ public class LaController {
 			}
 	}
 	pdfAndimg.IMGtoPDF(completePdf, this.savePos+"_complete.pdf");
+	System.out.println(speechToText.getString().toString());
 	try {
 		textToimg = new TextToImg(speechToText.getString(),notes, changePos, pdfWidth, pdfHeight);
 		pdfAndimg.IMGtoPDF(textToimg.convert(), this.savePos+"_script.pdf");
