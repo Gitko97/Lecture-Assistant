@@ -186,7 +186,7 @@ public class TextToImg {
 		result.add(bImg);
 		//----- debug for file IO--------
 		//ImageIO.write(bImg, "PNG", fos); //debugging for file IO
-		//System.out.println(outputCount++ + "th note converted"); //debugging for fileIO
+		System.out.println(outputCount++ + "th note converted"); //debugging for fileIO
 		//fileName = Integer.toString(outputCount)+".png"; //debugging for fileIO
 		//-------------------------------
 	}
