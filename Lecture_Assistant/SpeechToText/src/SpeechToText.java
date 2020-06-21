@@ -190,6 +190,7 @@ public class SpeechToText implements Runnable{
 	        String resulttime = convertMillisToDate(correctedTime);
 	        if (!result.getIsFinal()) {
 	          if(!curTime.equals(resulttime)) {
+	        	LaController.sttStart = true;
 	            curTime = resulttime;
 	            saveTime.add(curTime);
 	            SpeechToText.responses.add(response);
@@ -236,6 +237,7 @@ public class SpeechToText implements Runnable{
 
       @Override
       public void run() {
+    	  System.out.println("Run");
         targetDataLine.start();
         byte[] data = new byte[BYTES_PER_BUFFER];
         while (targetDataLine.isOpen()) {
@@ -255,7 +257,7 @@ public class SpeechToText implements Runnable{
     // Creating microphone input buffer thread
     MicBuffer micrunnable = new MicBuffer();
     Thread micThread = new Thread(micrunnable);
-    micThread.setPriority(10);
+    micThread.setPriority(8);
 
     try {
       // SampleRate:16000Hz, SampleSizeInBits: 16, Number of channels: 1, Signed: true,
@@ -334,7 +336,8 @@ public class SpeechToText implements Runnable{
               StreamingRecognizeRequest.newBuilder()
                 .setAudioContent(lastAudioInput.get(i))
                   .build();
-                  
+
+        	  LaController.sttStart = true;
             clientStream.send(request);
           }
         }
@@ -346,6 +349,8 @@ public class SpeechToText implements Runnable{
           StreamingRecognizeRequest.newBuilder().setAudioContent(tempByteString).build();
         audioInput.add(tempByteString);
         }
+
+  	  LaController.sttStart = true;
       clientStream.send(request);
       }
     } catch (Exception e) {
