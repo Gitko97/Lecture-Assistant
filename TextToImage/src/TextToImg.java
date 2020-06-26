@@ -4,9 +4,9 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.io.File; //debug for fileIO
-import java.io.FileOutputStream; //debug for fileIO
-import javax.imageio.ImageIO; // debug for fileIO
+//import java.io.File; //debug for fileIO
+//import java.io.FileOutputStream; //debug for fileIO
+//import javax.imageio.ImageIO; // debug for fileIO
 
 // Class TextToImg
 // 1. args are ArrayList<String> STTString, ArrayList<Note> notes, ArrayLise<Integer> changedPosition, int width, int height
@@ -28,7 +28,7 @@ public class TextToImg {
 	private int fontSize = 20;
 	private Font font;
 	private String fontFamily = "바탕";
-	private String fileName; // debug for fileIO
+	//private String fileName; // debug for fileIO
 	private Graphics2D graphics;
 	private BufferedImage bImg;
 
@@ -107,8 +107,11 @@ public class TextToImg {
 					}
 				}
 				headLine = "<"+secondToMinute(i)+"'s note>";	// print a note's index to identify
+				lineStart += fontSize * lineSpacing;
+				wordStart = 10;
 				graphics.drawString(headLine, wordStart, lineStart);
-				wordStart += headLine.length() * (fontSize - 3);
+				lineStart += fontSize * lineSpacing;
+				wordStart = 10;
 			}
 				
 				//System.out.println(noteIndex + "th image and " + i + "'s text"); // debugging
@@ -141,11 +144,12 @@ public class TextToImg {
 					}
 					else {
 						wordStart = 10;
-						lineStart += fontSize * lineSpacing ;
+						lineStart += fontSize * lineSpacing;
 					}
 					graphics.drawString("<Note end>", wordStart, lineStart);
 					notePrinted = false;
-					lineStart = heightMargin + fontSize * 3;
+					if (lineStart < heightMargin) lineStart = heightMargin + fontSize * 3;
+					else lineStart += fontSize * lineSpacing;
 					wordStart = 10;	
 					widthMargin = width;
 					if (noteIndex < notes.size()) {
@@ -180,7 +184,7 @@ public class TextToImg {
 		result.add(bImg);
 		//----- debug for file IO--------
 		System.out.println(outputCount++ + "th note converted"); //debugging
-		fileName = Integer.toString(outputCount)+".png";
+		//fileName = Integer.toString(outputCount)+".png";
 		//-------------------------------
 	}
 	private String spaceRemover(String s) {
