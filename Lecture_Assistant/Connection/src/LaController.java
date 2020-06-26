@@ -91,7 +91,7 @@ public class LaController {
 			}
 	}
 	pdfAndimg.IMGtoPDF(completePdf, this.savePos+"_complete.pdf");
-	System.out.println(speechToText.getString().toString());
+	//System.out.println(speechToText.getString().toString());
 	try {
 		textToimg = new TextToImg(speechToText.getString(),notes, changePos, pdfWidth, pdfHeight);
 		pdfAndimg.IMGtoPDF(textToimg.convert(), this.savePos+"_script.pdf");
